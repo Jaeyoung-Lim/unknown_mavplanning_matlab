@@ -1,0 +1,3 @@
+[submodule "mav_matlab_tools"]
+	path = mav_matlab_tools
+	url = git@github.com:ethz-asl/mav_matlab_tools.git
