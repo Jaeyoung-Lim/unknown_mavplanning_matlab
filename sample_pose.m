@@ -1,4 +1,4 @@
-function [pos, yaw] = sample_pose(map)
+function [pose] = sample_pose(map)
 % Sample free space from a Binary Occupancy gridmap
 
 map_corner = [map.XWorldLimits(1), map.YWorldLimits(1)];
@@ -14,5 +14,6 @@ while true
 % Sample mav yaw
 yaw = 2* pi()*rand();
 
+pose = [pos, yaw];
 
 end
