@@ -9,7 +9,7 @@ resolution_m = 10;
 numsamples_m = 10;
 
 start_point = [0.5 0.5];
-goal_point = [9.5 9.5];
+goal_point = [19.5 19.5];
 
 
 % Local Map parameters

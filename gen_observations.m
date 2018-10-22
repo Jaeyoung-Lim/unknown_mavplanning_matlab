@@ -2,9 +2,11 @@
 clear all;
 close all;
 % Parameterss
-%TODO: Define camera FOV as a parameter
 set_params();
 
+writerObj = VideoWriter('myVideo.avi');
+writerObj.FrameRate = 10;
+open(writerObj);
 %% Generate Global Trajectory
 % Get the Global map
 binmap_true = create_random_map(width_m, height_m, resolution_m, numsamples_m, inflation_m);
@@ -17,14 +19,18 @@ path = a_star(binmap_true, start_point, goal_point);
 %% Generate Local map
 % Convert map to occupancy grid
 map_true = robotics.OccupancyGrid(double(binmap_true.occupancyMatrix), resolution_m);
-% Create a partial map based on observation
-map_obs = robotics.OccupancyGrid(width_m, height_m, resolution_m);
 
 %% Random sample pose inside the map
 % Sample position and check if it is free
 % [mavPose] = sample_pose(binmap_true);
+if options.plotting
+    plot_binmap(binmap_true, path);
+end
+
 for j = 1:size(path, 1)
     mavPose = [path(j, :), 0];
+    % Create a partial map based on observation
+    map_obs = robotics.OccupancyGrid(width_m, height_m, resolution_m);
 
     %% Generate a local map
 
@@ -58,22 +64,24 @@ for j = 1:size(path, 1)
 
     %% Plot
     if options.plotting
-        plot_binmap(binmap_true, mavPose);
-        plot_map(map_true, mavPose, intsectionPts, angles);
-        plot_partialmap(map_obs);
+%         plot_map(map_true, mavPose, intsectionPts, angles);
+        writerObj = plot_partialmap(map_obs, writerObj);
     end
 end
-function plot_binmap(map, pose)
-    figure('Name', 'True binary occupancy gridmap');
-    show(map);
+close(writerObj);
+
+function plot_binmap(map, path)
+    figure(101)
+    show(map)
     hold on;
-    plot(pose(1), pose(2), 'xr','MarkerSize',10)
-    hold off;
+    plot(path(:, 1), path(:, 2));
+    hold on;
+%     plot(pose(1), pose(2), 'xr','MarkerSize',10);
 end
 
 function plot_map(map, pose, intsectionPts, angles)
-    figure('Name', 'True Occupancy gridmap')
-    show(map);
+    figure(1)
+    show(map)
     hold on;
     plot(pose(1), pose(2), 'xr','MarkerSize',10)
     hold on;
@@ -86,7 +94,10 @@ function plot_map(map, pose, intsectionPts, angles)
     hold off;
 end
 
-function plot_partialmap(map)
-    figure('Name', 'Observation')
-    show(map);
+function [video_obj] = plot_partialmap(map, video_obj)
+    figure(107)
+    show(map)
+    hold on;
+    frame = occupancyMatrix(map);
+    writeVideo(video_obj, frame);
 end
