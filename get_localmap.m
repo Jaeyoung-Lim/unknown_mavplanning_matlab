@@ -4,7 +4,7 @@ function [map_obs] = get_localmap(map_true, pose)
     % Update observations on local map
     map_obs = robotics.OccupancyGrid(width_m, height_m, resolution_m);
 
-    angles = (pose(3)-fov/2):0.01:(pose(3)+fov/2);
+    angles = -fov/2:0.01:fov/2;
     intsectionPts = rayIntersection(map_true, pose, angles, maxrange);
 
     for i = 1:1:size(intsectionPts, 1)
