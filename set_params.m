@@ -5,16 +5,16 @@ options.plotting = true;
 width_m = 20;
 height_m = 20;
 inflation_m = 0.4;
-resolution_m = 10;
-numsamples_m = 20;
+resolution_m = 20;
+numsamples_m = 40;
 
-start_point = [0.5 0.5];
-goal_point = [19.5 19.5];
+start_point = [5.0 5.0];
+goal_point = [15.0 15.0];
 
 
 % Local Map parameters
 width_subm = 5;
-hieght_subm = 5;
+height_subm = 5;
 
 % Sensor parameters
 maxrange = 20;
