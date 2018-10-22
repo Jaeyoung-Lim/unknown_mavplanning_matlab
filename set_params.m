@@ -1,12 +1,19 @@
 options = {};
 options.plotting = true;
 
-% Map parameters
-width_m = 10;
-height_m = 10;
+% Gloabal Map parameters
+width_m = 20;
+height_m = 20;
 inflation_m = 0.4;
 resolution_m = 10;
 numsamples_m = 10;
+
+start_point = [0.5 0.5];
+goal_point = [9.5 9.5];
+
+
+% Local Map parameters
+
 
 % Sensor parameters
 maxrange = 20;

@@ -3,12 +3,18 @@ clear all;
 close all;
 % Parameterss
 %TODO: Define camera FOV as a parameter
-set_params()
+set_params();
 
-
-%% Generate maps
-% Get the true map
+%% Generate Global Trajectory
+% Get the Global map
 binmap_true = create_random_map(width_m, height_m, resolution_m, numsamples_m, inflation_m);
+
+setOccupancy(binmap_true, vertcat(start_point, goal_point, ...
+  start_point+0.05, goal_point+0.05, start_point-0.05, goal_point-0.05), 0);
+
+path = a_star(binmap_true, start_point, goal_point);
+
+%% Generate Local map
 % Convert map to occupancy grid
 map_true = robotics.OccupancyGrid(double(binmap_true.occupancyMatrix), resolution_m);
 % Create a partial map based on observation
@@ -16,45 +22,47 @@ map_obs = robotics.OccupancyGrid(width_m, height_m, resolution_m);
 
 %% Random sample pose inside the map
 % Sample position and check if it is free
-[mavPose] = sample_pose(binmap_true);
+% [mavPose] = sample_pose(binmap_true);
+for j = 1:size(path, 1)
+    mavPose = [path(j, :), 0];
 
-%% Generate a local map
+    %% Generate a local map
 
-angles = (mavPose(3)-fov/2):0.01:(mavPose(3)+fov/2);
-intsectionPts = rayIntersection(map_true,mavPose,angles,maxrange);
+    angles = (mavPose(3)-fov/2):0.01:(mavPose(3)+fov/2);
+    intsectionPts = rayIntersection(map_true,mavPose,angles,maxrange);
 
-for i = 1:1:size(intsectionPts, 1)
-    
-    ray_endpoint = intsectionPts(i, :);
-    if norm(double(isnan(ray_endpoint))) > 0
-        ray_endpoint = mavPose(1:2) + [maxrange*cos(angles(i)), maxrange*sin(angles(i))]; 
-        ray_endpoint(1) = max(min(ray_endpoint(1), map_obs.XWorldLimits(2)), map_obs.XWorldLimits(1));
-        ray_endpoint(2) = max(min(ray_endpoint(2), map_obs.YWorldLimits(2)), map_obs.YWorldLimits(1));
+    for i = 1:1:size(intsectionPts, 1)
 
-        [endpoints, midpoints] = raycast(map_obs, mavPose(1:2), ray_endpoint);
+        ray_endpoint = intsectionPts(i, :);
+        if norm(double(isnan(ray_endpoint))) > 0
+            ray_endpoint = mavPose(1:2) + [maxrange*cos(angles(i)), maxrange*sin(angles(i))]; 
+            ray_endpoint(1) = max(min(ray_endpoint(1), map_obs.XWorldLimits(2)), map_obs.XWorldLimits(1));
+            ray_endpoint(2) = max(min(ray_endpoint(2), map_obs.YWorldLimits(2)), map_obs.YWorldLimits(1));
 
-        setOccupancy(map_obs, midpoints, zeros(size(midpoints, 1), 1), 'grid');
-    else
-        ray_endpoint(1) = max(min(ray_endpoint(1), map_obs.XWorldLimits(2)), map_obs.XWorldLimits(1));
-        ray_endpoint(2) = max(min(ray_endpoint(2), map_obs.YWorldLimits(2)), map_obs.YWorldLimits(1));
+            [endpoints, midpoints] = raycast(map_obs, mavPose(1:2), ray_endpoint);
 
-        [endpoints, midpoints] = raycast(map_obs, mavPose(1:2), ray_endpoint);
+            setOccupancy(map_obs, midpoints, zeros(size(midpoints, 1), 1), 'grid');
+        else
+            ray_endpoint(1) = max(min(ray_endpoint(1), map_obs.XWorldLimits(2)), map_obs.XWorldLimits(1));
+            ray_endpoint(2) = max(min(ray_endpoint(2), map_obs.YWorldLimits(2)), map_obs.YWorldLimits(1));
 
-        setOccupancy(map_obs, midpoints, zeros(size(midpoints, 1), 1), 'grid');
-        setOccupancy(map_obs, endpoints, ones(size(endpoints, 1), 1), 'grid'); 
+            [endpoints, midpoints] = raycast(map_obs, mavPose(1:2), ray_endpoint);
+
+            setOccupancy(map_obs, midpoints, zeros(size(midpoints, 1), 1), 'grid');
+            setOccupancy(map_obs, endpoints, ones(size(endpoints, 1), 1), 'grid'); 
+        end
+    end
+
+    %% Mark unknown space / known space
+
+
+    %% Plot
+    if options.plotting
+        plot_binmap(binmap_true, mavPose);
+        plot_map(map_true, mavPose, intsectionPts, angles);
+        plot_partialmap(map_obs);
     end
 end
-
-%% Mark unknown space / known space
-
-
-%% Plot
-if options.plotting
-    plot_binmap(binmap_true, mavPose);
-    plot_map(map_true, mavPose, intsectionPts, angles);
-    plot_partialmap(map_obs);
-end
-
 function plot_binmap(map, pose)
     figure('Name', 'True binary occupancy gridmap');
     show(map);
