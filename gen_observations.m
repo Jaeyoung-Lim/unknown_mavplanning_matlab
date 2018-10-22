@@ -6,9 +6,9 @@ set_params()
 
 %% Generate maps
 % Get the true map
-binmap_true = create_random_map(width_m, height_m, resolution_m, 10, inflation_m);
+binmap_true = create_random_map(width_m, height_m, resolution_m, numsamples_m, inflation_m);
 % Convert map to occupancy grid
-map_true = robotics.OccupancyGrid(double(binmap_true.occupancyMatrix));
+map_true = robotics.OccupancyGrid(double(binmap_true.occupancyMatrix), resolution_m);
 % Create a partial map based on observation
 map_obs = robotics.OccupancyGrid(width_m, height_m, resolution_m);
 
