@@ -1,6 +1,5 @@
 %% Setup & loading
-clear all;
-close all;
+clear all; close all;
 % Parameterss
 set_params();
 
@@ -39,9 +38,10 @@ for j = 1:size(path, 1)-1
     %% Plot
     if options.plotting
 %         plot_map(map_true, mavPose, intsectionPts, angles);
-        writerObj = plot_partialmap(map_obs, writerObj);
+        writerObj = plot_localmap(map_obs, writerObj);
     end
 end
+
 close(writerObj);
 
 function plot_binmap(map, path)
@@ -68,7 +68,7 @@ function plot_map(map, pose, intsectionPts, angles)
     hold off;
 end
 
-function [video_obj] = plot_partialmap(map, video_obj)
+function [video_obj] = plot_localmap(map, video_obj)
     figure(107)
     show(map)
     hold on;
