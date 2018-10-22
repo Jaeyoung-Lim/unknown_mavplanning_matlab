@@ -18,9 +18,6 @@ path = a_star(binmap_true, start_point, goal_point);
 %% Random sample pose inside the map
 % Sample position and check if it is free
 % [mavPose] = sample_pose(binmap_true);
-if options.plotting
-    plot_binmap(binmap_true, path);
-end
 
 for j = 1:size(path, 1)-1
     position = path(j, :);
@@ -34,6 +31,7 @@ for j = 1:size(path, 1)-1
 
     %% Plot
     if options.plotting
+        plot_binmap(binmap_true, path, mavPose);
 %         plot_map(map_true, mavPose, intsectionPts, angles);
         writerObj = plot_localmap(map_obs, writerObj);
     end
@@ -41,16 +39,20 @@ end
 
 close(writerObj);
 
-function plot_binmap(map, path)
+function plot_binmap(map, path, pose)
+    set_params();
     figure(101)
     show(map)
     hold on;
     plot(path(:, 1), path(:, 2));
     hold on;
-%     plot(pose(1), pose(2), 'xr','MarkerSize',10);
+    plot(pose(1), pose(2), 'xr','MarkerSize',10);
+    hold on;
+    rectangle('Position',[pose(1)-0.5*width_subm, pose(2)-0.5*height_subm, width_subm, height_subm], 'EdgeColor', 'b');
+    hold off;
 end
 
-function plot_map(map, pose, intsectionPts, angles)
+function plot_map(map, pose, intsectionPts, angles)    
     figure(1)
     show(map)
     hold on;
@@ -66,9 +68,11 @@ function plot_map(map, pose, intsectionPts, angles)
 end
 
 function [video_obj] = plot_localmap(map, video_obj)
+    set_params();
     figure(107)
     show(map)
     hold on;
+    plot(0.5*width_subm, 0.5*height_subm, 'xr','MarkerSize',10)
     frame = occupancyMatrix(map);
     writeVideo(video_obj, frame);
 end

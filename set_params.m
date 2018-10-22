@@ -5,8 +5,8 @@ options.plotting = true;
 width_m = 20;
 height_m = 20;
 inflation_m = 0.4;
-resolution_m = 20;
-numsamples_m = 40;
+resolution_m = 10;
+numsamples_m = 80;
 
 start_point = [5.0 5.0];
 goal_point = [15.0 15.0];
