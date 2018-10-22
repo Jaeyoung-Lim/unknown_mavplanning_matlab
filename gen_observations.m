@@ -1,71 +1,60 @@
 %% Setup & loading
-clear all;
-close all;
+clear all; close all;
 % Parameterss
-%TODO: Define camera FOV as a parameter
-set_params()
+set_params();
 
-
-%% Generate maps
-% Get the true map
+writerObj = VideoWriter('myVideo.avi');
+writerObj.FrameRate = 10;
+open(writerObj);
+%% Generate Global Trajectory
+% Get the Global map
 binmap_true = create_random_map(width_m, height_m, resolution_m, numsamples_m, inflation_m);
-% Convert map to occupancy grid
-map_true = robotics.OccupancyGrid(double(binmap_true.occupancyMatrix), resolution_m);
-% Create a partial map based on observation
-map_obs = robotics.OccupancyGrid(width_m, height_m, resolution_m);
+
+setOccupancy(binmap_true, vertcat(start_point, goal_point, ...
+  start_point+0.05, goal_point+0.05, start_point-0.05, goal_point-0.05), 0);
+
+path = a_star(binmap_true, start_point, goal_point);
 
 %% Random sample pose inside the map
 % Sample position and check if it is free
-[mavPose] = sample_pose(binmap_true);
+% [mavPose] = sample_pose(binmap_true);
 
-%% Generate a local map
-
-angles = (mavPose(3)-fov/2):0.01:(mavPose(3)+fov/2);
-intsectionPts = rayIntersection(map_true,mavPose,angles,maxrange);
-
-for i = 1:1:size(intsectionPts, 1)
+for j = 1:size(path, 1)-1
+    position = path(j, :);
+    velocity = path(j +1, :) - path(j, :);
+    ram = atan2(velocity(2), velocity(1));
     
-    ray_endpoint = intsectionPts(i, :);
-    if norm(double(isnan(ray_endpoint))) > 0
-        ray_endpoint = mavPose(1:2) + [maxrange*cos(angles(i)), maxrange*sin(angles(i))]; 
-        ray_endpoint(1) = max(min(ray_endpoint(1), map_obs.XWorldLimits(2)), map_obs.XWorldLimits(1));
-        ray_endpoint(2) = max(min(ray_endpoint(2), map_obs.YWorldLimits(2)), map_obs.YWorldLimits(1));
+    mavPose = [position, ram];
+    %% Generate Local map
+    % Create a partial map based on observation
+    map_obs = get_localmap(binmap_true, mavPose);
 
-        [endpoints, midpoints] = raycast(map_obs, mavPose(1:2), ray_endpoint);
-
-        setOccupancy(map_obs, midpoints, zeros(size(midpoints, 1), 1), 'grid');
-    else
-        ray_endpoint(1) = max(min(ray_endpoint(1), map_obs.XWorldLimits(2)), map_obs.XWorldLimits(1));
-        ray_endpoint(2) = max(min(ray_endpoint(2), map_obs.YWorldLimits(2)), map_obs.YWorldLimits(1));
-
-        [endpoints, midpoints] = raycast(map_obs, mavPose(1:2), ray_endpoint);
-
-        setOccupancy(map_obs, midpoints, zeros(size(midpoints, 1), 1), 'grid');
-        setOccupancy(map_obs, endpoints, ones(size(endpoints, 1), 1), 'grid'); 
+    %% Plot
+    if options.plotting
+        plot_binmap(binmap_true, path, mavPose);
+%         plot_map(map_true, mavPose, intsectionPts, angles);
+        writerObj = plot_localmap(map_obs, writerObj);
     end
 end
 
-%% Mark unknown space / known space
+close(writerObj);
 
-
-%% Plot
-if options.plotting
-    plot_binmap(binmap_true, mavPose);
-    plot_map(map_true, mavPose, intsectionPts, angles);
-    plot_partialmap(map_obs);
-end
-
-function plot_binmap(map, pose)
-    figure('Name', 'True binary occupancy gridmap');
-    show(map);
+function plot_binmap(map, path, pose)
+    set_params();
+    figure(101)
+    show(map)
     hold on;
-    plot(pose(1), pose(2), 'xr','MarkerSize',10)
+    plot(path(:, 1), path(:, 2));
+    hold on;
+    plot(pose(1), pose(2), 'xr','MarkerSize',10);
+    hold on;
+    rectangle('Position',[pose(1)-0.5*width_subm, pose(2)-0.5*height_subm, width_subm, height_subm], 'EdgeColor', 'b');
     hold off;
 end
 
-function plot_map(map, pose, intsectionPts, angles)
-    figure('Name', 'True Occupancy gridmap')
-    show(map);
+function plot_map(map, pose, intsectionPts, angles)    
+    figure(1)
+    show(map)
     hold on;
     plot(pose(1), pose(2), 'xr','MarkerSize',10)
     hold on;
@@ -78,7 +67,12 @@ function plot_map(map, pose, intsectionPts, angles)
     hold off;
 end
 
-function plot_partialmap(map)
-    figure('Name', 'Observation')
-    show(map);
+function [video_obj] = plot_localmap(map, video_obj)
+    set_params();
+    figure(107)
+    show(map)
+    hold on;
+    plot(0.5*width_subm, 0.5*height_subm, 'xr','MarkerSize',10)
+    frame = occupancyMatrix(map);
+    writeVideo(video_obj, frame);
 end
