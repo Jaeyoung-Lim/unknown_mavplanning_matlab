@@ -8,8 +8,15 @@ writerObj.FrameRate = 10;
 open(writerObj);
 %% Generate Global Trajectory
 % Get the Global map
-binmap_true = create_random_map(width_m, height_m, resolution_m, numsamples_m, inflation_m);
-
+switch options.map
+    case 'randomforest'
+        binmap_true = create_random_map(width_m, height_m, resolution_m, numsamples_m, inflation_m);
+        
+    case 'image'
+        binmap_true = create_image_map('/home/jalim/dev/unknown_mavplanning_matlab/data/intelgfs.png');
+    otherwise
+        print('map generation option is not valid');
+end
 setOccupancy(binmap_true, vertcat(start_point, goal_point, ...
   start_point+0.05, goal_point+0.05, start_point-0.05, goal_point-0.05), 0);
 
@@ -73,6 +80,7 @@ function [video_obj] = plot_localmap(map, video_obj)
     show(map)
     hold on;
     plot(0.5*width_subm, 0.5*height_subm, 'xr','MarkerSize',10)
-    frame = occupancyMatrix(map);
+    image = occupancyMatrix(map);
+    frame = image;
     writeVideo(video_obj, frame);
 end
