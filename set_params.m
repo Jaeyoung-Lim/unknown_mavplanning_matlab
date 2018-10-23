@@ -1,6 +1,6 @@
 options = {};
 options.plotting = true;
-options.map = 'corridor';
+options.map = 'image';
 
 switch options.map
     case 'randomforest'        
@@ -18,7 +18,7 @@ switch options.map
         width_subm = 5;
         height_subm = 5;
 
-    case 'corridor'
+    case 'image'
         % Gloabal Map parameters
         width_m = 20;
         height_m = 20;
@@ -26,14 +26,14 @@ switch options.map
         resolution_m = 1;
         numsamples_m = 80;
 
-        start_point = [20 20];
+        start_point = [150 150];
         goal_point = [190 190];
 
         % Local Map parameters
-        width_subm = 20;
-        height_subm = 20;
+        width_subm = 100;
+        height_subm = 100;
 end
 
 % Sensor parameters
-maxrange = 20;
+maxrange = 100;
 fov = 2*pi();
