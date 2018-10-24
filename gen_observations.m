@@ -13,14 +13,33 @@ switch options.map
         binmap_true = create_random_map(width_m, height_m, resolution_m, numsamples_m, inflation_m);
         
     case 'image'
-        binmap_true = create_image_map('/home/jalim/dev/unknown_mavplanning_matlab/data/intelgfs.png');
+        binmap_true = create_image_map('/home/jalim/dev/unknown_mavplanning_matlab/data/blobby_map.png');
+%         binmap_true = create_image_map('/home/jalim/dev/unknown_mavplanning_matlab/data/intelgfs.png');
     otherwise
         print('map generation option is not valid');
 end
 setOccupancy(binmap_true, vertcat(start_point, goal_point, ...
   start_point+0.05, goal_point+0.05, start_point-0.05, goal_point-0.05), 0);
 
-path = a_star(binmap_true, start_point, goal_point);
+switch options.planner
+    case 'a_star'
+        path = a_star(binmap_true, start_point, goal_point);
+    case 'chomp'
+        K = 2; % Number of dimensions.
+        N = 11; % Is equivalent to N = 12 in Markus code
+        v_max = 1.0;
+        a_max = 2.0;
+
+        trajectory = create_trajectory(K, N);
+        trajectory = add_vertex_to_trajectory(trajectory, start_point, 1);
+
+        trajectory = add_vertex_to_trajectory(trajectory, goal_point, 1);
+
+        % Estimate segment times.
+        trajectory = estimate_trajectory_times(trajectory, v_max, a_max);
+        trajectory = solve_trajectory(trajectory);
+        [t, path] = sample_trajectory(trajectory, 0.1);
+end
 
 %% Random sample pose inside the map
 % Sample position and check if it is free
