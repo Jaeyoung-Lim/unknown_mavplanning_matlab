@@ -2,10 +2,12 @@ function [map_obs] = get_localmap(binmap, pose)
     %% Generate a local map
     set_params();
     % Convert map to occupancy grid
-    ij_min = world2grid(binmap, pose(1:2) + [-0.5*width_subm, 0.5*height_subm]);
-    ij_max = world2grid(binmap, pose(1:2) + [0.5*width_subm, -0.5*height_subm]);
+    ij_pos = world2grid(binmap, pose(1:2));
+    i_width = world2grid(binmap, [0.5*width_subm, binmap.YWorldLimits(2)]);
+    j_height = world2grid(binmap, [0.0, binmap.YWorldLimits(2)-0.5*height_subm]);
     binmap = double(binmap.occupancyMatrix);
-    sub_binmap = binmap(ij_min(1):ij_max(1), ij_min(2):ij_max(2));
+    binmap = padarray(binmap, [i_width(2), j_height(1)], 'both');
+    sub_binmap = binmap(ij_pos(1):(ij_pos(1)+2*i_width(2)), ij_pos(2):(ij_pos(2)+2*j_height(1)));
     map_true = robotics.OccupancyGrid(sub_binmap, resolution_m);
 
     % Update observations on local map
