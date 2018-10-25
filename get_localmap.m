@@ -12,8 +12,8 @@ function [map_obs] = get_localmap(binmap, pose)
 
     % Update observations on local map
     map_obs = robotics.OccupancyGrid(width_subm, height_subm, resolution_m);
-
-    angles = -fov/2:0.01:fov/2;
+    scan_resolution = min(1/(0.5*width_subm*resolution_m), (1/0.5*height_subm*resolution_m));
+    angles = -fov/2:scan_resolution:fov/2;
     origin = [0.5*width_subm, 0.5*height_subm, pose(3)];
     intsectionPts = rayIntersection(map_true, origin, angles, maxrange);
     for i = 1:1:size(intsectionPts, 1)
