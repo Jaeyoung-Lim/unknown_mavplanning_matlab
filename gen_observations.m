@@ -1,13 +1,6 @@
-%% Setup & loading
-clear all; close all;
-% Parameterss
-writerObj = VideoWriter('myVideo.avi');
-writerObj.FrameRate = 10;
-open(writerObj);
+function gen_observations(params)
+
 %% Generate Global Trajectory
-% Get the Global map
-% params = Param_RANDOMFOREST;
-params = Param_INTEL;
 
 switch params.map_type
     case 'randomforest'
@@ -49,5 +42,4 @@ for j = 1:size(path, 1)-1
         plot_summary(params, binmap_true, map_obs, path, mavPose, writerObj);
     end
 end
-
-close(writerObj);
+end
