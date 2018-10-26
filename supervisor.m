@@ -7,8 +7,20 @@ open(writerObj);
 
 % Get the Global map
 % params = Param_RANDOMFOREST;
-parameterfile = Param_INTEL;
+parameterfile = Param_RANDOMFOREST;
 
-gen_observations(parameterfile);
+for i=1:10
+    if isempty(parameterfile.start_point)
+        randompose = sample_pose(parameterfile.globalmap.width, parameterfile.globalmap.height);
+        parameterfile.start_point = randompose(1:2);
+    end
+    if isempty(parameterfile.goal_point)
+        randompose = sample_pose(parameterfile.globalmap.width, parameterfile.globalmap.height);
+        parameterfile.goal_point = randompose(1:2);
+    end
+
+    gen_observations(parameterfile, writerObj);
+
+end
 
 close(writerObj);

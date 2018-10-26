@@ -1,4 +1,4 @@
-function gen_observations(params)
+function gen_observations(params, videoObj)
 
 %% Generate Global Trajectory
 
@@ -12,6 +12,7 @@ switch params.map_type
     otherwise
         print('map generation option is not valid');
 end
+
 setOccupancy(binmap_true, vertcat(params.start_point, params.goal_point, ...
   params.start_point+0.05, params.goal_point+0.05, params.start_point-0.05, params.goal_point-0.05), 0);
 
@@ -25,7 +26,6 @@ end
 
 %% Random sample pose inside the map
 % Sample position and check if it is free
-% [mavPose] = sample_pose(binmap_true);
 
 for j = 1:size(path, 1)-1
     position = path(j, :);
@@ -39,7 +39,7 @@ for j = 1:size(path, 1)-1
 
     %% Plot
     if params.visualization
-        plot_summary(params, binmap_true, map_obs, path, mavPose, writerObj);
+        plot_summary(params, binmap_true, map_obs, path, mavPose, videoObj);
     end
 end
 end
