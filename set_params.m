@@ -1,6 +1,7 @@
 options = {};
 options.plotting = true;
 options.map = 'randomforest';
+options.globalplanner = 'a_star';
 
 switch options.map
     case 'randomforest'        
