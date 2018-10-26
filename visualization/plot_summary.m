@@ -1,20 +1,23 @@
-function [videoObj] = plot_summary(globalmap, partialmap, mavpath, mavpose, videoObj)
+function [videoObj] = plot_summary(param, globalmap, partialmap, mavpath, mavpose, videoObj)
 
-    plot_binmap(globalmap, mavpath, mavpose);
+    plot_binmap(param, globalmap, mavpath, mavpose);
     % plot_map(map_true, mavPose, intsectionPts, angles);
-    videoObj = plot_localmap(partialmap, videoObj);
+    videoObj = plot_localmap(param, partialmap, videoObj);
     drawnow
 end
 
-function plot_binmap(map, path, pose)
-    set_params();
+function plot_binmap(param, map, path, pose)
     
     subplot(1,2,1);
     
     show(map); hold on;
     plot(path(:, 1), path(:, 2)); hold on;
     plot(pose(1), pose(2), 'xr','MarkerSize',10); hold on;
-    rectangle('Position',[pose(1)-0.5*width_subm, pose(2)-0.5*height_subm, width_subm, height_subm], 'EdgeColor', 'b');
+    rectangle('Position',[pose(1)-0.5*param.localmap.width, ...
+                          pose(2)-0.5*param.localmap.height, ...
+                          param.localmap.width, ...
+                          param.localmap.height], ...
+                          'EdgeColor', 'b');
     hold off;
     
 end
@@ -33,13 +36,12 @@ function plot_map(map, pose, intsectionPts, angles)
     hold off;
 end
 
-function [video_obj] = plot_localmap(map, video_obj)
-    set_params();
+function [video_obj] = plot_localmap(param, map, video_obj)
     
     subplot(1,2,2);
     
     show(map); hold on;
-    plot(0.5*width_subm, 0.5*height_subm, 'xr','MarkerSize',10); hold off;
+    plot(0.5*param.localmap.width, 0.5*param.localmap.height, 'xr','MarkerSize',10); hold off;
     
     image = occupancyMatrix(map);
     frame = image;
