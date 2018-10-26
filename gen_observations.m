@@ -1,30 +1,31 @@
 %% Setup & loading
 clear all; close all;
 % Parameterss
-set_params();
-
 writerObj = VideoWriter('myVideo.avi');
 writerObj.FrameRate = 10;
 open(writerObj);
 %% Generate Global Trajectory
 % Get the Global map
-switch options.map
+params = Param_RANDOMFOREST;
+
+switch params.map_type
     case 'randomforest'
-        binmap_true = create_random_map(width_m, height_m, resolution_m, numsamples_m, inflation_m);
+        binmap_true = create_random_map(params.globalmap.width, params.globalmap.height, params.globalmap.resolution, params.globalmap.numsamples, params.globalmap.inflation);
         
     case 'image'
-        binmap_true = create_image_map('/home/jalim/dev/unknown_mavplanning_matlab/data/intelgfs.png');
+        binmap_true = create_image_map(map_path);
+    
     otherwise
         print('map generation option is not valid');
 end
-setOccupancy(binmap_true, vertcat(start_point, goal_point, ...
-  start_point+0.05, goal_point+0.05, start_point-0.05, goal_point-0.05), 0);
+setOccupancy(binmap_true, vertcat(params.start_point, params.goal_point, ...
+  params.start_point+0.05, params.goal_point+0.05, params.start_point-0.05, params.goal_point-0.05), 0);
 
-switch options.globalplanner
+switch params.planner
     case 'a_star'
-        path = a_star(binmap_true, start_point, goal_point);
+        path = a_star(binmap_true, params.start_point, params.goal_point);
     case 'chomp'
-        trajectory = continous_chomp(binmap_true, start_point, goal_point);
+        trajectory = continous_chomp(binmap_true, params.start_point, params.goal_point);
         [~, path] = sample_trajectory(trajectory, 0.1);
 end
 
@@ -40,11 +41,11 @@ for j = 1:size(path, 1)-1
     mavPose = [position, ram];
     %% Generate Local map
     % Create a partial map based on observation
-    map_obs = get_localmap(binmap_true, mavPose);
+    map_obs = get_localmap(binmap_true, params, mavPose);
 
     %% Plot
-    if options.plotting
-        plot_summary(binmap_true, map_obs, path, mavPose, writerObj);
+    if params.visualization
+        plot_summary(params, binmap_true, map_obs, path, mavPose, writerObj);
     end
 end
 
