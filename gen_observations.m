@@ -20,7 +20,13 @@ end
 setOccupancy(binmap_true, vertcat(start_point, goal_point, ...
   start_point+0.05, goal_point+0.05, start_point-0.05, goal_point-0.05), 0);
 
-path = a_star(binmap_true, start_point, goal_point);
+switch options.globalplanner
+    case 'a_star'
+        path = a_star(binmap_true, start_point, goal_point);
+    case 'chomp'
+        trajectory = continous_chomp(binmap_true, start_point, goal_point);
+        [~, path] = sample_trajectory(trajectory, 0.1);
+end
 
 %% Random sample pose inside the map
 % Sample position and check if it is free
