@@ -41,6 +41,7 @@ for j = 1:size(path, 1)-1
         plot_binmap(binmap_true, path, mavPose);
 %         plot_map(map_true, mavPose, intsectionPts, angles);
         writerObj = plot_localmap(map_obs, writerObj);
+        drawnow
     end
 end
 
@@ -48,24 +49,23 @@ close(writerObj);
 
 function plot_binmap(map, path, pose)
     set_params();
-    figure(101)
-    show(map)
-    hold on;
-    plot(path(:, 1), path(:, 2));
-    hold on;
-    plot(pose(1), pose(2), 'xr','MarkerSize',10);
-    hold on;
+    
+    subplot(1,2,1);
+    
+    show(map); hold on;
+    plot(path(:, 1), path(:, 2)); hold on;
+    plot(pose(1), pose(2), 'xr','MarkerSize',10); hold on;
     rectangle('Position',[pose(1)-0.5*width_subm, pose(2)-0.5*height_subm, width_subm, height_subm], 'EdgeColor', 'b');
     hold off;
+    
 end
 
 function plot_map(map, pose, intsectionPts, angles)    
-    figure(1)
-    show(map)
+    show(map);
     hold on;
-    plot(pose(1), pose(2), 'xr','MarkerSize',10)
+    plot(pose(1), pose(2), 'xr','MarkerSize',10);
     hold on;
-    plot(intsectionPts(:,1),intsectionPts(:,2) , '*r') % Intersection points
+    plot(intsectionPts(:,1),intsectionPts(:,2) , '*r'); % Intersection points
     hold on;
     for i = 1:size(intsectionPts, 1)
         plot([pose(1),intsectionPts(i,1)],...
@@ -76,10 +76,12 @@ end
 
 function [video_obj] = plot_localmap(map, video_obj)
     set_params();
-    figure(107)
-    show(map)
-    hold on;
-    plot(0.5*width_subm, 0.5*height_subm, 'xr','MarkerSize',10)
+    
+    subplot(1,2,2);
+    
+    show(map); hold on;
+    plot(0.5*width_subm, 0.5*height_subm, 'xr','MarkerSize',10); hold off;
+    
     image = occupancyMatrix(map);
     frame = image;
     writeVideo(video_obj, frame);

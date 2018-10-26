@@ -1,6 +1,6 @@
 options = {};
 options.plotting = true;
-options.map = 'image';
+options.map = 'randomforest';
 
 switch options.map
     case 'randomforest'        
