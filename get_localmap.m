@@ -1,7 +1,12 @@
 function [map_obs] = get_localmap(binmap, pose)
-    %% Generate a local map
+    %% Initialize
+    
     set_params();
-    % Convert map to occupancy grid
+    free_space = []; %Observed Free space in the map
+    occupied_space = []; % Observed Occupied space inthe map
+    
+    %% Convert map to occupancy grid
+    % Pad global map so that the submap can exceed the boudaries
     ij_pos = world2grid(binmap, pose(1:2));
     i_width = world2grid(binmap, [0.5*width_subm, binmap.YWorldLimits(2)]);
     j_height = world2grid(binmap, [0.0, binmap.YWorldLimits(2)-0.5*height_subm]);
@@ -13,9 +18,12 @@ function [map_obs] = get_localmap(binmap, pose)
     % Update observations on local map
     map_obs = robotics.OccupancyGrid(width_subm, height_subm, resolution_m);
     scan_resolution = min(1/(0.5*width_subm*resolution_m), (1/0.5*height_subm*resolution_m));
+    
     angles = -fov/2:scan_resolution:fov/2;
-    origin = [0.5*width_subm, 0.5*height_subm, pose(3)];
-    intsectionPts = rayIntersection(map_true, origin, angles, maxrange);
+    origin = [0.5*width_subm, 0.5*height_subm, pose(3)]; % For Robocentric Coordinates
+
+    intsectionPts = rayIntersection(map_true, origin, angles, maxrange); % Generate rays
+            
     for i = 1:1:size(intsectionPts, 1)
 
         ray_endpoint = intsectionPts(i, :);
@@ -24,22 +32,18 @@ function [map_obs] = get_localmap(binmap, pose)
             
             [~, midpoints] = raycast(map_obs, origin, maxrange, angles(i));
             
-            if(~isempty(midpoints))
-                setOccupancy(map_obs, midpoints, zeros(size(midpoints, 1), 1), 'grid');
-            end
+            free_space = [free_space; midpoints];
         else
             ray_endpoint(1) = max(min(ray_endpoint(1), map_obs.XWorldLimits(2)), map_obs.XWorldLimits(1));
             ray_endpoint(2) = max(min(ray_endpoint(2), map_obs.YWorldLimits(2)), map_obs.YWorldLimits(1));
 
             [endpoints, midpoints] = raycast(map_obs, origin(1:2), ray_endpoint);
             
-            if(~isempty(midpoints))
-                setOccupancy(map_obs, midpoints, zeros(size(midpoints, 1), 1), 'grid');
-            end
-            
-            if(~isempty(endpoints))
-                setOccupancy(map_obs, endpoints, ones(size(endpoints, 1), 1), 'grid');         
-            end
+            free_space = [free_space; midpoints];
+            occupied_space = [occupied_space; endpoints];
         end
     end
+    
+    setOccupancy(map_obs, free_space, zeros(size(free_space, 1), 1), 'grid');
+    setOccupancy(map_obs, occupied_space, ones(size(occupied_space, 1), 1), 'grid');    
 end
