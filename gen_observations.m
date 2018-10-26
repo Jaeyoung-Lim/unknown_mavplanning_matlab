@@ -6,14 +6,15 @@ writerObj.FrameRate = 10;
 open(writerObj);
 %% Generate Global Trajectory
 % Get the Global map
-params = Param_RANDOMFOREST;
+% params = Param_RANDOMFOREST;
+params = Param_INTEL;
 
 switch params.map_type
     case 'randomforest'
         binmap_true = create_random_map(params.globalmap.width, params.globalmap.height, params.globalmap.resolution, params.globalmap.numsamples, params.globalmap.inflation);
         
     case 'image'
-        binmap_true = create_image_map(map_path);
+        binmap_true = create_image_map(params.map_path);
     
     otherwise
         print('map generation option is not valid');
