@@ -2,6 +2,7 @@ classdef Param_RANDOMFOREST
     properties
         
         visualization = true;
+        generate_data = true;
         
         map_type = 'randomforest';
         % Gloabal Map parameters
@@ -23,8 +24,11 @@ classdef Param_RANDOMFOREST
         % Planner
         planner = 'chomp'
         
-        start_point = [5.0 5.0];
-        goal_point = [15.0 15.0];
+%         start_point = [5.0 5.0];
+%         goal_point = [15.0 15.0];
+        start_point = [];
+        goal_point = [];
+
         
     end 
     methods

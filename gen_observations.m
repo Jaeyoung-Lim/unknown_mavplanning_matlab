@@ -1,13 +1,6 @@
-%% Setup & loading
-clear all; close all;
-% Parameterss
-writerObj = VideoWriter('myVideo.avi');
-writerObj.FrameRate = 10;
-open(writerObj);
+function gen_observations(params, videoObj)
+
 %% Generate Global Trajectory
-% Get the Global map
-% params = Param_RANDOMFOREST;
-params = Param_INTEL;
 
 switch params.map_type
     case 'randomforest'
@@ -19,6 +12,7 @@ switch params.map_type
     otherwise
         print('map generation option is not valid');
 end
+
 setOccupancy(binmap_true, vertcat(params.start_point, params.goal_point, ...
   params.start_point+0.05, params.goal_point+0.05, params.start_point-0.05, params.goal_point-0.05), 0);
 
@@ -32,7 +26,6 @@ end
 
 %% Random sample pose inside the map
 % Sample position and check if it is free
-% [mavPose] = sample_pose(binmap_true);
 
 for j = 1:size(path, 1)-1
     position = path(j, :);
@@ -42,12 +35,18 @@ for j = 1:size(path, 1)-1
     mavPose = [position, ram];
     %% Generate Local map
     % Create a partial map based on observation
-    map_obs = get_localmap(binmap_true, params, mavPose);
+    [localmap_obs, localmap_full] = get_localmap(binmap_true, params, mavPose);
 
     %% Plot
     if params.visualization
-        plot_summary(params, binmap_true, map_obs, path, mavPose, writerObj);
+        plot_summary(params, binmap_true, localmap_obs, path, mavPose, videoObj);
+    end
+    if params.generate_data
+        directory = 'data/output';
+        ffilepath = strcat(directory ,'/f', int2str(j),'.png');
+        imwrite(1-localmap_full.occupancyMatrix, ffilepath);
+        pfilepath = strcat(directory ,'/p', int2str(j),'.png');
+        imwrite(1-localmap_obs.occupancyMatrix, pfilepath);
     end
 end
-
-close(writerObj);
+end
