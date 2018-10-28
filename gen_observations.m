@@ -42,8 +42,11 @@ for j = 1:size(path, 1)-1
         plot_summary(params, binmap_true, localmap_obs, path, mavPose, videoObj);
     end
     if params.generate_data
-        imwrite(1-localmap_full.occupancyMatrix, 'data/hello.png');
-        imwrite(1-localmap_obs.occupancyMatrix, 'data/hello.png');
+        directory = 'data/output';
+        ffilepath = strcat(directory ,'/f', int2str(j),'.png');
+        imwrite(1-localmap_full.occupancyMatrix, ffilepath);
+        pfilepath = strcat(directory ,'/p', int2str(j),'.png');
+        imwrite(1-localmap_obs.occupancyMatrix, pfilepath);
     end
 end
 end
