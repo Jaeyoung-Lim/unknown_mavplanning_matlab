@@ -2,6 +2,7 @@ classdef Param_RANDOMFOREST
     properties
         
         visualization = true;
+        generate_data = true;
         
         map_type = 'randomforest';
         % Gloabal Map parameters

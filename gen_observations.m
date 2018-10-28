@@ -35,11 +35,15 @@ for j = 1:size(path, 1)-1
     mavPose = [position, ram];
     %% Generate Local map
     % Create a partial map based on observation
-    map_obs = get_localmap(binmap_true, params, mavPose);
+    [localmap_obs, localmap_full] = get_localmap(binmap_true, params, mavPose);
 
     %% Plot
     if params.visualization
-        plot_summary(params, binmap_true, map_obs, path, mavPose, videoObj);
+        plot_summary(params, binmap_true, localmap_obs, path, mavPose, videoObj);
+    end
+    if params.generate_data
+        imwrite(1-localmap_full.occupancyMatrix, 'data/hello.png');
+        imwrite(1-localmap_obs.occupancyMatrix, 'data/hello.png');
     end
 end
 end
