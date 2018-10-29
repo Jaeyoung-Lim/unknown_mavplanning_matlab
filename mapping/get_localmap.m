@@ -19,8 +19,10 @@ function [map_obs, map_true] = get_localmap(binmap, map_obs, param, pose)
             origin = [0.5*param.localmap.width, 0.5*param.localmap.height, pose(3)]; % For Robocentric Coordinates
 
         case 'increment'
-            map_true = robotics.OccupancyGrid(double(binmap.occupancyMatrix));
+            map_true = robotics.OccupancyGrid(double(binmap.occupancyMatrix), param.globalmap.resolution);
+            map_obs = robotics.OccupancyGrid(param.globalmap.width, param.globalmap.height, param.globalmap.resolution);
             origin = pose;
+
     end
     
     scan_resolution = min(1/(0.5*param.localmap.width*param.localmap.resolution), (1/0.5*param.localmap.height*param.localmap.resolution));
