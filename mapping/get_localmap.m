@@ -20,7 +20,7 @@ function [map_obs, map_true] = get_localmap(binmap, map_obs, param, pose)
 
         case 'increment'
             map_true = robotics.OccupancyGrid(double(binmap.occupancyMatrix), param.globalmap.resolution);
-            map_obs = robotics.OccupancyGrid(param.globalmap.width, param.globalmap.height, param.globalmap.resolution);
+%             map_obs = robotics.OccupancyGrid(param.globalmap.width, param.globalmap.height, param.globalmap.resolution);
             origin = pose;
 
     end

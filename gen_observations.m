@@ -27,7 +27,7 @@ end
 %% Random sample pose inside the map
 % Sample position and check if it is free
 
-localmap_obs = robotics.OccupancyGrid(double(binmap_true.occupancyMatrix), params.localmap.resolution);
+localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
 
 for j = 1:size(path, 1)-1
     position = path(j, :);
