@@ -2,7 +2,7 @@ function [videoObj] = plot_summary(param, globalmap, partialmap, mavpath, mavpos
 
     plot_binmap(param, globalmap, mavpath, mavpose);
     % plot_map(map_true, mavPose, intsectionPts, angles);
-    videoObj = plot_localmap(param, partialmap, videoObj);
+    videoObj = plot_localmap(param, partialmap, mavpose, videoObj);
     drawnow
 end
 
@@ -36,13 +36,17 @@ function plot_map(map, pose, intsectionPts, angles)
     hold off;
 end
 
-function [video_obj] = plot_localmap(param, map, video_obj)
+function [video_obj] = plot_localmap(param, map, pose, video_obj)
     
     subplot(1,2,2);
     
     show(map); hold on;
-    plot(0.5*param.localmap.width, 0.5*param.localmap.height, 'xr','MarkerSize',10); hold off;
-    
+    switch param.mapping
+        case 'local'
+            plot(0.5*param.localmap.width, 0.5*param.localmap.height, 'xr','MarkerSize',10); hold off;
+        case 'increment'
+            plot(pose(1), pose(2), 'xr','MarkerSize',10); hold off;
+    end
     image = occupancyMatrix(map);
     frame = image;
     writeVideo(video_obj, frame);
