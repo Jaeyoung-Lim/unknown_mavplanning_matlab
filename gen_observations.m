@@ -27,6 +27,8 @@ end
 %% Random sample pose inside the map
 % Sample position and check if it is free
 
+localmap_obs = robotics.OccupancyGrid(double(binmap_true.occupancyMatrix), params.localmap.resolution);
+
 for j = 1:size(path, 1)-1
     position = path(j, :);
     velocity = path(j +1, :) - path(j, :);
@@ -35,7 +37,7 @@ for j = 1:size(path, 1)-1
     mavPose = [position, ram];
     %% Generate Local map
     % Create a partial map based on observation
-    [localmap_obs, localmap_full] = get_localmap(binmap_true, params, mavPose);
+    [localmap_obs, localmap_full] = get_localmap(binmap_true, localmap_obs, params, mavPose);
 
     %% Plot
     if params.visualization
