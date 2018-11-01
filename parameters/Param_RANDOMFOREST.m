@@ -5,7 +5,7 @@ classdef Param_RANDOMFOREST
         generate_data = true;
         
         map_type = 'randomforest';
-        mapping = 'local';
+        mapping = 'increment';
         
         % Gloabal Map parameters
         globalmap = struct('width', 20, ...
@@ -20,7 +20,7 @@ classdef Param_RANDOMFOREST
                           'resolution', 10);
 
         sensor = struct('fov', 2*pi(), ...
-                        'maxrange', 100);
+                        'maxrange', 10);
                     
         
         % Planner
