@@ -12,6 +12,6 @@ function [videoObj] = plot_fft(param, fullmap, partialmap, mavpath, mavpose, vid
 end
 
 function run_fft(map)
-    X = fft2(1-map.occupancyMatrix);
+    X = fft2(map.occupancyMatrix);
     imagesc(abs(fftshift(X)))
 end
