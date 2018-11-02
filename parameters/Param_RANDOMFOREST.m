@@ -21,7 +21,8 @@ classdef Param_RANDOMFOREST
 
         sensor = struct('fov', 2*pi(), ...
                         'maxrange', 10);
-                    
+        
+        mav = struct('size', 0.5);
         
         % Planner
         planner = 'chomp'

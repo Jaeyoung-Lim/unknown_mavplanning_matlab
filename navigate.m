@@ -45,9 +45,9 @@ while true
     %% Move along local trajectory
     for t = 1:dt:update_rate
         mavPose = posefromtrajectoy(localpath, localT, t);
-        % Plot
+        
         if params.visualization
-            plot_summary(params, binmap_true, localmap_obs, localpath, mavPose, videoObj);
+            plot_summary(params, binmap_true, localmap_obs, localpath, globalpath, mavPose, videoObj); % Plot MAV moving in environment
         end
     end
     
@@ -65,6 +65,3 @@ while true
 
 end
 end
-
-
-
