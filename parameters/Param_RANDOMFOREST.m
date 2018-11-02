@@ -1,11 +1,11 @@
 classdef Param_RANDOMFOREST
     properties
         
-        visualization = true;
+        visualization = 'frequency';
         generate_data = true;
         
         map_type = 'randomforest';
-        mapping = 'local';
+        mapping = 'increment';
         
         % Gloabal Map parameters
         globalmap = struct('width', 20, ...
