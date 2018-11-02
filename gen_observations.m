@@ -48,10 +48,10 @@ for j = 1:size(path, 1)-1
     end
     
     if params.generate_data
-        directory = 'data/output';
-        ffilepath = strcat(directory ,'/f', int2str(j),'.png');
+        directory = 'data';
+        ffilepath = strcat(directory ,'/fullmap/', int2str(j),'.jpg');
         imwrite(1-localmap_full.occupancyMatrix, ffilepath);
-        pfilepath = strcat(directory ,'/p', int2str(j),'.png');
+        pfilepath = strcat(directory ,'/partialmap/', int2str(j),'.jpg');
         imwrite(1-localmap_obs.occupancyMatrix, pfilepath);
     end
 end

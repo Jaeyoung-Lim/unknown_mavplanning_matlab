@@ -20,7 +20,7 @@ classdef Param_RANDOMFOREST
                           'resolution', 10);
 
         sensor = struct('fov', 2*pi(), ...
-                        'maxrange', 100);
+                        'maxrange', 10);
                     
         
         % Planner
