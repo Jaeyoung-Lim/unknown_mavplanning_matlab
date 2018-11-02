@@ -25,7 +25,7 @@ function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, po
 
     end
     
-    scan_resolution = min(1/(0.5*param.localmap.width*param.localmap.resolution), (1/0.5*param.localmap.height*param.localmap.resolution));
+    scan_resolution = min(1/(0.5*param.sensor.maxrange*param.localmap.resolution), (1/0.5*param.localmap.height*param.localmap.resolution));
     
     angles = -param.sensor.fov/2:scan_resolution:param.sensor.fov/2;
 
