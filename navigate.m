@@ -57,14 +57,14 @@ while true
     local_start = mavPose(1:2);
     local_goal = goalfrompath(cons_binmap, globalpath, mavPose(1:2), plan_horizon);
     
-%     if goalreached(, global_goal)
-%         break;
-%     end
+    if goalreached(mavPose(1:2), global_goal)
+        break;
+    end
 
 end
 end
 
-function [isgoal] = goalreached(current_position, goal_position)
+function isgoal = goalreached(current_position, goal_position)
     tolerance = 0.1;
     isgoal = norm(current_position - goal_position) <  tolerance;
 end
@@ -89,7 +89,7 @@ function pose = posefromtrajectoy(trajectory, T, t)
         idx = sum(T < t);
         
         position = trajectory(idx, :);
-        velocity = trajectory(idx +1, :) - trajectory(idx, :);
+        velocity = trajectory(idx, :) - trajectory(idx-1, :);
         ram = atan2(velocity(2), velocity(1));
         pose = [position, ram];
 end
