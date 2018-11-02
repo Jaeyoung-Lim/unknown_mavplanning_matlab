@@ -31,7 +31,7 @@ for j = 1:size(path, 1)-1
     mavPose = [position, ram];
     %% Generate Local map
     % Create a partial map based on observation
-    [localmap_obs, localmap_full] = get_localmap(binmap_true, localmap_obs, params, mavPose);
+    [localmap_obs, localmap_full] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mavPose);
 
     %% Plot
     if params.visualization

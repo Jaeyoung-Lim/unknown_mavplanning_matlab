@@ -1,9 +1,9 @@
-function [map_obs, map_true] = get_localmap(binmap, map_obs, param, pose)
+function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, pose)
     %% Initialize
     free_space = []; %Observed Free space in the map
     occupied_space = []; % Observed Occupied space inthe map
 
-    switch param.mapping
+    switch map_type
         case 'local'
             % Recreate local map
             % Pad global map so that the submap can exceed the boudaries
