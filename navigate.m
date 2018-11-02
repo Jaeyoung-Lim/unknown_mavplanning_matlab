@@ -32,52 +32,39 @@ cons_binmap = get_conservativemap(map_partial, params, mavPose);
 
 [T, globalpath] = plan_trajectory('chomp', opt_binmap, global_start, global_goal);
 
-curr_pos = mavPose(1:2);
-
-%% Parse path from global path
+% Parse intermediate goal from global path
 local_start = globalpath(sum(T < update_rate), :);
-local_goal = goalfrompath(cons_binmap, globalpath, curr_pos, plan_horizon);
- 
-while true
-    
-    local_start = globalpath(sum(T < update_rate), :);
-    local_goal = globalpath(sum(vecnorm(globalpath - curr_pos, 2, 2) < plan_horizon), :);
-    
-    %% Check if we can see the goal
-    
-    %% Generate Local map
+local_goal = goalfrompath(cons_binmap, globalpath, mavPose(1:2), plan_horizon);
+
+while true        
+    %% Local Planning from global path
     % Create a partial map based on observation
-    [localmap_obs, localmap_full] = get_localmap(binmap_true, localmap_obs, params, mavPose);
-        
-    %% Replan Local trajectory
-    [T, localpath] = plan_trajectory('chomp', localmap_full, local_start, local_goal);
+    [localmap_obs, localmap_full] = get_localmap('increment', binmap_true, localmap_obs, params, mavPose);
+    
+    % Replan Local trajectory from trajectory replanning rate
+    cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
+    [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal);
 
     %% Move along local trajectory
     for t = 1:dt:update_rate
-        position = path(j, :);
-        velocity = path(j +1, :) - path(j, :);
-        ram = atan2(velocity(2), velocity(1));
-
-        mavPose = [position, ram];
-        %% Plot
+        mavPose = posefromtrajectoy(localpath, localT, t);
+        % Plot
         if params.visualization
-            plot_summary(params, binmap_true, localmap_obs, path, mavPose, videoObj);
-        end   
-        if goalreached(position, global_goal)
-            break;
+            plot_summary(params, binmap_true, localmap_obs, localpath, mavPose, videoObj);
         end
     end
-    start_pos = mavPose(1:2);
-
-    local_start = globalpath(sum(T < update_rate), :);
-    local_goal = global_goal;
+    
+    local_start = mavPose(1:2);
+    local_goal = goalfrompath(cons_binmap, globalpath, mavPose(1:2), plan_horizon);
+    
+%     if goalreached(, global_goal)
+%         break;
+%     end
 
 end
-
 end
 
 function [isgoal] = goalreached(current_position, goal_position)
-
     tolerance = 0.1;
     isgoal = norm(current_position - goal_position) <  tolerance;
 end
@@ -86,10 +73,23 @@ function goal = goalfrompath(map, path, current_position, horizon)
     idx = sum(vecnorm(path - current_position, 2, 2) < horizon);
     
     while true
-        if map.getOccupancy(path(idx, :))
+        if(idx <= 1)
+           disp('No valid Goal position found');
+           break;
+        end
+        if ~map.getOccupancy(path(idx, :))
            break;
         end
         idx = idx -1;
     end
     goal = path(idx, :);
+end
+
+function pose = posefromtrajectoy(trajectory, T, t)
+        idx = sum(T < t);
+        
+        position = trajectory(idx, :);
+        velocity = trajectory(idx +1, :) - trajectory(idx, :);
+        ram = atan2(velocity(2), velocity(1));
+        pose = [position, ram];
 end
