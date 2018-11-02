@@ -16,13 +16,7 @@ end
 setOccupancy(binmap_true, vertcat(params.start_point, params.goal_point, ...
   params.start_point+0.05, params.goal_point+0.05, params.start_point-0.05, params.goal_point-0.05), 0);
 
-switch params.planner
-    case 'a_star'
-        path = a_star(binmap_true, params.start_point, params.goal_point);
-    case 'chomp'
-        trajectory = continous_chomp(binmap_true, params.start_point, params.goal_point);
-        [~, path] = sample_trajectory(trajectory, 0.1);
-end
+[~, path] = plan_trajectory(params.planner, binmap_true, params.start_point, params.goal_point);
 
 %% Random sample pose inside the map
 % Sample position and check if it is free
@@ -37,7 +31,7 @@ for j = 1:size(path, 1)-1
     mavPose = [position, ram];
     %% Generate Local map
     % Create a partial map based on observation
-    [localmap_obs, localmap_full] = get_localmap(binmap_true, localmap_obs, params, mavPose);
+    [localmap_obs, localmap_full] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mavPose);
 
     %% Plot
     switch params.visualization

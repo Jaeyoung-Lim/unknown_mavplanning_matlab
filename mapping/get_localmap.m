@@ -1,9 +1,9 @@
-function [map_obs, map_true] = get_localmap(binmap, map_obs, param, pose)
+function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, pose)
     %% Initialize
     free_space = []; %Observed Free space in the map
     occupied_space = []; % Observed Occupied space inthe map
 
-    switch param.mapping
+    switch map_type
         case 'local'
             % Recreate local map
             % Pad global map so that the submap can exceed the boudaries
@@ -25,7 +25,7 @@ function [map_obs, map_true] = get_localmap(binmap, map_obs, param, pose)
 
     end
     
-    scan_resolution = min(1/(0.5*param.localmap.width*param.localmap.resolution), (1/0.5*param.localmap.height*param.localmap.resolution));
+    scan_resolution = min(1/(0.5*param.sensor.maxrange*param.localmap.resolution), (1/0.5*param.localmap.height*param.localmap.resolution));
     
     angles = -param.sensor.fov/2:scan_resolution:param.sensor.fov/2;
 
