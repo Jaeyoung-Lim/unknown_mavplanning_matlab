@@ -40,9 +40,13 @@ for j = 1:size(path, 1)-1
     [localmap_obs, localmap_full] = get_localmap(binmap_true, localmap_obs, params, mavPose);
 
     %% Plot
-    if params.visualization
-        plot_summary(params, binmap_true, localmap_obs, path, mavPose, videoObj);
+    switch params.visualization
+        case 'summary'
+            plot_summary(params, binmap_true, localmap_obs, path, mavPose, videoObj);
+        case 'frequency'
+            plot_fft(params, binmap_true, localmap_obs, path, mavPose, videoObj);
     end
+    
     if params.generate_data
         directory = 'data/output';
         ffilepath = strcat(directory ,'/f', int2str(j),'.png');
