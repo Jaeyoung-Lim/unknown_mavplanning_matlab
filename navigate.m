@@ -17,7 +17,7 @@ opt_binmap = get_optimisticmap(map_partial, params, mavPose);
 cons_binmap = get_conservativemap(map_partial, params, mavPose);
 
 % Plan global trajectory
-[T, globalpath] = plan_trajectory('chomp', opt_binmap, global_start, global_goal);
+[T, globalpath] = plan_trajectory('polynomial', opt_binmap, global_start, global_goal);
 
 % Parse intermediate goal from global path
 local_start = globalpath(sum(T < update_rate), :);
