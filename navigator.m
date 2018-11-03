@@ -9,17 +9,10 @@ writerObj = VideoWriter('myVideo.avi');
 writerObj.FrameRate = 10;
 open(writerObj);
 
+map = generate_environment(parameterfile);
 
-
-if isempty(parameterfile.start_point)
-    randompose = sample_pose(parameterfile.globalmap.width, parameterfile.globalmap.height);
-    parameterfile.start_point = randompose(1:2);
-end
-if isempty(parameterfile.goal_point)
-    randompose = sample_pose(parameterfile.globalmap.width, parameterfile.globalmap.height);
-    parameterfile.goal_point = randompose(1:2);
-end
-
-navigate(parameterfile, writerObj);
+parameterfile.start_point = sample_map(map);
+parameterfile.goal_point = sample_map(map);
+navigate(parameterfile, map, writerObj);
 
 close(writerObj);

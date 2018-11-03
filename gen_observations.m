@@ -36,7 +36,7 @@ for j = 1:size(path, 1)-1
     %% Plot
     switch params.visualization
         case 'summary'
-            plot_summary(params, binmap_true, localmap_obs, path, mavPose, videoObj);
+            plot_summary(params, binmap_true, localmap_obs, path, path, mavPose, videoObj);
         case 'frequency'
             plot_fft(params, binmap_true, localmap_obs, path, mavPose, videoObj);
     end
