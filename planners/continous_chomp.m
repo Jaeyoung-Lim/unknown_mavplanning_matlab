@@ -8,10 +8,11 @@ a_max = 6.0;
 trajectory = create_trajectory(K, N);
 trajectory = add_vertex_to_trajectory(trajectory, initpos, 1);
 
+trajectory = add_vertex_to_trajectory(trajectory, 1 * (initpos + finalpos)/4, 0, 1);
 % trajectory = add_vertex_to_trajectory(trajectory, 1 * (initpos + finalpos)/4, 0, 1);
-% trajectory = add_vertex_to_trajectory(trajectory, 2 * (initpos + finalpos)/4, 0, 1);
-% trajectory = add_vertex_to_trajectory(trajectory, 3 * (initpos  +finalpos)/4, 0, 1);
 
+trajectory = add_vertex_to_trajectory(trajectory, 2 * (initpos + finalpos)/4, 0, 1);
+trajectory = add_vertex_to_trajectory(trajectory, 3 * (initpos  +finalpos)/4, 0, 1);
 %trajectory = add_vertex_to_trajectory(trajectory, 3*(start_point+goal_point)/4, 0, 1);
 
 trajectory = add_vertex_to_trajectory(trajectory, finalpos, 1);
