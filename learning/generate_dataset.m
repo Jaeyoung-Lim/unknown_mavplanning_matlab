@@ -1,6 +1,6 @@
 %% Parameters
 directory = '/home/jalim/dev/unknown_mavplanning_matlab/data';
-num_maps = 200;
+num_maps = 2000;
 
 %% Generate and save maps
 param = Param_LOCALMAP;
