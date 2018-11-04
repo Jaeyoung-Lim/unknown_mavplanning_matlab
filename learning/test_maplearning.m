@@ -5,11 +5,13 @@ test_dir = '/home/jalim/dev/unknown_mavplanning_matlab/data/test';
 
 XTrain = read_dataset(data_dir);
 
-hiddenSize = 25;
+hiddenSize = 50;
 autoenc = trainAutoencoder(XTrain,hiddenSize,...
-        'L2WeightRegularization',0.004,...
+        'MaxEpochs', 4000, ...
+        'L2WeightRegularization',0.04,...
         'SparsityRegularization',4,...
-        'SparsityProportion',0.15);
+        'SparsityProportion',0.15, ...
+        'UseGPU', true);
     
 XTest = read_dataset(test_dir);
 
@@ -17,9 +19,9 @@ xReconstructed = predict(autoenc,XTest);
 
 figure;
 for i = 1:4
-    subplot(1,4,i);
-    imshow(XTest{i});
     subplot(2,4,i);
+    imshow(XTest{i});
+    subplot(2,4,i+4);
     imshow(xReconstructed{i});
 
 end
