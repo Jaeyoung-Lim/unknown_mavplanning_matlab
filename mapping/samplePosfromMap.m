@@ -1,4 +1,4 @@
-function pos = sample_map(map)
+function pos = samplePosfromMap(map)
 % Sample free space from a Binary Occupancy gridmap
 
 map_width = map.XWorldLimits(2) - map.XWorldLimits(1);
@@ -12,7 +12,4 @@ while true
         break;
     end
 end
-
-% yaw = 2* pi()*rand();
-% pose = [pos, yaw];
 end

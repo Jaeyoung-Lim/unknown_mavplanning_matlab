@@ -1,7 +1,7 @@
 function [T, path]=plan_trajectory(planner_type, binary_occupancygrid, start_position, goal_position)
 %% Run Planner between start and endpoint depending on the planner type
 
-binary_occupancygrid.inflate(0.5);
+% binary_occupancygrid.inflate(0.5);
 
 switch planner_type
     case 'a_star'

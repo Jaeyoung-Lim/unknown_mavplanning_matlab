@@ -1,17 +1,20 @@
 function [videoObj] = plot_summary(param, globalmap, partialmap, mavpath, globalpath, mavpose, videoObj)
+%% Plot Summary of global and local trajectory
 
-    plot_binmap(param, globalmap, mavpath, globalpath, mavpose);
-    % plot_map(map_true, mavPose, intsectionPts, angles);
-    videoObj = plot_localmap(param, partialmap, mavpose, videoObj);
-    drawnow
+subplot(1,2,1);
+plot_binmap(param, globalmap, mavpath, globalpath, mavpose);
+
+subplot(1,2,2);
+videoObj = plot_localmap(param, partialmap, mavpose, mavpath, globalpath, videoObj);
+
+drawnow
 end
 
 function plot_binmap(param, map, localpath, globalpath, pose)
-    
-    subplot(1,2,1);
-    
+        
     show(map); hold on;
     plot(localpath(:, 1), localpath(:, 2), 'g'); hold on;
+    plot(localpath(end, 1), localpath(end, 2), 'b'); hold on;
     plot(globalpath(:, 1), globalpath(:, 2), 'r'); hold on;
     plot(pose(1), pose(2), 'xr','MarkerSize',10); hold on;
     rectangle('Position',[pose(1)-0.5*param.localmap.width, ...
@@ -20,6 +23,25 @@ function plot_binmap(param, map, localpath, globalpath, pose)
                           param.localmap.height], ...
                           'EdgeColor', 'b');
     hold off;
+    
+end
+
+function [video_obj] = plot_localmap(param, map, pose, localpath, globalpath, video_obj)
+        
+    show(map); hold on;
+    switch param.mapping
+        case 'local'
+            plot(0.5*param.localmap.width, 0.5*param.localmap.height, 'xr','MarkerSize',10); hold off;
+            
+        case 'increment'
+            plot(localpath(:, 1), localpath(:, 2), 'g'); hold on;
+            plot(localpath(end, 1), localpath(end, 2), 'xb'); hold on;
+            plot(pose(1), pose(2), 'xr','MarkerSize',10); hold off;
+            
+    end
+    
+    frame = occupancyMatrix(map);
+    writeVideo(video_obj, frame);
     
 end
 
@@ -35,20 +57,4 @@ function plot_map(map, pose, intsectionPts, angles)
             [pose(2),intsectionPts(i,2)],'-b') % Plot intersecting rays
     end
     hold off;
-end
-
-function [video_obj] = plot_localmap(param, map, pose, video_obj)
-    
-    subplot(1,2,2);
-    
-    show(map); hold on;
-    switch param.mapping
-        case 'local'
-            plot(0.5*param.localmap.width, 0.5*param.localmap.height, 'xr','MarkerSize',10); hold off;
-        case 'increment'
-            plot(pose(1), pose(2), 'xr','MarkerSize',10); hold off;
-    end
-    image = occupancyMatrix(map);
-    frame = image;
-    writeVideo(video_obj, frame);
 end
