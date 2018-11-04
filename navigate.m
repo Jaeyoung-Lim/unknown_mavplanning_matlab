@@ -1,7 +1,7 @@
 function navigate(params, binmap_true, videoObj)
 %% Initialize Parameters
 plan_horizon = 10;
-update_rate = 2;
+update_rate = 10;
 dt = 0.1;
 
 %% Plan Optimistic global trajectory 
@@ -34,6 +34,8 @@ while true
     [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mavPose);
     
     % Replan Local trajectory from trajectory replanning rate
+    local_start = mavPose(1:2);
+    
     cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
     [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal);
 
@@ -46,7 +48,6 @@ while true
         end
     end
     
-    local_start = mavPose(1:2);
     % Check if goal is visible
     if cons_binmap.getOccupancy(global_goal)
         local_goal = global_goal;
