@@ -3,6 +3,7 @@ function navigate(params, binmap_true, videoObj)
 plan_horizon = 10;
 update_rate = 10;
 dt = 0.1;
+mavPath = [];
 
 %% Plan Optimistic global trajectory 
 global_start = params.start_point; % Set gloabl start and goal position
@@ -36,10 +37,13 @@ while true
     %% Move along local trajectory
     for t = 1:dt:update_rate
         mavPose = posefromtrajectoy(localpath, localT, t);
+        %TODO: Collision Checking
+        mavPath = [mavPath; mavPose(1:2)]; % Record trajectory
         
         if params.visualization
-            plot_summary(params, binmap_true, localmap_obs, localpath, globalpath, mavPose, videoObj); % Plot MAV moving in environment
+            plot_summary(params, binmap_true, localmap_obs, mavPath, localpath, globalpath, mavPose, videoObj); % Plot MAV moving in environment
         end
+        
         if goalreached(mavPose(1:2), global_goal)
             disp('Goal Reached!');
             break;
