@@ -17,6 +17,7 @@ function plot_binmap(param, map, mavpath, localpath, globalpath, pose)
     plot(mavpath(:, 1), mavpath(:, 2), 'b'); hold on;
     plot(localpath(end, 1), localpath(end, 2), 'b'); hold on;
     plot(globalpath(:, 1), globalpath(:, 2), 'r'); hold on;
+    plot(globalpath(end, 1), globalpath(end, 2), 'xr'); hold on;
     plot(pose(1), pose(2), 'xr','MarkerSize',10); hold on;
     rectangle('Position',[pose(1)-0.5*param.localmap.width, ...
                           pose(2)-0.5*param.localmap.height, ...
@@ -38,6 +39,7 @@ function [video_obj] = plot_localmap(param, map, pose, mavpath, localpath, globa
             plot(localpath(:, 1), localpath(:, 2), 'g'); hold on;
             plot(mavpath(:, 1), mavpath(:, 2), 'b'); hold on;
             plot(localpath(end, 1), localpath(end, 2), 'xb'); hold on;
+            plot(globalpath(end, 1), globalpath(end, 2), 'xr'); hold on;
             plot(pose(1), pose(2), 'xr','MarkerSize',10); hold off;
             
     end

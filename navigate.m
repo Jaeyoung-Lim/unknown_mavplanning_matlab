@@ -23,10 +23,10 @@ opt_binmap = get_optimisticmap(map_partial, params, mavPose); % Optimistic binar
 % local_start = globalpath(sum(T < update_rate), :);
 
 %% Local replanning from global path
+[localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mavPose);     % Create a partial map based on observation
 
 while true        
     % Replan Local trajectory from trajectory replanning rate
-    [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mavPose);     % Create a partial map based on observation
     cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
 
     local_start = mavPose(1:2);
@@ -39,15 +39,19 @@ while true
         mavPose = posefromtrajectoy(localpath, localT, t);
         %TODO: Collision Checking
         mavPath = [mavPath; mavPose(1:2)]; % Record trajectory
+        [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mavPose);     % Create a partial map based on observation
         
         if params.visualization
             plot_summary(params, binmap_true, localmap_obs, mavPath, localpath, globalpath, mavPose, videoObj); % Plot MAV moving in environment
         end
         
         if goalreached(mavPose(1:2), global_goal)
-            disp('Goal Reached!');
             break;
         end
+    end
+    if goalreached(mavPose(1:2), global_goal)
+        disp('Goal Reached!');
+        break;
     end
 end
 
