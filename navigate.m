@@ -10,7 +10,8 @@ failure = false;
 %% Plan Optimistic global trajectory 
 global_start = params.start_point; % Set gloabl start and goal position
 global_goal = params.goal_point;
-mavPose = [global_start, 0.0]; % Current position starts from global start
+init_yaw = atan2(global_goal(2)-global_start(2), global_goal(1)-global_start(1));
+mavPose = [global_start, init_yaw]; % Current position starts from global start
 
 % Initialize Local map
 localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
