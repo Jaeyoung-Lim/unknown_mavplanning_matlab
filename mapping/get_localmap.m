@@ -50,7 +50,10 @@ function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, po
             occupied_space = [occupied_space; endpoints];
         end
     end
-    
-    setOccupancy(map_obs, free_space, zeros(size(free_space, 1), 1), 'grid');
-    setOccupancy(map_obs, occupied_space, ones(size(occupied_space, 1), 1), 'grid');    
+    if ~isempty(free_space)
+        setOccupancy(map_obs, free_space, zeros(size(free_space, 1), 1), 'grid');
+    end
+    if ~isempty(occupied_space)
+        setOccupancy(map_obs, occupied_space, ones(size(occupied_space, 1), 1), 'grid');
+    end
 end
