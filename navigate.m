@@ -19,11 +19,16 @@ map_partial = get_localmap('increment', binmap_true, localmap_obs, params, mavPo
 opt_binmap = get_optimisticmap(map_partial, params, mavPose); % Optimistic binary occupancy grid
 
 % Plan global trajectory
-% Global plan based on optimistic map
-% [~, globalpath] = plan_trajectory('polynomial', opt_binmap, global_start, global_goal);
-% Global plan based on true map
-[~, globalpath] = plan_trajectory('polynomial', binmap_true, global_start, global_goal);
+switch param.global_planner
+    case 'optimistic'
+        % Global plan based on optimistic map
+        [~, globalpath] = plan_trajectory('polynomial', opt_binmap, global_start, global_goal);
+     
+    case 'true'
+        % Global plan based on true map
+        [~, globalpath] = plan_trajectory('polynomial', binmap_true, global_start, global_goal);
 
+end
 % Parse intermediate goal from global path
 % local_start = globalpath(sum(T < update_rate), :);
 
