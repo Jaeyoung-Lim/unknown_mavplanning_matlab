@@ -1,11 +1,11 @@
-function [videoObj] = plot_summary(param, globalmap, partialmap, mavpath, localpath, globalpath, mavpose, videoObj)
+function plot_summary(param, globalmap, partialmap, mavpath, localpath, globalpath, mavpose)
 %% Plot Summary of global and local trajectory
 
 subplot(1,2,1);
 plot_binmap(param, globalmap, mavpath, localpath, globalpath, mavpose);
 
 subplot(1,2,2);
-videoObj = plot_localmap(param, partialmap, mavpose, mavpath, localpath, globalpath, videoObj);
+plot_localmap(param, partialmap, mavpose, mavpath, localpath, globalpath);
 
 drawnow
 end
@@ -28,7 +28,7 @@ function plot_binmap(param, map, mavpath, localpath, globalpath, pose)
     
 end
 
-function [video_obj] = plot_localmap(param, map, pose, mavpath, localpath, globalpath, video_obj)
+function plot_localmap(param, map, pose, mavpath, localpath, globalpath)
         
     show(map); hold on;
     switch param.mapping
@@ -44,8 +44,8 @@ function [video_obj] = plot_localmap(param, map, pose, mavpath, localpath, globa
             
     end
     
-    frame = occupancyMatrix(map);
-    writeVideo(video_obj, frame);
+%     frame = occupancyMatrix(map);
+%     writeVideo(video_obj, frame);
     
 end
 
