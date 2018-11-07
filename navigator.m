@@ -5,25 +5,30 @@
 % The implementation is included from the following papers
 %   - Oleynikova (2016), Continuous-time trajectory optimization for online UAV replanning
 
-% Parameters
-parameterfile = Param_RANDOMFOREST;
-num_trials = 1;
-num_tests = 1;
-
-
 %% Setup & loading
 clear all; close all;
 
-D =[]; % Distance traveled
-T = []; % Time taken
-S = []; % Success Mask
+% Parameters
+parameterfile = Param_RANDOMFOREST;
+num_trials = 2;
+num_tests = 3;
+
+Test_planner = {'optimistic', 'true', 'optimistic'};
+Test_goalselection = {'frompath', 'frompath', 'random'};
+
+
+D = zeros(num_tests, num_trials); % Distance traveled
+T = zeros(num_tests, num_trials); % Time taken
+S = zeros(num_tests, num_trials); % Success Mask
  
 parameterfile.start_point = [5.0, 5.0]; 
 parameterfile.goal_point = [15.0, 15.0]; 
 
 %% Start Navigation
 for j=1:num_tests
-    
+    % Switch test cases
+    parameterfile.global_planner = Test_planner{j};
+    parameterfile.localgoal = Test_goalselection{j};
     
     %% Generate Map only once
     if parameterfile.map_generate
@@ -31,16 +36,17 @@ for j=1:num_tests
         save map;
         parameterfile.map_generate = false;
     else
-        load('map.mat');
+        map = load('map.mat', 'map');
+        map = map.map;
     end
     %% Navigate through environment and store results
     for i = 1:num_trials
         [time, path, failure] = navigate(parameterfile, map);
-        S = [S, ~failure];
+        S(j, i) = ~failure;
         if ~failure
             distance_traveled = pathlength(path);
-            D = [D, distance_traveled];
-            T = [T, time];
+            D(j, i) = distance_traveled;
+            T(j, i) = time;
         end
 
     end
