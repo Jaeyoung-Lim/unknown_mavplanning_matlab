@@ -1,4 +1,4 @@
-function gen_laser2goal(params, map, videoObj)
+function gen_laser2goal(params, map)
 %% Make a plan using A*.
 X = []; % Input states for learning
 T = []; % Target states
@@ -33,5 +33,4 @@ for i=1:numel(mavT)
         drawnow
     end
 end
-
 end

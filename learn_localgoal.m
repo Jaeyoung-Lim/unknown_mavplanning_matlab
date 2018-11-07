@@ -1,21 +1,11 @@
-%% Navigator
-% Navigator runs a receding horizon planner between a randomly sampled
-% start and goal point that are not unoccupied.
+%% Learn Local Goal
+% This application learns to predict a intermediate goal where if the map was fully know, a A* algorithm whould have given
 % 
-% The implementation is included from the following papers
-%   - Oleynikova (2016), Continuous-time trajectory optimization for online UAV replanning
 
 %% Setup & loading
 clc; clear all; close all;
 % Parameters
 parameterfile = Param_RANDOMFOREST;
-
-%%
-
-writerObj = VideoWriter('myVideo.avi');
-writerObj.FrameRate = 10;
-open(writerObj);
-
 
 for i=1:100
     map = generate_environment(parameterfile);
@@ -33,8 +23,5 @@ for i=1:100
     % parameterfile.goal_point = samplePosfromMap(map_inflate);
 
     %% Start Navigation
-
-    gen_laser2goal(parameterfile, map, writerObj);
+    gen_laser2goal(parameterfile, map);
 end
-%%
-close(writerObj);

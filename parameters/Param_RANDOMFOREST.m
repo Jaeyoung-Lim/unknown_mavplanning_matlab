@@ -1,7 +1,7 @@
 classdef Param_RANDOMFOREST
     properties
         
-        visualization = 'frequency';
+        visualization = 'summary';
         generate_data = true;
         
         map_type = 'randomforest';
