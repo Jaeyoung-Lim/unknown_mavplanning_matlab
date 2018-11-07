@@ -10,20 +10,28 @@ clear all; close all;
 % Parameters
 parameterfile = Param_RANDOMFOREST;
 
+D =[]; % Distance traveled
+T = []; % Time taken
+ 
 %%
 
-writerObj = VideoWriter('myVideo.avi');
-writerObj.FrameRate = 10;
-open(writerObj);
+% writerObj = VideoWriter('myVideo.avi');
+% writerObj.FrameRate = 10;
+% open(writerObj);
 
-map = generate_environment(parameterfile);
-
-parameterfile.start_point = samplePosfromMap(map);
-parameterfile.goal_point = samplePosfromMap(map);
+parameterfile.start_point = [5.0, 5.0]; 
+parameterfile.goal_point = [15.0, 15.0]; 
 
 %% Start Navigation
+% for i=1:5
+% map = generate_envwithPos(parameterfile, parameterfile.start_point, parameterfile.goal_point);
+% save map;
+load('map.mat');
 
-navigate(parameterfile, map, writerObj);
-
-%%
-close(writerObj);
+[time, path, failure] = navigate(parameterfile, map);
+if ~failure
+    distance_traveled = pathlength(path);
+    D = [D, distance_traveled];
+    T = [T, time];
+end
+% end
