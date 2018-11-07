@@ -19,7 +19,7 @@ map_partial = get_localmap('increment', binmap_true, localmap_obs, params, mavPo
 opt_binmap = get_optimisticmap(map_partial, params, mavPose); % Optimistic binary occupancy grid
 
 % Plan global trajectory
-switch param.global_planner
+switch params.global_planner
     case 'optimistic'
         % Global plan based on optimistic map
         [~, globalpath] = plan_trajectory('polynomial', opt_binmap, global_start, global_goal);
@@ -40,7 +40,7 @@ while true
     cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
 
     local_start = mavPose(1:2);
-    local_goal = getLocalGoal(cons_binmap, mavPose, globalpath, global_goal, plan_horizon); % Parse intermediate goal from global path
+    local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal, plan_horizon); % Parse intermediate goal from global path
 
     [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal);
     if norm(localpath(1, :) - localpath(end, :)) < 0.5
