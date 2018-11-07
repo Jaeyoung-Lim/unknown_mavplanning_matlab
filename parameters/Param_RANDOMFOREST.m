@@ -5,6 +5,7 @@ classdef Param_RANDOMFOREST
         generate_data = true;
         
         map_type = 'randomforest';
+        map_generate = false;
         mapping = 'increment';
         
         % Gloabal Map parameters

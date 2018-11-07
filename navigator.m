@@ -9,6 +9,7 @@
 clear all; close all;
 % Parameters
 parameterfile = Param_RANDOMFOREST;
+num_trials = 1;
 
 D =[]; % Distance traveled
 T = []; % Time taken
@@ -24,14 +25,21 @@ parameterfile.goal_point = [15.0, 15.0];
 
 %% Start Navigation
 % for i=1:5
-% map = generate_envwithPos(parameterfile, parameterfile.start_point, parameterfile.goal_point);
-% save map;
-load('map.mat');
+if parameterfile.map_generate
+    map = generate_envwithPos(parameterfile, parameterfile.start_point, parameterfile.goal_point);
+    save map;
+    parameterfile.map_generate = false;
+else
+    load('map.mat');
+end
 
-[time, path, failure] = navigate(parameterfile, map);
-if ~failure
-    distance_traveled = pathlength(path);
-    D = [D, distance_traveled];
-    T = [T, time];
+for i = 1:num_trials
+    [time, path, failure] = navigate(parameterfile, map);
+    if ~failure
+        distance_traveled = pathlength(path);
+        D = [D, distance_traveled];
+        T = [T, time];
+    end
+
 end
 % end
