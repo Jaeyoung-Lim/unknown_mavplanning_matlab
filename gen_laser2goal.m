@@ -13,9 +13,12 @@ mavPose = [mavPos, mavYaw]; % Current position starts from global start
 
 %% Get local observations
 [reference_goal, observation_data, intermediate_goal] = generateData(mavPose, plan_horizon, mavT, mavPath, map, params);
-
-X = [reference_goal, observation_data];
-T = intermediate_goal';
+theta_ref = atan2(reference_goal(2), reference_goal(1)) - mavYaw;
+d_ref = norm(reference_goal, 2);
+theta_int = atan2(intermediate_goal(2), intermediate_goal(1)) - mavYaw;
+d_int = norm(intermediate_goal, 2);
+X = [d_ref, theta_ref, observation_data];
+T = [d_int, theta_int];
 
 if params.visualization=='summary'
     show(map); hold on;

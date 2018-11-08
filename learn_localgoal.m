@@ -10,7 +10,7 @@ parameterfile = Param_RANDOMFOREST;
 X = [];
 T = [];
 
-for i=1:100
+for i=1:2000
     map = generate_environment(parameterfile);
     parameterfile.start_point = samplePosfromMap(map);
     parameterfile.goal_point = samplePosfromMap(map);
@@ -22,3 +22,6 @@ for i=1:100
     
     
 end
+
+save(X);
+save(T);
