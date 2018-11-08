@@ -2,7 +2,7 @@ function [T, X] = gen_laser2goal(params, map)
 %% Make a plan using A*.
 X = []; % Input states for learning
 T = []; % Target states
-plan_horizon = 3;
+plan_horizon = 10;
 global_start = params.start_point;
 global_goal = params.goal_point;
 
