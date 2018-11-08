@@ -1,9 +1,9 @@
-function [reference_goal, observation_data, global_goal] = generateData(pose, time, time_path, path, map, param)
+function [reference_goal, observation_data, global_goal] = generateData(pose, horizon, time_path, path, map, param)
 
 map = robotics.OccupancyGrid(double(map.occupancyMatrix), param.globalmap.resolution);
 
 observation_data = getLaserScan(map, pose, param);
-reference_goal = getIntermediateGoal(pose, time, time_path, path);
+reference_goal = getIntermediateGoal(pose, horizon, time_path, path);
 
 %% TODO: Convert to robocentric frame
 global_goal = path(end, :) - pose(1:2);

@@ -9,6 +9,9 @@ switch planner_type
     
     case 'polynomial'
         trajectory = polynomial(binary_occupancygrid, start_position, goal_position);        
+        if isempty(trajectory)
+            disp('empty')
+        end
         [T, path] = sample_trajectory(trajectory, 0.1);
         
     case 'chomp'
