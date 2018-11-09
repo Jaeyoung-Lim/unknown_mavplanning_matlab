@@ -67,6 +67,9 @@ for k = 1:num_tests
         T_mean(k) = mean(T(k, S(k, :)));
         T_stdev(k) = std(T(k, S(k, :)));        
     end
-
-    
+    % Plot messages
+    fprintf('--------------------------------------------------\n');
+    fprintf('Test case %d: %s , %s\n', k, Test_planner{k}, Test_goalselection{k});
+    fprintf('  - Distance Traveled: %d +- %d\n', D_mean(k), D_stdev(k));
+    fprintf('  - Time Traveled: %d +- %d\n', T_mean(k), T_stdev(k));
 end
