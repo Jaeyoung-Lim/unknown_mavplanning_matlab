@@ -44,10 +44,17 @@ while true
     local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal, plan_horizon); % Parse intermediate goal from global path
 
     [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal);
-    if norm(localpath(1, :) - localpath(end, :)) < 0.5
-        failure = true;
-        disp('Stuck in local goal!');
-        break;
+    if detectLocalOptima(localpath)
+        switch params.globalreplan
+            case false
+                failure = true;
+                disp('Stuck in local goal!');
+                break;
+            case true
+                opt_binmap = get_optimisticmap(map_partial, params, mavPose); % Optimistic binary occupancy grid
+                % Global plan based on optimistic map
+                [~, globalpath] = plan_trajectory('polynomial', opt_binmap, local_start, global_goal);
+        end
     end
     %% Move along local trajectory
     for t = 1:dt:update_rate
