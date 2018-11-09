@@ -52,3 +52,21 @@ for i = 1:num_trials
     end
     parameterfile.map_generate = true;
 end
+%% Calculate analytics
+
+D_mean = zeros(num_tests, 1);
+D_stdev = zeros(num_tests, 1);
+T_mean = zeros(num_tests, 1);
+T_stdev = zeros(num_tests, 1);
+S= logical(S);
+
+for k = 1:num_tests
+    if sum(S(k, :))>0
+        D_mean(k) = mean(D(k, S(k, :)));
+        D_stdev(k) = std(D(k, S(k, :)));
+        T_mean(k) = mean(T(k, S(k, :)));
+        T_stdev(k) = std(T(k, S(k, :)));        
+    end
+
+    
+end

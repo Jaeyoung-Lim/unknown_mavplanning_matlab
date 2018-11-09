@@ -11,7 +11,9 @@ while true
         otherwise
             print('map generation option is not valid');
     end
-    if ~map.getOccupancy(start_pos) && ~map.getOccupancy(goal_pos)
+    map_inflate = copy(map);
+    map_inflate.inflate(0.4);
+    if ~map_inflate.getOccupancy(start_pos) && ~map_inflate.getOccupancy(goal_pos)
         break;
     end
 
