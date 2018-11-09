@@ -28,6 +28,7 @@ classdef Param_RANDOMFOREST
         % Planner
         planner = 'chomp'
         global_planner = 'optimistic';
+        globalreplan = true;
         localgoal = 'random'
         
 %         start_point = [5.0 5.0];
