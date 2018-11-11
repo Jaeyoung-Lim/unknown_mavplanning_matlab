@@ -1,9 +1,9 @@
 function [T, path]=plan_trajectory(planner_type, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity)
 %% Run Planner between start and endpoint depending on the planner type
-if nargin < 6
-    goal_velocity = [0.0, 0.0];
-elseif nargin < 5
+if nargin < 5
     start_velocity = [0.0, 0.0];    
+    goal_velocity = [0.0, 0.0];
+elseif nargin < 6
     goal_velocity = [0.0, 0.0];
 end
 
