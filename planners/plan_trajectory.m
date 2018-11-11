@@ -1,10 +1,10 @@
-function [T, path]=plan_trajectory(planner_type, binary_occupancygrid, start_position, goal_position, goal_velocity, start_velocity)
+function [T, path]=plan_trajectory(planner_type, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity)
 %% Run Planner between start and endpoint depending on the planner type
 if nargin < 6
-    start_velocity = [0.0, 0.0];
     goal_velocity = [0.0, 0.0];
-else if nargin < 5
+elseif nargin < 5
     start_velocity = [0.0, 0.0];    
+    goal_velocity = [0.0, 0.0];
 end
 
 
@@ -23,6 +23,6 @@ switch planner_type
         
     case 'chomp'
 
-        trajectory = continous_chomp(binary_occupancygrid, start_position, goal_position);
+        trajectory = continous_chomp(binary_occupancygrid, start_position, goal_position, start_velocity);
         [T, path] = sample_trajectory(trajectory, 0.1);
 end
