@@ -1,7 +1,5 @@
 function [T, mavPath, failure] = navigate(params, binmap_true)
 %% Initialize Parameters
-plan_horizon = 10;
-update_rate = 10;
 dt = 0.1;
 mavPath = [];
 T = 0;
@@ -30,8 +28,6 @@ switch params.global_planner
         [~, globalpath] = plan_trajectory('polynomial', binmap_true, global_start, global_goal);
 
 end
-% Parse intermediate goal from global path
-% local_start = globalpath(sum(T < update_rate), :);
 
 %% Local replanning from global path
 [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mavPose);     % Create a partial map based on observation
@@ -41,7 +37,7 @@ while true
     cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
 
     local_start = mavPose(1:2);
-    local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal, plan_horizon); % Parse intermediate goal from global path
+    local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal); % Parse intermediate goal from global path
 
     [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mavVel);
     if detectLocalOptima(localpath)
@@ -57,7 +53,7 @@ while true
         end
     end
     %% Move along local trajectory
-    for t = 1:dt:update_rate
+    for t = 1:dt:params.update_rate
         [mavPose, mavVel] = posefromtrajectoy(localpath, localT, t);
         %TODO: Collision Checking
         mavPath = [mavPath; mavPose(1:2)]; % Record trajectory
