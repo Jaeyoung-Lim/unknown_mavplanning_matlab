@@ -12,6 +12,10 @@ else
         case 'random'
             %% Pick Random Goal
             local_goal = samplePosfromMap(occupancy_map);
+            
+        case 'nbvp'
+            %% Pick Next Best View
+            local_goal = getNextBestView(param, occupancy_map, curr_pose, goal);
 
     end
 end
