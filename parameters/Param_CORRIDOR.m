@@ -1,10 +1,10 @@
-classdef Param_RANDOMFOREST
+classdef Param_CORRIDOR
     properties
         
         visualization = 'summary';
-        generate_data = true;
+        generate_data = false;
         
-        map_type = 'randomforest';
+        map_type = 'corridor';
         map_generate = true;
         mapping = 'increment';
         
@@ -20,8 +20,8 @@ classdef Param_RANDOMFOREST
                           'height', 5, ...
                           'resolution', 10);
 
-        sensor = struct('fov', 2*pi(), ...
-                        'maxrange', 10);
+        sensor = struct('fov', 0.5*pi(), ...
+                        'maxrange', 5);
         
         mav = struct('size', 0.5);
         

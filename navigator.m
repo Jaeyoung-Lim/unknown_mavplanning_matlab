@@ -14,7 +14,7 @@ parameterfile = Param_CORRIDOR;
 
 num_trials = 1; % Number of trials for statistics
 Test_planner = {'optimistic', 'true', 'optimistic'}; % Configuration for different test sets
-Test_goalselection = {'frompath', 'frompath', 'random'};
+Test_goalselection = {'random', 'frompath','frompath'};
 
 
 %% Initialize variables for statistics

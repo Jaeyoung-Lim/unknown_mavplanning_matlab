@@ -8,6 +8,8 @@ while true
         case 'image'
             map = create_image_map(params.map_path);
 
+        case 'corridor'
+            map = create_corridor_map(params.globalmap.width, params.globalmap.height, params.globalmap.resolution, params.globalmap.numsamples, params.globalmap.inflation);
         otherwise
             print('map generation option is not valid');
     end
