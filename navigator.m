@@ -9,22 +9,20 @@
 clear all; close all;
 
 % Parameters
-parameterfile = Param_RANDOMFOREST;
+% parameterfile = Param_RANDOMFOREST;
+parameterfile = Param_CORRIDOR;
 
 num_trials = 1; % Number of trials for statistics
-Test_planner = {'optimistic', 'true', 'optimistic'}; % Configuration for different test sets
-Test_goalselection = {'frompath', 'frompath', 'random'};
+Test_planner = {'true', 'optimistic', 'optimistic'}; % Configuration for different test sets
+Test_goalselection = {'frompath','frompath', 'random'};
 
 
-%%
+%% Initialize variables for statistics
 num_tests = size(Test_planner, 2);
 
 D = zeros(num_tests, num_trials); % Distance traveled
 T = zeros(num_tests, num_trials); % Time taken
 S = zeros(num_tests, num_trials); % Success Mask
- 
-parameterfile.start_point = [5.0, 5.0]; 
-parameterfile.goal_point = [15.0, 15.0]; 
 
 %% Navigate through environment and store results
 for i = 1:num_trials
@@ -54,24 +52,6 @@ for i = 1:num_trials
     end
     parameterfile.map_generate = true;
 end
+
 %% Calculate analytics
-
-D_mean = zeros(num_tests, 1);
-D_stdev = zeros(num_tests, 1);
-T_mean = zeros(num_tests, 1);
-T_stdev = zeros(num_tests, 1);
-S= logical(S);
-
-for k = 1:num_tests
-    if sum(S(k, :))>0
-        D_mean(k) = mean(D(k, S(k, :)));
-        D_stdev(k) = std(D(k, S(k, :)));
-        T_mean(k) = mean(T(k, S(k, :)));
-        T_stdev(k) = std(T(k, S(k, :)));        
-    end
-    % Plot messages
-    fprintf('--------------------------------------------------\n');
-    fprintf('Test case %d: %s , %s\n', k, Test_planner{k}, Test_goalselection{k});
-    fprintf('  - Distance Traveled: %d +- %d\n', D_mean(k), D_stdev(k));
-    fprintf('  - Time Traveled: %d +- %d\n', T_mean(k), T_stdev(k));
-end
+calc_analytics(D, T, S);

@@ -8,8 +8,8 @@ else if nargin < 5
 end
 K = size(initpos, 2); % Number of dimensions.
 N = 11; % Is equivalent to N = 12 in Markus code
-v_max = 5.0;
-a_max = 6.0;
+v_max = 10.0;
+a_max = 10.0;
 
 trajectory = create_trajectory(K, N);
 trajectory = add_vertex_to_trajectory(trajectory, initpos, 1, 0, initvel);

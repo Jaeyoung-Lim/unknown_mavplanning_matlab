@@ -37,6 +37,7 @@ while true
     cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
 
     local_start = mavPose(1:2);
+
     local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal); % Parse intermediate goal from global path
 
     [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mavVel);
@@ -54,12 +55,12 @@ while true
     end
     %% Move along local trajectory
     for t = 1:dt:params.update_rate
-        [mavPose, mavVel] = posefromtrajectoy(localpath, localT, t);
+        [mavPose, ~] = posefromtrajectoy(localpath, localT, t);
         %TODO: Collision Checking
         mavPath = [mavPath; mavPose(1:2)]; % Record trajectory
         T = T + dt;
         [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mavPose);     % Create a partial map based on observation
-        
+
         if params.visualization
             plot_summary(params, binmap_true, localmap_obs, mavPath, localpath, globalpath, mavPose); % Plot MAV moving in environment
         end
@@ -68,6 +69,8 @@ while true
             break;
         end
     end
+    mavVel = mavPose(1:2) - mavPath(end-1, :);
+
     if goalreached(mavPose(1:2), global_goal)
         disp('Goal Reached!');
         break;

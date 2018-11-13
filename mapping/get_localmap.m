@@ -25,7 +25,7 @@ function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, po
 
     end
     
-    scan_resolution = min(1/(0.5*param.sensor.maxrange*param.localmap.resolution), (1/0.5*param.localmap.height*param.localmap.resolution));
+    scan_resolution = min(1/(param.sensor.maxrange*param.localmap.resolution), (1/param.localmap.height*param.localmap.resolution));
     
     angles = -param.sensor.fov/2:scan_resolution:param.sensor.fov/2;
 
@@ -51,7 +51,10 @@ function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, po
         end
     end
     if ~isempty(free_space)
-        setOccupancy(map_obs, free_space, zeros(size(free_space, 1), 1), 'grid');
+        occupied_mask = checkOccupancy(map_obs, free_space, 'grid') > 0;
+        if ~isempty(free_space(~occupied_mask, :))
+            setOccupancy(map_obs, free_space(~occupied_mask, :), zeros(size(free_space(~occupied_mask, :), 1), 1), 'grid');
+        end
     end
     if ~isempty(occupied_space)
         setOccupancy(map_obs, occupied_space, ones(size(occupied_space, 1), 1), 'grid');
