@@ -34,10 +34,8 @@ classdef Param_RANDOMFOREST
         globalreplan = true;
         localgoal = 'random'
         
-%         start_point = [5.0 5.0];
-%         goal_point = [15.0 15.0];
-        start_point = [];
-        goal_point = [];
+        start_point = [5.0 5.0];
+        goal_point = [15.0 15.0];
 
         
     end 
