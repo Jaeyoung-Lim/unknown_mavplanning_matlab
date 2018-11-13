@@ -10,7 +10,9 @@ global_start = params.start_point; % Set gloabl start and goal position
 global_goal = params.goal_point;
 init_yaw = atan2(global_goal(2)-global_start(2), global_goal(1)-global_start(1));
 mavPose = [global_start, init_yaw]; % Current position starts from global start
+prev_mavPose = mavPose;
 mavVel = [0.0, 0.0];
+
 % Initialize Local map
 localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
 
@@ -56,6 +58,7 @@ while true
     %% Move along local trajectory
     for t = 1:dt:params.update_rate
         [mavPose, ~] = posefromtrajectoy(localpath, localT, t);
+        mavVel = mavPose(1:2) - prev_mavPose(1:2);
         %TODO: Collision Checking
         mavPath = [mavPath; mavPose(1:2)]; % Record trajectory
         T = T + dt;
@@ -68,8 +71,8 @@ while true
         if goalreached(mavPose(1:2), global_goal)
             break;
         end
+        prev_mavPose = mavPose;
     end
-    mavVel = mavPose(1:2) - mavPath(end-1, :);
 
     if goalreached(mavPose(1:2), global_goal)
         disp('Goal Reached!');
