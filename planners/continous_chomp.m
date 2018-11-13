@@ -1,7 +1,10 @@
-function [trajectory] = continous_chomp(map, initpos, finalpos, initvel)
+function [trajectory] = continous_chomp(map, initpos, finalpos, initvel, finalvel)
 
 if nargin < 4
     initvel = [0.0, 0.0];
+    finalvel = [0.0, 0.0];
+else if nargin < 5
+    finalvel = [0.0, 0.0];
 end
 K = size(initpos, 2); % Number of dimensions.
 N = 11; % Is equivalent to N = 12 in Markus code
@@ -18,7 +21,7 @@ trajectory = add_vertex_to_trajectory(trajectory, 2 * (initpos + finalpos)/4, 0,
 trajectory = add_vertex_to_trajectory(trajectory, 3 * (initpos  +finalpos)/4, 0, 1);
 %trajectory = add_vertex_to_trajectory(trajectory, 3*(start_point+goal_point)/4, 0, 1);
 
-trajectory = add_vertex_to_trajectory(trajectory, finalpos, 1);
+trajectory = add_vertex_to_trajectory(trajectory, finalpos, 1, 0, finalvel);
 
 % Estimate segment times.
 trajectory = estimate_trajectory_times(trajectory, v_max, a_max);
