@@ -1,4 +1,4 @@
-function local_goal = getLocalGoal(param, occupancy_map, curr_pose, path, goal, plan_horizon)
+function local_goal = getLocalGoal(param, occupancy_map, curr_pose, path, goal)
 
 if ~occupancy_map.getOccupancy(goal)
     % Local goal is global goal if global goal is free
@@ -7,7 +7,7 @@ else
     switch param.localgoal
         case 'frompath'
             %% Pick Goal from Path
-            local_goal = goalfrompath(occupancy_map, path, curr_pose(1:2), plan_horizon);
+            local_goal = goalfrompath(occupancy_map, path, curr_pose(1:2), param.plan_horizon);
 
         case 'random'
             %% Pick Random Goal

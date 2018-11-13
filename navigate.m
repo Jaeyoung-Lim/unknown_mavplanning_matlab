@@ -1,7 +1,5 @@
 function [T, mavPath, failure] = navigate(params, binmap_true)
 %% Initialize Parameters
-plan_horizon = 10;
-update_rate = 10;
 dt = 0.1;
 mavPath = [];
 T = 0;
@@ -12,7 +10,7 @@ global_start = params.start_point; % Set gloabl start and goal position
 global_goal = params.goal_point;
 init_yaw = atan2(global_goal(2)-global_start(2), global_goal(1)-global_start(1));
 mavPose = [global_start, init_yaw]; % Current position starts from global start
-
+mavVel = [0.0, 0.0];
 % Initialize Local map
 localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
 
@@ -30,8 +28,6 @@ switch params.global_planner
         [~, globalpath] = plan_trajectory('polynomial', binmap_true, global_start, global_goal);
 
 end
-% Parse intermediate goal from global path
-% local_start = globalpath(sum(T < update_rate), :);
 
 %% Local replanning from global path
 [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mavPose);     % Create a partial map based on observation
@@ -41,9 +37,9 @@ while true
     cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
 
     local_start = mavPose(1:2);
-    local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal, plan_horizon); % Parse intermediate goal from global path
+    local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal); % Parse intermediate goal from global path
 
-    [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal);
+    [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mavVel);
     if detectLocalOptima(localpath)
         switch params.globalreplan
             case false
@@ -57,8 +53,8 @@ while true
         end
     end
     %% Move along local trajectory
-    for t = 1:dt:update_rate
-        mavPose = posefromtrajectoy(localpath, localT, t);
+    for t = 1:dt:params.update_rate
+        [mavPose, mavVel] = posefromtrajectoy(localpath, localT, t);
         %TODO: Collision Checking
         mavPath = [mavPath; mavPose(1:2)]; % Record trajectory
         T = T + dt;

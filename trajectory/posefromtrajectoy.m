@@ -1,4 +1,4 @@
-function pose = posefromtrajectoy(trajectory, T, t)
+function [pose, velocity] = posefromtrajectoy(trajectory, T, t)
         idx = sum(T <= t);
         
         position = trajectory(idx, :);

@@ -10,12 +10,14 @@ clear all; close all;
 
 % Parameters
 parameterfile = Param_RANDOMFOREST;
-num_trials = 2;
-num_tests = 3;
 
-Test_planner = {'optimistic', 'true', 'optimistic'};
+num_trials = 1; % Number of trials for statistics
+Test_planner = {'optimistic', 'true', 'optimistic'}; % Configuration for different test sets
 Test_goalselection = {'frompath', 'frompath', 'random'};
 
+
+%%
+num_tests = size(Test_planner, 2);
 
 D = zeros(num_tests, num_trials); % Distance traveled
 T = zeros(num_tests, num_trials); % Time taken
