@@ -13,8 +13,8 @@ clear all; close all;
 parameterfile = Param_CORRIDOR;
 
 num_trials = 1; % Number of trials for statistics
-Test_planner = {'true', 'optimistic', 'optimistic'}; % Configuration for different test sets
-Test_goalselection = {'frompath','frompath', 'random'};
+Test_planner = {'true', 'optimistic', 'optimistic', 'disable'}; % Configuration for different test sets
+Test_goalselection = {'nextbestview','frompath', 'random'};
 
 
 %% Initialize variables for statistics
@@ -42,8 +42,9 @@ for i = 1:num_trials
         end
         %% Start Navigation
 
-        [time, path, failure] = navigate(parameterfile, map);
+        [time, path, failure] = navigate(parameterfile, map); % All Navigation works in here
         S(j, i) = ~failure;
+        
         if ~failure
             distance_traveled = pathlength(path);
             D(j, i) = distance_traveled;

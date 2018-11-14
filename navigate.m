@@ -28,6 +28,9 @@ switch params.global_planner
     case 'true'
         % Global plan based on true map
         [~, globalpath] = plan_trajectory('polynomial', binmap_true, global_start, global_goal);
+    case 'disable'
+        % Disable global planner
+        globalpath = [];
 
 end
 
@@ -36,11 +39,10 @@ end
 
 while true        
     % Replan Local trajectory from trajectory replanning rate
-    cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
 
     local_start = mavPose(1:2);
-
-    local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal); % Parse intermediate goal from global path
+    cons_binmap = get_conservativemap(localmap_obs, params, mavPose);
+    local_goal = getLocalGoal(params, cons_binmap, mavPose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path    
 
     [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mavVel);
     if detectLocalOptima(localpath)
