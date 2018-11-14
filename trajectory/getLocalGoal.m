@@ -1,8 +1,9 @@
-function local_goal = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancy_map)
+function [local_goal, local_goal_yaw] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancy_map)
 
 if nargin < 6
     occupancy_map = [];
 end
+local_goal_yaw = [];
 
 if ~binoccupancy_map.getOccupancy(goal)
     % Local goal is global goal if global goal is free
@@ -19,7 +20,7 @@ else
             
         case 'nextbestview'
             %% Pick Next Best View
-            local_goal = getNextBestView(param, binoccupancy_map, curr_pose, goal, occupancy_map);
+            [local_goal, local_goal_yaw] = getNextBestView(param, binoccupancy_map, curr_pose, goal, occupancy_map);
 
     end
 end

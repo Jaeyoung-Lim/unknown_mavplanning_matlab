@@ -23,6 +23,6 @@ switch planner_type
         
     case 'chomp'
 
-        trajectory = continous_chomp(binary_occupancygrid, start_position, goal_position, start_velocity);
+        trajectory = continous_chomp(binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity);
         [T, path] = sample_trajectory(trajectory, 0.1);
 end

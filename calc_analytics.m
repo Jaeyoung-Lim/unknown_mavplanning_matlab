@@ -1,4 +1,4 @@
-function [S, D_mean, D_stdev, T_mean, T_stdev] = calc_analytics(D, T, S)
+function [S, D_mean, D_stdev, T_mean, T_stdev] = calc_analytics(D, T, S, num_tests, Test_planner, Test_goalselection)
 D_mean = zeros(num_tests, 1);
 D_stdev = zeros(num_tests, 1);
 T_mean = zeros(num_tests, 1);

@@ -12,9 +12,9 @@ clear all; close all;
 % parameterfile = Param_RANDOMFOREST;
 parameterfile = Param_CORRIDOR;
 
-num_trials = 1; % Number of trials for statistics
-Test_planner = {'true', 'optimistic', 'optimistic', 'disable'}; % Configuration for different test sets
-Test_goalselection = {'nextbestview','frompath', 'random'};
+num_trials = 3; % Number of trials for statistics
+Test_planner = {'true'}; % Configuration for different test sets
+Test_goalselection = {'nextbestview'};
 
 
 %% Initialize variables for statistics
@@ -55,4 +55,4 @@ for i = 1:num_trials
 end
 
 %% Calculate analytics
-calc_analytics(D, T, S);
+calc_analytics(D, T, S, num_tests, Test_planner, Test_goalselection);
