@@ -46,7 +46,7 @@ while true
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_yaw] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
     if ~isempty(local_goal_yaw)
-        local_goal_vel = 0.0 * [cos(local_goal_yaw), sin(local_goal_yaw)];
+        local_goal_vel = 1.0 * [cos(local_goal_yaw), sin(local_goal_yaw)];
         [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel);
     else
         [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity);
