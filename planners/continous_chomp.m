@@ -12,16 +12,16 @@ v_max = 10.0;
 a_max = 10.0;
 
 trajectory = create_trajectory(K, N);
-trajectory = add_vertex_to_trajectory(trajectory, initpos, 1, 0, initvel);
+trajectory = add_vertex_state_to_trajectory(trajectory, initpos, 1, 0, initvel);
 
-trajectory = add_vertex_to_trajectory(trajectory, 1 * (initpos + finalpos)/4, 0, 1);
+trajectory = add_vertex_state_to_trajectory(trajectory, 1 * (initpos + finalpos)/4, 0, 1);
 % trajectory = add_vertex_to_trajectory(trajectory, 1 * (initpos + finalpos)/4, 0, 1);
 
-trajectory = add_vertex_to_trajectory(trajectory, 2 * (initpos + finalpos)/4, 0, 1);
-trajectory = add_vertex_to_trajectory(trajectory, 3 * (initpos  +finalpos)/4, 0, 1);
+trajectory = add_vertex_state_to_trajectory(trajectory, 2 * (initpos + finalpos)/4, 0, 1);
+trajectory = add_vertex_state_to_trajectory(trajectory, 3 * (initpos  +finalpos)/4, 0, 1);
 %trajectory = add_vertex_to_trajectory(trajectory, 3*(start_point+goal_point)/4, 0, 1);
 
-trajectory = add_vertex_to_trajectory(trajectory, finalpos, 1, 0, finalvel);
+trajectory = add_vertex_state_to_trajectory(trajectory, finalpos, 1, 0, finalvel);
 
 % Estimate segment times.
 trajectory = estimate_trajectory_times(trajectory, v_max, a_max);
