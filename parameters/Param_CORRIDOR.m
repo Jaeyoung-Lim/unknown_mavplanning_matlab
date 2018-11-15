@@ -12,7 +12,7 @@ classdef Param_CORRIDOR
         globalmap = struct('width', 20, ...
                             'height', 20, ...
                             'inflation', 0.4, ...
-                            'resolution', 10, ...
+                            'resolution', 5, ...
                             'numsamples', 80 ...
                             );
         % Local Map parameters
@@ -21,14 +21,14 @@ classdef Param_CORRIDOR
                           'resolution', 10);
 
         sensor = struct('fov', 0.5*pi(), ...
-                        'maxrange', 5);
+                        'maxrange', 10);
         
         mav = struct('size', 0.5);
         
         % Planner
         planner = 'chomp'
         plan_horizon = 5;
-        update_rate = 10;        
+        update_rate = 5;        
         
         global_planner = 'optimistic';
         globalreplan = true;

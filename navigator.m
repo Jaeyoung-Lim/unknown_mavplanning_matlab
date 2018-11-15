@@ -12,9 +12,9 @@ clear all; close all;
 % parameterfile = Param_RANDOMFOREST;
 parameterfile = Param_CORRIDOR;
 
-num_trials = 1; % Number of trials for statistics
-Test_planner = {'true', 'optimistic', 'optimistic'}; % Configuration for different test sets
-Test_goalselection = {'frompath','frompath', 'random'};
+num_trials = 3; % Number of trials for statistics
+Test_planner = {'true'}; % Configuration for different test sets
+Test_goalselection = {'nextbestview'};
 
 
 %% Initialize variables for statistics
@@ -42,8 +42,9 @@ for i = 1:num_trials
         end
         %% Start Navigation
 
-        [time, path, failure] = navigate(parameterfile, map);
+        [time, path, failure] = navigate(parameterfile, map); % All Navigation works in here
         S(j, i) = ~failure;
+        
         if ~failure
             distance_traveled = pathlength(path);
             D(j, i) = distance_traveled;
@@ -54,4 +55,4 @@ for i = 1:num_trials
 end
 
 %% Calculate analytics
-calc_analytics(D, T, S);
+calc_analytics(D, T, S, num_tests, Test_planner, Test_goalselection);

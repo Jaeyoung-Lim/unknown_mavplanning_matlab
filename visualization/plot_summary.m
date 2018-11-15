@@ -1,26 +1,39 @@
-function plot_summary(param, globalmap, partialmap, mavpath, localpath, globalpath, mavpose)
+function plot_summary(param, T, globalmap, partialmap, localpath, globalpath, mav, goalVel)
 %% Plot Summary of global and local trajectory
 
 subplot(1,2,1);
-plot_binmap(param, globalmap, mavpath, localpath, globalpath, mavpose);
+plot_binmap(param, globalmap, mav, localpath, globalpath, goalVel);
 
 subplot(1,2,2);
-plot_localmap(param, partialmap, mavpose, mavpath, localpath, globalpath);
+plot_localmap(param, partialmap, mav.pose, mav.path, localpath, globalpath);
+
+% subplot(1,3,3);
+% plot_data(param, T, mav.velocity);
 
 drawnow
 end
 
-function plot_binmap(param, map, mavpath, localpath, globalpath, pose)
+function plot_data(param, T, velocity);
+    
+    plot(T, norm(velocity), 'b-'); hold on;
+end
+
+function plot_binmap(param, map, state, localpath, globalpath, goalvel)
         
     show(map); hold on;
     plot(localpath(:, 1), localpath(:, 2), 'g'); hold on;
-    plot(mavpath(:, 1), mavpath(:, 2), 'b'); hold on;
+    plot(state.path(:, 1), state.path(:, 2), 'b'); hold on;
     plot(localpath(end, 1), localpath(end, 2), 'b'); hold on;
-    plot(globalpath(:, 1), globalpath(:, 2), 'r'); hold on;
-    plot(globalpath(end, 1), globalpath(end, 2), 'xr'); hold on;
-    plot(pose(1), pose(2), 'xr','MarkerSize',10); hold on;
-    rectangle('Position',[pose(1)-0.5*param.localmap.width, ...
-                          pose(2)-0.5*param.localmap.height, ...
+%     quiver(localpath(end, 1), localpath(end, 2), 30*goalvel(1), 30*goalvel(2), 'r'); hold on;
+
+%     if ~isempty(globalpath)
+%         plot(globalpath(:, 1), globalpath(:, 2), 'r'); hold on;
+%         plot(globalpath(end, 1), globalpath(end, 2), 'xr'); hold on;
+%     end
+%     quiver(state.pose(1), state.pose(2), 30*state.velocity(1), 30*state.velocity(2), 'r'); hold on;
+    plot(state.pose(1), state.pose(2), 'xr','MarkerSize',10); hold on;
+    rectangle('Position',[state.pose(1)-0.5*param.localmap.width, ...
+                          state.pose(2)-0.5*param.localmap.height, ...
                           param.localmap.width, ...
                           param.localmap.height], ...
                           'EdgeColor', 'b');
