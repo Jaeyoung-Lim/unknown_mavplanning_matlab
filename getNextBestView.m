@@ -2,8 +2,8 @@ function [goal, goal_yaw] = getNextBestView(param, binmap, pose, global_goal, ma
     %% Next best view planner from Oleynikova 2017
     % Parameters
     num_samples = 80;
-    we = 0.5;
-    wg = 0.5;
+    we = 0.01;
+    wg = 0.4;
     r = 0.5;
 
     %%
@@ -23,6 +23,7 @@ function [goal, goal_yaw] = getNextBestView(param, binmap, pose, global_goal, ma
         l(i) = getExplorationgain(param, map, sample_pose);
         dg = norm(global_goal-mav_pos) + r;
         R(i) = we * l(i) + wg * (dg  - norm(global_goal - sample_pos))/dg;
+        fprintf('%d / %d\n', we *l(i), wg * (dg  - norm(global_goal - sample_pos))/dg);
     end
     [~, idx] = max(R);
     goal = pos(idx, :);
