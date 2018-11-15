@@ -1,10 +1,11 @@
 function [T, mavpath, failure] = navigate(params, binmap_true)
 %% Initialize Parameters
 dt = 0.1;
-initialize();
 T = 0;
 failure = false;
 local_goal_vel = [0.0, 0.0];
+
+initialize();
 
 %% Plan Optimistic global trajectory 
 global_start = params.start_point; % Set gloabl start and goal position
@@ -12,7 +13,6 @@ global_goal = params.goal_point;
 % init_yaw = atan2(global_goal(2)-global_start(2), global_goal(1)-global_start(1));
 init_yaw = pi()/2;
 mav.pose = [global_start, init_yaw]; % Current position starts from global start
-prev_mavPose = mav.pose;
 mav.velocity = [0.0, 0.0];
 
 % Initialize Local map
@@ -46,10 +46,10 @@ while true
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_yaw] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
     if ~isempty(local_goal_yaw)
-        local_goal_vel = 1.0 * [cos(local_goal_yaw), sin(local_goal_yaw)];
-        [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel);
+        local_goal_vel = 0.3 * [cos(local_goal_yaw), sin(local_goal_yaw)];
+        [localT, localpath, localpath_vel] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel);
     else
-        [localT, localpath] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity);
+        [localT, localpath, localpath_vel] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity);
     end
     if detectLocalOptima(localpath)
         switch params.globalreplan
@@ -64,13 +64,12 @@ while true
         end
     end
     %% Move along local trajectory
-    for t = 1:dt:params.update_rate
-        prev_mavPose = mav.pose;
-        [mav.pose, ~] = posefromtrajectoy(localpath, localT, t);
-        mav.velocity = mav.pose(1:2) - prev_mavPose(1:2);
+    for t = 0:dt:params.update_rate
+        [mav.pose, mav.velocity] = posefromtrajectoy(localpath, localpath_vel, localT, t);
         %TODO: Collision Checking
         mav.path = [mav.path; mav.pose(1:2)]; % Record trajectory
-        T = T + dt;        
+        mav.path_vel = [mav.path_vel; norm(mav.velocity)];
+        T = T + dt;
 
         [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
 
