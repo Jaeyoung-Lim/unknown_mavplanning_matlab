@@ -32,7 +32,7 @@ classdef Param_CORRIDOR
         
         global_planner = 'optimistic';
         globalreplan = true;
-        localgoal = 'random'
+        localgoal = 'nextbestview'
         
         start_point = [5.0 5.0];
         goal_point = [15.0 15.0];
