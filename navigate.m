@@ -8,7 +8,6 @@ global_goal = params.goal_point;
 % init_yaw = atan2(global_goal(2)-global_start(2), global_goal(1)-global_start(1));
 init_yaw = pi()/2;
 mav.pose = [global_start, init_yaw]; % Current position starts from global start
-mav.velocity = [0.0, 0.0];
 
 % Initialize Local map
 localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
