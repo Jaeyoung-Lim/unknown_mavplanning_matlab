@@ -6,7 +6,7 @@
 %   - Oleynikova (2016), Continuous-time trajectory optimization for online UAV replanning
 
 %% Setup & loading
-clear all; close all;
+clc; clear all; close all;
 
 % Parameters
 % parameterfile = Param_RANDOMFOREST;
