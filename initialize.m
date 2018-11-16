@@ -1,4 +1,9 @@
+% Initialize mav states
 mav = struct('pose', [0.0, 0.0, 0.0], ...
              'velocity', [0.0, 0.0], ...
              'path', [], ...
              'path_vel', []);
+% Initialize time
+dt = 0.1;
+T = 0;
+failure = false;

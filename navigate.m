@@ -1,10 +1,5 @@
 function [T, mavpath, failure] = navigate(params, binmap_true)
 %% Initialize Parameters
-dt = 0.1;
-T = 0;
-failure = false;
-local_goal_vel = [0.0, 0.0];
-
 initialize();
 
 %% Plan Optimistic global trajectory 
