@@ -1,4 +1,4 @@
-function [goal, goal_yaw] = getNextBestView(param, binmap, pose, global_goal, map)
+function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, map)
     %% Next best view planner from Oleynikova 2017
     % Parameters
     num_samples = 80;
@@ -15,20 +15,24 @@ function [goal, goal_yaw] = getNextBestView(param, binmap, pose, global_goal, ma
     
     for i=1:num_samples
         sample_pos = samplePosfromMap(binmap);
-        sample_yaw = 2*pi()*rand();
         pos(i, :) = sample_pos;
-        yaw(i) = sample_yaw;
-%         sample_yaw = atan2(sample_pos(2) - mav_pos(2), sample_pos(1) - mav_pos(1)); % From Oleynikova 2017
+        switch param.localgoal
+            case 'nextbestview'
+                sample_yaw = atan2(sample_pos(2) - mav_pos(2), sample_pos(1) - mav_pos(1)); % From Oleynikova 2017
+                vel = 0.0;
+            case 'nextbestview-e'
+                sample_yaw = 2*pi()*rand();
+                yaw(i) = sample_yaw;
+                vel = 1.0;
+        end
         sample_pose = [sample_pos, sample_yaw];
         l(i) = getExplorationgain(param, map, sample_pose);
         dg = norm(global_goal-mav_pos) + r;
         R(i) = we * l(i) + wg * (dg  - norm(global_goal - sample_pos))/dg;
-        fprintf('%d / %d\n', we *l(i), wg * (dg  - norm(global_goal - sample_pos))/dg);
     end
     [~, idx] = max(R);
     goal = pos(idx, :);
-    goal_yaw = yaw(idx);
-
+    goal_vel = vel * [cos(yaw(idx)), sin(yaw(idx))];
 end
 
 function l = getExplorationgain(param, map, pose)
@@ -40,7 +44,7 @@ function l = getExplorationgain(param, map, pose)
             
             intsectionPts = rayIntersection(map, pose, angles(i), param.sensor.maxrange); % Generate rays
             if isnan(intsectionPts)
-                [~, midpoints] = raycast(map, pose, param.sensor.maxrange, angles(i)); ;
+                [~, midpoints] = raycast(map, pose, param.sensor.maxrange, angles(i));
             else
                 [~, midpoints] = raycast(map, pose(1:2), intsectionPts);
             end
