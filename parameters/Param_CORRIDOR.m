@@ -23,7 +23,8 @@ classdef Param_CORRIDOR
         sensor = struct('fov', 0.5*pi(), ...
                         'maxrange', 10);
         
-        mav = struct('size', 0.5);
+        mav = struct('size', 0.5, ...
+                     'max_velocity', 5.0);
         
         % Planner
         planner = 'chomp'

@@ -32,6 +32,9 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
     end
     [~, idx] = max(R);
     goal = pos(idx, :);
+    goal_yaw = yaw(idx);
+     %% Check for ICS
+    vel = getMaximumVelocity(param, binmap, [goal, goal_yaw]);
     goal_vel = vel * [cos(yaw(idx)), sin(yaw(idx))];
 end
 
@@ -54,4 +57,14 @@ function l = getExplorationgain(param, map, pose)
                 l = l + sum(checkOccupancy(map, midpoints, 'grid') < 0);
             end
         end
+end
+
+function max_velocity = getMaximumVelocity(param, binmap, pose)
+    max_velocity = 0.0;
+    while true
+        max_velocity = max_velocity + 0.1;
+        if isInevitableCollisonState(param, binmap, pose) || max_velocity > param.mav.max_velocity
+            break;
+        end
+    end
 end
