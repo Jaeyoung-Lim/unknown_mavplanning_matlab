@@ -1,20 +1,26 @@
 function plot_summary(param, T, globalmap, partialmap, localpath, globalpath, mav, goalVel)
 %% Plot Summary of global and local trajectory
-subplot(1,2,1);
-plot_binmap(param, globalmap, mav, localpath, globalpath, goalVel);
+% subplot(1,2,1);
+% plot_binmap(param, globalmap, mav, localpath, globalpath, goalVel);
+% 
+% subplot(1,2,2);
+% plot_localmap(param, partialmap, mav.pose, mav.path, localpath, globalpath);
 
-subplot(1,2,2);
-plot_localmap(param, partialmap, mav.pose, mav.path, localpath, globalpath);
-
-% plot_data(param, T, mav); hold off;
+plot_data(param, T, mav); hold off;
 
 drawnow
 end
 
 function plot_data(param, T, mav);
-    
+    subplot(1,2,1);
     plot(mav.path_vel, 'b-'); hold on;
-    size(mav.path_vel);
+    xlabel('Time [s]');
+    ylabel('Velocity [m/s]'); 
+    subplot(1,2,2);
+    plot(mav.path_acc, 'b-'); hold on;
+    xlabel('Time [s]');
+    ylabel('Acceleration [m/s^2]'); 
+
 end
 
 function plot_binmap(param, map, state, localpath, globalpath, goalvel)
