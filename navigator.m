@@ -14,7 +14,7 @@ parameterfile = Param_CORRIDOR;
 
 num_trials = 3; % Number of trials for statistics
 Test_planner = {'true'}; % Configuration for different test sets
-Test_goalselection = {'nextbestview'};
+Test_goalselection = {'nextbestview-yaw'};
 
 
 %% Initialize variables for statistics
