@@ -40,7 +40,7 @@ while true
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
    
-    [localT, localpath, localpath_vel] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel);
+    [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel);
     
     if detectLocalOptima(localpath)
         switch params.globalreplan
@@ -56,10 +56,11 @@ while true
     end
     %% Move along local trajectory
     for t = 0:dt:params.update_rate
-        [mav.pose, mav.velocity] = posefromtrajectoy(localpath, localpath_vel, localT, t);
+        [mav.pose, mav.velocity, mav.acceleration] = statefromtrajectoy(localpath, localpath_vel, localpath_acc, localT, t);
         %TODO: Collision Checking
         mav.path = [mav.path; mav.pose(1:2)]; % Record trajectory
         mav.path_vel = [mav.path_vel; norm(mav.velocity)];
+        mav.path_acc = [mav.path_acc; norm(mav.acceleration)];
         T = T + dt;
 
         [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
