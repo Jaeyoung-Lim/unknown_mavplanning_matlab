@@ -1,4 +1,4 @@
-function trajectory = add_vertex_to_trajectory(trajectory, position, start_or_end, unconstrained, velocity)
+function trajectory = add_vertex_state_to_trajectory(trajectory, position, start_or_end, unconstrained, velocity, acceleration)
 % Check that position is K-D.
 if (nargin < 3)
   start_or_end = 0;
@@ -9,10 +9,13 @@ end
 if (nargin < 5)
    velocity = [0.0, 0.0];
 end
+if nargin < 6
+   acceleration = [0.0, 0.0];
+end
 
 for i = 1 : trajectory.K
    if (start_or_end)
-     vert = create_vertex_state_start_end(position(i), velocity(i), trajectory.N);
+     vert = create_vertex_state_start_end(position(i), velocity(i), acceleration(i), trajectory.N);
    else
      vert = create_vertex_state(position(i), velocity(i), trajectory.N, unconstrained);
    end
