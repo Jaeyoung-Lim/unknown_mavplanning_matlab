@@ -5,7 +5,7 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
     we = 0.01;
     wg = 0.4;
     r = 0.5;
-    vel = 1.0;
+    vel = 3.0;
 
     %%
     mav_pos = pose(1:2); 

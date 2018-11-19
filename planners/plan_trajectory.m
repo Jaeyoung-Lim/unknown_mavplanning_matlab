@@ -12,6 +12,8 @@ end
 path_vel = [0.0, 0.0];
 path_acc = [0.0, 0.0];
 
+start_derivatives = [start_velocity; start_acceleration];
+end_derivatives = [goal_velocity; [0.0, 0.0]];
 
 % binary_occupancygrid.inflate(0.5);
 
@@ -20,11 +22,11 @@ switch planner_type
         path = a_star(binary_occupancygrid, start_position, goal_position);
     
     case 'polynomial'
-        trajectory = polynomial(binary_occupancygrid, start_position, goal_position);        
+        trajectory = polynomial(binary_occupancygrid, start_position, goal_position, start_derivatives, end_derivatives);        
         if isempty(trajectory)
             disp('empty')
         end
-        [T, path] = sample_trajectory(trajectory, 0.1);
+        [T, path, path_vel, path_acc] = sample_trajectory(trajectory, 0.1);
         
     case 'chomp'
 
