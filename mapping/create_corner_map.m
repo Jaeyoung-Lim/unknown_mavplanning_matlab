@@ -1,4 +1,12 @@
 function map = create_corridor_map(width_m, height_m, resolution, num_samples, inflation)
+%% Parameters
+pst = 0.4;
+ptt = 0;
+corridor_width = 4;
+corridor_length = 14;
+
+fullgrid = ones(height_m*resolution, width_m*resolution);
+map = robotics.BinaryOccupancyGrid(fullgrid, resolution);
 
 segment_pose = [4, 16, 0];
 map = set_corner(map, segment_pose, corridor_width, corridor_length, resolution);

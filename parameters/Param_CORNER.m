@@ -1,10 +1,10 @@
-classdef Param_CORRIDOR
+classdef Param_CORNER
     properties
         
         visualization = 'summary';
         generate_data = false;
         
-        map_type = 'corridor';
+        map_type = 'corner';
         map_generate = true;
         mapping = 'increment';
         
