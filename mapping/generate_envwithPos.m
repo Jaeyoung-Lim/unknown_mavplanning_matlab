@@ -10,6 +10,8 @@ while true
 
         case 'corridor'
             [map, start_pos, goal_pos] = create_corridor_map(params.globalmap.width, params.globalmap.height, params.globalmap.resolution, params.globalmap.numsamples, params.globalmap.inflation);
+        case 'corner'
+            [map, start_pos, goal_pos] = create_corner_map(params.globalmap.width, params.globalmap.height, params.globalmap.resolution, params.globalmap.numsamples, params.globalmap.inflation);
         otherwise
             print('map generation option is not valid');
     end

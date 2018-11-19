@@ -73,54 +73,14 @@ end
 r = create_straight(segment_pose, corridor_width, corridor_width, resolution);
 setOccupancy(map, r, 0)
 goal_pos = segment_pose(1:2);
+
+
 end
 
 function result = checkboundarycells(r, map_width, map_height)
     result = false;
     if sum(((r(:, 1) > map_width) + (r(:, 1) <= 0) ) + ((r(:, 2) > map_height) + (r(:, 2) <= 0 ))) > 0
         result = true;
-    end
-
-end
-
-function map = set_corner(map, segment_pose, corridor_width, corridor_length, resolution)
-    segment_pose(3) = 0;
-    r = create_straight(segment_pose, corridor_length, corridor_width, resolution);
-    setOccupancy(map, r, 0);
-    segment_pose(3) = 3*pi()/2;
-    r = create_straight(segment_pose, corridor_length, corridor_width, resolution);
-    setOccupancy(map, r, 0);
-
-end
-
-function map = set_strip(map, segment_pose, corridor_width, corridor_length, resolution)
-    segment_pose(3) = -pi()/2;
-    r = create_straight(segment_pose, 0.4*map.height, corridor_width, resolution);
-    setOccupancy(map, r, 0);
-    segment_pose(3) = pi()/2;
-    r = create_straight(segment_pose, 0.4*map.height, corridor_width, resolution);
-    setOccupancy(map, r, 0);
-
-end
-
-function r = create_straight(pose, length, width, resolution)
-    origin = pose(1:2);
-    theta = pose(3);
-    r = [];
-   
-    for d=0:1/(2*resolution):length
-        pos = origin + [d*cos(theta), d*sin(theta)];
-        for h= -0.5*width:1/(2*resolution):0.5*width
-            dpos = pos + [h*sin(theta), h*cos(theta)]; 
-            r= [r; dpos];
-        end
-    end
-    for d=0:1/(2*resolution):0.5*width
-        pos = origin - [d*cos(theta), d*sin(theta)];
-        for h= -0.5*width:1/(2*resolution):0.5*width
-            dpos = pos + [h*sin(theta), h*cos(theta)]; 
-            r= [r; dpos];
-        end
     end
 
 end
@@ -147,7 +107,6 @@ function r = create_corner(pose, width, resolution)
     end
 
 end
-
 
 function mask = getstate(idx)
     state = logical(zeros(8, 1));
