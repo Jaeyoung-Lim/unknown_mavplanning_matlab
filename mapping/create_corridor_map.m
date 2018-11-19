@@ -47,11 +47,11 @@ for i=2:num_samples
         find(pS, 1, 'first')
         S(i, :) = getstate(find(pS, 1, 'first'));
         sample_pose = transition_pos(S(i-1, :), S(i, :), segment_pose, corridor_width, corridor_length);
-        if checkbounds(width_m, height_m, segment_pose, S(i-1, :), S(i, :), corridor_width, corridor_length)
+        if checkbounds(width_m, height_m, sample_pose, S(i-1, :), S(i, :), corridor_width, corridor_length)
             segment_pose = sample_pose;
             break;
         end
-        if segment_pose(1) > 0.9*width_m
+        if segment_pose(1) >= 35
             break;
         end
     end
@@ -63,11 +63,22 @@ for i=2:num_samples
     else
         r = create_straight(segment_pose, corridor_length, corridor_width, resolution);
     end
+%     if checkboundarycells(r, width_m, height_m)
+%         disp('fuuuuuck');
+%     end
     setOccupancy(map, r, 0)
-    show(map);    
+%     show(map);    
 end
 
-map = set_strip(map, [0.9*width_m, 0.5*height_m], corridor_width, corridor_length, resolution);
+% map = set_strip(map, [0.9*width_m, 0.5*height_m], corridor_width, corridor_length, resolution);
+
+end
+
+function result = checkboundarycells(r, map_width, map_height)
+    result = false;
+    if sum(((r(:, 1) > map_width) + (r(:, 1) <= 0) ) + ((r(:, 2) > map_height) + (r(:, 2) <= 0 ))) > 0
+        result = true;
+    end
 
 end
 
