@@ -1,19 +1,19 @@
-classdef Param_CORRIDOR
+classdef Param_CORNER
     properties
         
         visualization = 'summary';
-        generate_data = true;
+        generate_data = false;
         
-        map_type = 'corridor';
+        map_type = 'corner';
         map_generate = true;
         mapping = 'increment';
         
         % Gloabal Map parameters
-        globalmap = struct('width', 40, ...
-                            'height', 43, ...
+        globalmap = struct('width', 20, ...
+                            'height', 20, ...
                             'inflation', 0.4, ...
                             'resolution', 5, ...
-                            'numsamples', 100 ...
+                            'numsamples', 80 ...
                             );
         % Local Map parameters
         localmap = struct('width', 5, ...
@@ -30,9 +30,9 @@ classdef Param_CORRIDOR
         plan_horizon = 5;
         update_rate = 1;        
         
-        global_planner = 'disable';
+        global_planner = 'optimistic';
         globalreplan = true;
-        localgoal = 'nextbestview'
+        localgoal = 'nextbestview-yaw'
         
         start_point = [5.0 5.0];
         goal_point = [15.0 15.0];

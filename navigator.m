@@ -11,10 +11,11 @@ clc; clear all; close all;
 % Parameters
 % parameterfile = Param_RANDOMFOREST;
 parameterfile = Param_CORRIDOR;
+% parameterfile = Param_CORNER;
 
 num_trials = 3; % Number of trials for statistics
-Test_planner = {'true', 'true'}; % Configuration for different test sets
-Test_goalselection = {'nextbestview-yaw', 'nextbestview'};
+Test_planner = {'disable'}; % Configuration for different test sets
+Test_goalselection = {'nextbestview-yaw'};
 
 
 %% Initialize variables for statistics
@@ -33,7 +34,9 @@ for i = 1:num_trials
 
         %% Generate Map only once
         if parameterfile.map_generate
-            map = generate_envwithPos(parameterfile, parameterfile.start_point, parameterfile.goal_point);
+            [map, start_pos, goal_pos] = generate_envwithPos(parameterfile, parameterfile.start_point, parameterfile.goal_point);
+            parameterfile.start_point = start_pos;
+            parameterfile.goal_point = goal_pos;
             save map;
             parameterfile.map_generate = false;
         else
