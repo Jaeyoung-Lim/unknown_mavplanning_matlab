@@ -32,7 +32,7 @@ classdef Param_CORNER
         
         global_planner = 'optimistic';
         globalreplan = true;
-        localgoal = 'nextbestview'
+        localgoal = 'nextbestview-yaw'
         
         start_point = [5.0 5.0];
         goal_point = [15.0 15.0];

@@ -50,10 +50,10 @@ function l = getExplorationgain(param, map, pose)
             else
                 [~, midpoints] = raycast(map, pose(1:2), intsectionPts);
             end
-
-
-            if ~isempty(checkOccupancy(map, midpoints, 'grid') < 0)
-                l = l + sum(checkOccupancy(map, midpoints, 'grid') < 0);
+            if ~isempty(midpoints)
+                if ~isempty(checkOccupancy(map, midpoints, 'grid') < 0)
+                    l = l + sum(checkOccupancy(map, midpoints, 'grid') < 0);
+                end
             end
         end
 end
