@@ -70,8 +70,9 @@ for i=2:num_samples
 %     show(map);    
 end
 
-% map = set_strip(map, [0.9*width_m, 0.5*height_m], corridor_width, corridor_length, resolution);
-
+r = create_straight(segment_pose, corridor_width, corridor_width, resolution);
+setOccupancy(map, r, 0)
+goal_pos = segment_pose(1:2);
 end
 
 function result = checkboundarycells(r, map_width, map_height)
