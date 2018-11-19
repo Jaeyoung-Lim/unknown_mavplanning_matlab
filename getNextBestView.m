@@ -5,6 +5,7 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
     we = 0.01;
     wg = 0.4;
     r = 0.5;
+    vel = 3.0;
 
     %%
     mav_pos = pose(1:2); 
@@ -12,6 +13,7 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
     R = zeros(num_samples, 1);
     pos = zeros(num_samples ,2);
     yaw = zeros(num_samples, 1);
+    sample_yaw = 0.0;
     
     for i=1:num_samples
         sample_pos = samplePosfromMap(binmap);

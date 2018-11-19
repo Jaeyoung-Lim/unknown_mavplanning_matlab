@@ -13,8 +13,8 @@ clc; clear all; close all;
 parameterfile = Param_CORRIDOR;
 
 num_trials = 3; % Number of trials for statistics
-Test_planner = {'true'}; % Configuration for different test sets
-Test_goalselection = {'nextbestview'};
+Test_planner = {'true', 'true'}; % Configuration for different test sets
+Test_goalselection = {'nextbestview-yaw', 'nextbestview'};
 
 
 %% Initialize variables for statistics

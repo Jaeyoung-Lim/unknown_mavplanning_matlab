@@ -28,7 +28,7 @@ classdef Param_CORRIDOR
         % Planner
         planner = 'chomp'
         plan_horizon = 5;
-        update_rate = 5;        
+        update_rate = 1;        
         
         global_planner = 'optimistic';
         globalreplan = true;
