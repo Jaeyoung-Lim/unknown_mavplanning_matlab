@@ -1,4 +1,4 @@
-function map = create_corridor_map(width_m, height_m, resolution, num_samples, inflation)
+function [map, start_pos, goal_pos] = create_corridor_map(width_m, height_m, resolution, num_samples, inflation)
 %% State
 % 1. STRAIGHT segment origented left, following a #5 LEFT TURN
 % 2. STRAIGHT segment origented up, following a #7 RIGHT TURN
@@ -34,8 +34,8 @@ T = [pss,   0,   0,   0,   0,   0, pst,   0;
 % % Initialize statef
 S = logical(zeros(num_samples, 8));
 S(1, :) = getstate(1);
-
-segment_pose = [0.5*corridor_width , 0.5*height_m, 0];
+start_pos = [0.5*corridor_width , 0.5*height_m];
+segment_pose = [start_pos, 0];
 r = create_straight(segment_pose, corridor_length, corridor_width, resolution);
 setOccupancy(map, r, 0);
 

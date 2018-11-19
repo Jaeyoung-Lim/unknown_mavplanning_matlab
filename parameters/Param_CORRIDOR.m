@@ -20,7 +20,7 @@ classdef Param_CORRIDOR
                           'height', 5, ...
                           'resolution', 10);
 
-        sensor = struct('fov', 0.1*pi(), ...
+        sensor = struct('fov', 0.5*pi(), ...
                         'maxrange', 10);
         
         mav = struct('size', 0.5);
@@ -30,7 +30,7 @@ classdef Param_CORRIDOR
         plan_horizon = 5;
         update_rate = 1;        
         
-        global_planner = 'optimistic';
+        global_planner = 'disable';
         globalreplan = true;
         localgoal = 'nextbestview'
         
