@@ -44,7 +44,6 @@ for i=2:num_samples
     while true
         sample = rand();
         pS = cumsum(T(S(i-1, :), :)) > sample;
-        find(pS, 1, 'first')
         S(i, :) = getstate(find(pS, 1, 'first'));
         sample_pose = transition_pos(S(i-1, :), S(i, :), segment_pose, corridor_width, corridor_length);
         if checkbounds(width_m, height_m, sample_pose, S(i-1, :), S(i, :), corridor_width, corridor_length)
