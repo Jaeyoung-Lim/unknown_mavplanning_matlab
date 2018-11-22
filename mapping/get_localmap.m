@@ -1,4 +1,4 @@
-function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, pose)
+function [map_obs, map_true, free_space, occupied_space] = get_localmap(map_type, binmap, map_obs, param, pose)
     %% Initialize
     free_space = []; %Observed Free space in the map
     occupied_space = []; % Observed Occupied space inthe map
