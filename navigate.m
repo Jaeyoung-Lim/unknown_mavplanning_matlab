@@ -69,11 +69,18 @@ while true
             plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
         end
         
+        if isCollision(mav.pose(1:2), binmap_true)
+           break; 
+        end
+        
         if goalreached(mav.pose(1:2), global_goal)
             break;
         end
     end
-
+    if isCollision(mav.pose(1:2), binmap_true)
+       failure = true;
+       break; 
+    end
     if goalreached(mav.pose(1:2), global_goal)
         disp('Goal Reached!');
         break;
@@ -81,4 +88,9 @@ while true
 end
 
 mavpath = mav.path;
+end
+
+function collision = isCollision(pos, map)
+    collision = getOccupancy(map, pos);
+
 end
