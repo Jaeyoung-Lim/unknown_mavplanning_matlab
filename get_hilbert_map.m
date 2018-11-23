@@ -7,7 +7,7 @@ end
 
 %% Update weights
 record = [];
-xy = xy / 10;
+% xy = xy / 10;
 for i = 1:100
     
     wt = updateWeights(wt_1, xy, y, binmap);
