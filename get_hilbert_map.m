@@ -1,30 +1,31 @@
-function [map, wt] = get_hilbert_map(binmap, xy, y, wt_1)
+function [map, wt] = get_hilbert_map(param, binmap, xy, y, wt_1)
 %% Learn Kernel function from true binary occupancy map
 
-if nargin < 4
-    wt_1 = zeros(1600, 1);
+if nargin < 5
+    wt_1 = zeros(param.hilbertmap.num_features, 1);
 end
 
 %% Update weights
 record = [];
-% xy = xy / 10;
-for i = 1:100
+
+for i = 1:param.hilbertmap.iteration
     
-    wt = updateWeights(wt_1, xy, y, binmap);
+    wt = updateWeights(param, wt_1, xy, y, binmap);
     record = [record, wt];
     wt_1 = wt;
 end
 
-p = render_hilbertmap(wt, binmap);
-
-% plot_hilbertmap(p, record, xy, binmap);
+    p = render_hilbertmap(wt, binmap);
+if param.hilbertmap.render
+    plot_hilbertmap(p, record, xy, binmap);
+end
 map = p;
 
 end
 
 function p = render_hilbertmap(wt, map)
 % Reconstruct the hilbert map
-    high_res = 4;
+    high_res = 1;
     map_width = map.XWorldLimits(2)*map.Resolution * high_res;
     map_height = map.YWorldLimits(2)*map.Resolution * high_res;
     p = 0.5*ones(map_width, map_height);
