@@ -5,16 +5,22 @@ hilbert_map = [];
 xy = [];
 y = [];
 wt_1 = zeros(1600, 1);
+failure = false;
 
 %% Plan Optimistic global trajectory 
 global_start = params.start_point; % Set gloabl start and goal position
 global_goal = params.goal_point;
-% init_yaw = atan2(global_goal(2)-global_start(2), global_goal(1)-global_start(1));
+
 init_yaw = pi()/2;
 mav.pose = [global_start, init_yaw]; % Current position starts from global start
 
 % Initialize Local map
-localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
+switch params.mapping
+    case 'local'
+        localmap_obs = robotics.OccupancyGrid(params.localmap.width, params.localmap.height, params.localmap.resolution);
+    case 'increment'
+        localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
+end
 
 map_partial = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose); % 
 opt_binmap = get_optimisticmap(map_partial, params, mav.pose); % Optimistic binary occupancy grid
