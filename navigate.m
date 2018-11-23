@@ -43,6 +43,8 @@ while true
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
+    [hilbert_map, wt] = get_hilbert_map(params, binmap_true, xy, y, wt_1);
+    wt_1 = wt;
     
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration);
     
@@ -74,8 +76,6 @@ while true
         y = [y; ones(size(occupiedspace, 1), 1)];
         xy = [xy; freespace];
         y = [y; -1 * ones(size(freespace, 1), 1)];
-        [hilbert_map, wt] = get_hilbert_map(binmap_true, xy, y, wt_1);
-        wt_1 = wt;
 
         if params.visualization
              plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel, hilbert_map); % Plot MAV moving in environment
