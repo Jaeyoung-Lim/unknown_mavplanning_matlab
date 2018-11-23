@@ -1,6 +1,10 @@
 function [T, mavpath, failure] = navigate(params, binmap_true)
 %% Initialize Parameters
 initialize();
+hilbert_map = [];
+xy = [];
+y = [];
+wt_1 = zeros(1600, 1);
 
 %% Plan Optimistic global trajectory 
 global_start = params.start_point; % Set gloabl start and goal position
@@ -31,7 +35,7 @@ switch params.global_planner
 end
 
 %% Local replanning from global path
-[localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
+[localmap_obs, ~, free_space, occupied_space] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
 
 while true        
     % Replan Local trajectory from trajectory replanning rate
@@ -39,7 +43,7 @@ while true
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
-   
+    
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration);
     
     if detectLocalOptima(localpath)
@@ -63,10 +67,18 @@ while true
         mav.path_acc = [mav.path_acc; norm(mav.acceleration)];
         T = T + dt;
 
-        [localmap_obs, ~] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
+        [localmap_obs, ~, free_space, occupied_space] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
+        freespace = free_space(randi([0 size(free_space, 1)],64, 1), :);
+        occupiedspace = occupied_space;
+        xy = [xy; occupiedspace];
+        y = [y; ones(size(occupiedspace, 1), 1)];
+        xy = [xy; freespace];
+        y = [y; -1 * ones(size(freespace, 1), 1)];
+        [hilbert_map, wt] = get_hilbert_map(binmap_true, xy, y, wt_1);
+        wt_1 = wt;
 
         if params.visualization
-            plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
+             plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel, hilbert_map); % Plot MAV moving in environment
         end
         
         if isCollision(mav.pose(1:2), binmap_true)

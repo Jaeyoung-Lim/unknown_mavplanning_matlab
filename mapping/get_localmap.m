@@ -1,4 +1,4 @@
-function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, pose)
+function [map_obs, map_true, free_space, occupied_space] = get_localmap(map_type, binmap, map_obs, param, pose)
     %% Initialize
     free_space = []; %Observed Free space in the map
     occupied_space = []; % Observed Occupied space inthe map
@@ -58,4 +58,6 @@ function [map_obs, map_true] = get_localmap(map_type, binmap, map_obs, param, po
     if ~isempty(occupied_space)
         setOccupancy(map_obs, occupied_space, ones(size(occupied_space, 1), 1), 'grid');
     end
+    free_space = free_space/param.localmap.resolution;
+    occupied_space = occupied_space/param.localmap.resolution;
 end
