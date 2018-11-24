@@ -22,7 +22,7 @@ switch params.mapping
         localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
 end
 
-map_partial = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose); % 
+map_partial = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose); % 
 opt_binmap = get_optimisticmap(map_partial, params, mav.pose); % Optimistic binary occupancy grid
 
 % Plan global trajectory
@@ -49,8 +49,11 @@ while true
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
-    [hilbert_map, wt] = get_hilbert_map(params, binmap_true, xy, y, wt_1);
-    wt_1 = wt;
+    
+    if params.hilbertmap.enable
+        [hilbert_map, wt] = get_hilbert_map(params, binmap_true, xy, y, wt_1);
+        wt_1 = wt;
+    end
     
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration);
     
@@ -69,20 +72,21 @@ while true
     %% Move along local trajectory
     for t = 0:dt:params.update_rate
         [mav.pose, mav.velocity, mav.acceleration] = statefromtrajectoy(localpath, localpath_vel, localpath_acc, localT, t);
-        %TODO: Collision Checking
+
         mav.path = [mav.path; mav.pose(1:2)]; % Record trajectory
         mav.path_vel = [mav.path_vel; norm(mav.velocity)];
         mav.path_acc = [mav.path_acc; norm(mav.acceleration)];
         T = T + dt;
 
         [localmap_obs, ~, free_space, occupied_space] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
-        freespace = free_space(randi([0 size(free_space, 1)],64, 1), :);
-        occupiedspace = occupied_space;
-        xy = [xy; occupiedspace];
-        y = [y; ones(size(occupiedspace, 1), 1)];
-        xy = [xy; freespace];
-        y = [y; -1 * ones(size(freespace, 1), 1)];
-
+        if params.hilbertmap.enable
+            freespace = free_space(randi([1 size(free_space, 1)],30, 1), :);
+            occupiedspace = occupied_space;
+            xy = [xy; occupiedspace];
+            y = [y; ones(size(occupiedspace, 1), 1)];
+            xy = [xy; freespace];
+            y = [y; -1 * ones(size(freespace, 1), 1)];
+        end
         if params.visualization
              plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel, hilbert_map); % Plot MAV moving in environment
         end
