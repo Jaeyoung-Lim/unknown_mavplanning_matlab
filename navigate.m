@@ -41,7 +41,7 @@ switch params.global_planner
 end
 
 %% Local replanning from global path
-[localmap_obs, ~, free_space, occupied_space] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
+[localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
 
 while true        
     % Replan Local trajectory from trajectory replanning rate
@@ -78,7 +78,7 @@ while true
         mav.path_acc = [mav.path_acc; norm(mav.acceleration)];
         T = T + dt;
 
-        [localmap_obs, ~, free_space, occupied_space] = get_localmap('increment', binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
+        [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
         if params.hilbertmap.enable
             freespace = free_space(randi([1 size(free_space, 1)],30, 1), :);
             occupiedspace = occupied_space;
