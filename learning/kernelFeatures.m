@@ -1,8 +1,9 @@
-function phi_hat = kernelFeatures(x_query, map, option)
+function phi_hat = kernelFeatures(param, x_query, map, option)
     % X : Query point
     % X_data : Sample points
     % Create data from binary occupancy points
-    res = 1/map.Resolution;
+    param.hilbertmap.resolution
+    res = 1/(param.hilbertmap.resolution);
     [X, Y] = meshgrid(res:res:map.XWorldLimits(2), res:res:map.YWorldLimits(2));
     X = X(:);
     Y= Y(:);
