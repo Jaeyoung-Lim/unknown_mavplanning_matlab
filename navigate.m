@@ -89,14 +89,9 @@ while true
         end
         if params.visualization
              plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel, hilbert_map); % Plot MAV moving in environment
-        end
-        
-        if isCollision(mav.pose(1:2), binmap_true)
-           break; 
-        end
-        
-        if goalreached(mav.pose(1:2), global_goal)
-            break;
+        end        
+        if isCollision(mav.pose(1:2), binmap_true) || goalreached(mav.pose(1:2), global_goal)
+            break; % Get out of the for loop
         end
     end
     if isCollision(mav.pose(1:2), binmap_true)
