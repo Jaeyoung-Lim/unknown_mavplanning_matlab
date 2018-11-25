@@ -22,7 +22,4 @@ y = double(map.getOccupancy(xy));
 zero_mask = y < 1;
 y(zero_mask) = -1;
 
-tic;
 hilbert_map = get_hilbert_map(params, map, xy, y);
-time = toc;
-fprintf('Total Time: %d\n',time)
