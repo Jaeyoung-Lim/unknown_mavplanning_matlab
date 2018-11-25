@@ -9,16 +9,27 @@ end
 
 %% Update weights
 record = [];
-
-for i = 1:param.hilbertmap.iteration
-    
+iter = 0;
+tic;
+while true    
     wt = updateWeights(param, wt_1, xy, y, binmap);
     record = [record, wt];
+    if norm(wt - wt_1) < 1
+        break;
+    end
+    if iter > param.hilbertmap.max_iteration
+        break;
+    end
     wt_1 = wt;
+    iter = iter + 1;
 end
+time = toc;
+fprintf('Training Time: %d\n',time)
 
+tic;
 p = render_hilbertmap(param, wt, binmap);
-
+time = toc;
+fprintf('Render Time: %d\n',time)
 if param.hilbertmap.render
     plot_hilbertmap(p, record, xy, binmap);
 end
