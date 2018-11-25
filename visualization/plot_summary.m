@@ -1,4 +1,4 @@
-function plot_summary(param, T, globalmap, partialmap, localpath, globalpath, mav, goalVel, hilbert_map)
+function plot_summary(param, T, globalmap, partialmap, localpath, globalpath, mav, goalVel)
 %% Plot Summary of global and local trajectory
 figure(1);
 subplot(2,2,1);
@@ -7,27 +7,12 @@ plot_binmap(param, globalmap, mav, localpath, globalpath, goalVel);
 
 subplot(2,2,2);
 plot_localmap(param, partialmap, mav.pose, mav.path, localpath, globalpath);
-drawnow
 
-figure(2);
-% subplot(2,2,3);
-plot_hilbertmap(hilbert_map)
-% plot_data(param, T, mav); 
+plot_data(param, T, mav); 
 
 drawnow
 end
 
-function plot_hilbertmap(map)
-
-    imshow(map);
-    colormap jet;
-    colorbar('Ticks',[]);
-    title('Hilbert Map');
-    xlabel('X [meters]'); ylabel('Y [meters]');
-    xticks(1:4); yticks(1:4);
-
-
-end
 function plot_data(param, T, mav)
     subplot(2,2,3);
     plot(mav.path_vel, 'b-'); hold on;

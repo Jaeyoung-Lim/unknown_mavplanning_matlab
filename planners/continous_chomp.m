@@ -30,6 +30,6 @@ trajectory = estimate_trajectory_times(trajectory, v_max, a_max);
 trajectory = solve_trajectory(trajectory);
 
 %% Optimize path around obstacles.
-trajectory = optimize_trajectory_collisions(map, trajectory, 1);
+trajectory = optimize_trajectory_collisions(map, trajectory, 0);
 
 end

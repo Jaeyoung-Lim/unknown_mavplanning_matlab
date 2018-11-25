@@ -4,7 +4,7 @@ initialize();
 hilbert_map = [];
 xy = [];
 y = [];
-wt_1 = zeros(1600, 1);
+wt_1 = [];
 failure = false;
 
 %% Plan Optimistic global trajectory 
@@ -49,12 +49,7 @@ while true
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
-    
-    if params.hilbertmap.enable
-        [hilbert_map, wt] = get_hilbert_map(params, binmap_true, xy, y, wt_1);
-        wt_1 = wt;
-    end
-    
+        
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration);
     
     if detectLocalOptima(localpath)
@@ -82,18 +77,29 @@ while true
         if params.hilbertmap.enable
             freespace = free_space(randi([1 size(free_space, 1)],30, 1), :);
             occupiedspace = occupied_space;
-            xy = [xy; occupiedspace];
+            xy = [xy; occupiedspace + mav.pose(1:2)];
             y = [y; ones(size(occupiedspace, 1), 1)];
-            xy = [xy; freespace];
+            xy = [xy; freespace + mav.pose(1:2)];
             y = [y; -1 * ones(size(freespace, 1), 1)];
         end
         if params.visualization
-             plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel, hilbert_map); % Plot MAV moving in environment
+             plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
         end        
         if isCollision(mav.pose(1:2), binmap_true) || goalreached(mav.pose(1:2), global_goal)
             break; % Get out of the for loop
         end
     end
+    if params.hilbertmap.enable
+        wt = learn_hilbert_map(params, cons_binmap, xy - mav.pose(1:2), y, wt_1);
+        wt_1 = wt;
+        if params.hilbertmap.plot
+            figure(2);
+            plot_hilbertmap(params, wt, cons_binmap)
+        end
+    end
+    xy = [];
+    y = [];
+
     if isCollision(mav.pose(1:2), binmap_true)
        failure = true;
        break; 
@@ -109,5 +115,20 @@ end
 
 function collision = isCollision(pos, map)
     collision = getOccupancy(map, pos);
+
+end
+
+function plot_hilbertmap(param, wt, binmap)
+    tic;
+    map = render_hilbertmap(param, wt, binmap);
+    time = toc;
+    fprintf('Render Time: %d\n',time)
+        
+    imshow(map, 'InitialMagnification', 400);
+    colormap jet;
+    colorbar('Ticks',[]);
+    title('Hilbert Map');
+    xlabel('X [meters]'); ylabel('Y [meters]');
+    xticks(1:4); yticks(1:4);
 
 end
