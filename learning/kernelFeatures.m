@@ -12,19 +12,19 @@ function phi_hat = kernelFeatures(param, x_query, map, option)
    
    switch option
        case 'sparse'
-           phi_hat = kSparse(x_query, xy);
+           phi_hat = kSparse(x_query, xy, param.hilbertmap.radius);
        case 'threshold'
-           phi_hat = kThreshold(x_query, xy);
+           phi_hat = kThreshold(x_query, xy, param.hilbertmap.radius);
    end
 
 end
 
-function k = kSparse(x, x_hat)
+function k = kSparse(x, x_hat, radius)
     k= zeros(size(x_hat, 1), 1, size(x, 1));
     omega = eye(2); % Omega is positive semi definite
-    radius = sqrt(2);
+    rth = sqrt(radius);
 %     r = sqrt((x-x_hat)*omega*(x-x_hat)');
-    x = ( 1 / radius ) * x;
+    x = ( 1 / rth ) * x;
     x = reshape(x', [1, 2, size(x, 1)]);
     r =  vecnorm(x-x_hat, 2, 2);
     
@@ -34,9 +34,9 @@ function k = kSparse(x, x_hat)
 
 end
 
-function k = kThreshold(x, x_hat)
+function k = kThreshold(x, x_hat, radius)
     k= zeros(size(x_hat, 1), 1, size(x, 1)); 
-    rth = 2;
+    rth = radius;
     x = reshape(x', [1, 2, size(x, 1)]);
     r = vecnorm(x-x_hat, 2, 2);
     
