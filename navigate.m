@@ -94,7 +94,7 @@ while true
         wt_1 = wt;
         if params.hilbertmap.plot
             figure(2);
-            plot_hilbertmap(params, wt, cons_binmap)
+            plot_hilbertmap(params, wt, localmap_obs, xy)
         end
     end
     xy = [];
@@ -118,14 +118,18 @@ function collision = isCollision(pos, map)
 
 end
 
-function plot_hilbertmap(param, wt, binmap)
+function plot_hilbertmap(param, wt, binmap, xy)
     tic;
     map = render_hilbertmap(param, wt, binmap);
     time = toc;
     fprintf('Render Time: %d\n',time)
-        
+    subplot(1, 2, 1);
+    show(binmap); hold on;
+%     colormap(gca, 'gray');
+    plot(xy(:, 1), xy(:, 2), 'xr'); hold off;
+    subplot(1, 2, 2);
     imshow(map, 'InitialMagnification', 400);
-    colormap jet;
+    colormap(gca, 'jet');
     colorbar('Ticks',[]);
     title('Hilbert Map');
     xlabel('X [meters]'); ylabel('Y [meters]');
