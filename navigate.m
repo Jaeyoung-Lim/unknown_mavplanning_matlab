@@ -75,11 +75,11 @@ while true
 
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
         if params.hilbertmap.enable
-            freespace = free_space(randi([1 size(free_space, 1)],30, 1), :);
-            occupiedspace = occupied_space;
-            xy = [xy; occupiedspace + mav.pose(1:2)];
+            freespace = free_space(randi([1 size(free_space, 1)], 5, 1), :);
+            occupiedspace = occupied_space(randi([1 size(occupied_space, 1)], 2, 1), :);
+            xy = [xy; occupiedspace];
             y = [y; ones(size(occupiedspace, 1), 1)];
-            xy = [xy; freespace + mav.pose(1:2)];
+            xy = [xy; freespace];
             y = [y; -1 * ones(size(freespace, 1), 1)];
         end
         if params.visualization
@@ -90,15 +90,13 @@ while true
         end
     end
     if params.hilbertmap.enable
-        wt = learn_hilbert_map(params, cons_binmap, xy - mav.pose(1:2), y, wt_1);
+        wt = learn_hilbert_map(params, cons_binmap, xy, y, wt_1);
         wt_1 = wt;
         if params.hilbertmap.plot
             figure(2);
             plot_hilbertmap(params, wt, localmap_obs, xy)
         end
     end
-    xy = [];
-    y = [];
 
     if isCollision(mav.pose(1:2), binmap_true)
        failure = true;
@@ -128,7 +126,7 @@ function plot_hilbertmap(param, wt, binmap, xy)
 %     colormap(gca, 'gray');
     plot(xy(:, 1), xy(:, 2), 'xr'); hold off;
     subplot(1, 2, 2);
-    imshow(map, 'InitialMagnification', 400);
+    imshow(flipud(map'), 'InitialMagnification', 400);
     colormap(gca, 'jet');
     colorbar('Ticks',[]);
     title('Hilbert Map');

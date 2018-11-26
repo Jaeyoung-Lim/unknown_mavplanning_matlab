@@ -58,6 +58,6 @@ function [map_obs, map_true, free_space, occupied_space] = get_localmap(map_type
     if ~isempty(occupied_space)
         setOccupancy(map_obs, occupied_space, ones(size(occupied_space, 1), 1), 'grid');
     end
-    free_space = free_space/param.localmap.resolution;
-    occupied_space = occupied_space/param.localmap.resolution;
+    free_space = grid2world(map_obs,free_space);
+    occupied_space = grid2world(map_obs, occupied_space);
 end

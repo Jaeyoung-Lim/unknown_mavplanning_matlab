@@ -6,7 +6,7 @@ classdef Param_RANDOMFOREST
         
         map_type = 'randomforest';
         map_generate = true;
-        mapping = 'local';
+        mapping = 'increment';
         
         % Gloabal Map parameters
         globalmap = struct('width', 20, ...

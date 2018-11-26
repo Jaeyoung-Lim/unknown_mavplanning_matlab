@@ -10,9 +10,9 @@ clc; clear all; close all;
 
 % Parameters
 % parameterfile = Param_TINYRANDOMFOREST;
-parameterfile = Param_RANDOMFOREST;
+% parameterfile = Param_RANDOMFOREST;
 % parameterfile = Param_CORRIDOR;
-% parameterfile = Param_CORNER;
+parameterfile = Param_CORNER;
 
 num_trials = 3; % Number of trials for statistics
 Test_planner = {'disable'}; % Configuration for different test sets
