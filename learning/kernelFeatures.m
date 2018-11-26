@@ -22,11 +22,13 @@ end
 function k = kSparse(x, x_hat)
     k= zeros(size(x_hat, 1), 1, size(x, 1));
     omega = eye(2); % Omega is positive semi definite
+    radius = sqrt(2);
 %     r = sqrt((x-x_hat)*omega*(x-x_hat)');
+    x = ( 1 / radius ) * x;
     x = reshape(x', [1, 2, size(x, 1)]);
     r =  vecnorm(x-x_hat, 2, 2);
     
-    mask = r < 1;   
+    mask = r < 1;
     k(mask) = 2 + cos(2*pi()*r(mask)).*(1-r(mask))/3 + sin(2*pi()*r(mask))/(2*pi());
     k = squeeze(k);
 
