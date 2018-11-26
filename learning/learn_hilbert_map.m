@@ -1,4 +1,4 @@
-function wt = learn_hilbert_map(param, binmap, xy, y, wt_1)
+function [wt, time] = learn_hilbert_map(param, binmap, xy, y, wt_1)
 %% Learn Kernel function from true binary occupancy map
 
 num_features = param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2);
@@ -27,6 +27,3 @@ time = toc;
 fprintf('Training Time: %d\n',time)
 
 end
-
-
-
