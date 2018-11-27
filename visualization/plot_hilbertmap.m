@@ -1,4 +1,4 @@
-function plot_hilbertmap(param, wt, binmap, xy)
+function plot_hilbertmap(param, wt, binmap, xy, pose)
     tic;
     map = render_hilbertmap(param, wt, binmap);
     time = toc;
@@ -6,7 +6,13 @@ function plot_hilbertmap(param, wt, binmap, xy)
     subplot(1, 2, 1);
     show(binmap); hold on;
 %     colormap(gca, 'gray');
-    plot(xy(:, 1), xy(:, 2), 'xr'); hold off;
+    switch param.mapping
+         case 'local'
+             xy = xy - pose(1:2);
+            plot(xy(:, 1), xy(:, 2), 'xr'); hold off;
+        case 'increment'
+            plot(xy(:, 1), xy(:, 2), 'xr'); hold off;
+    end
     subplot(1, 2, 2);
     imshow(flipud(map'), 'InitialMagnification', 400);
     colormap(gca, 'jet');

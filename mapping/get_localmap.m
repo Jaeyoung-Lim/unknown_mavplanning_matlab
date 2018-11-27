@@ -58,6 +58,14 @@ function [map_obs, map_true, free_space, occupied_space] = get_localmap(map_type
     if ~isempty(occupied_space)
         setOccupancy(map_obs, occupied_space, ones(size(occupied_space, 1), 1), 'grid');
     end
-    free_space = grid2world(map_obs,free_space);
-    occupied_space = grid2world(map_obs, occupied_space);
+    
+    switch map_type
+        case 'local'
+            free_space = grid2world(map_obs,free_space) + pose(1:2);
+            occupied_space = grid2world(map_obs, occupied_space) + pose(1:2);
+            
+        case 'increment'
+            free_space = grid2world(map_obs,free_space);
+            occupied_space = grid2world(map_obs, occupied_space);
+    end
 end

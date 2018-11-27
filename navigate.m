@@ -94,7 +94,7 @@ while true
         wt_1 = wt;
         if params.hilbertmap.plot
             figure(2);
-            plot_hilbertmap(params, wt, localmap_obs, xy)
+            plot_hilbertmap(params, wt, localmap_obs, xy, mav.pose)
         end
     end
 
