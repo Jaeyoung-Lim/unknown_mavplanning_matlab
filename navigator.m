@@ -10,7 +10,8 @@ clc; clear all; close all;
 
 % Parameters
 % parameterfile = Param_TINYRANDOMFOREST;
-parameterfile = Param_RANDOMFOREST;
+% parameterfile = Param_RANDOMFOREST;
+parameterfile = Param_LOCALRANDOMFOREST;
 % parameterfile = Param_CORRIDOR;
 % parameterfile = Param_CORNER;
 
