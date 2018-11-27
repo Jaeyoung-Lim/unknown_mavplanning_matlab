@@ -1,4 +1,4 @@
-function [wt, time] = learn_hilbert_map(param, binmap, xy, y, wt_1)
+function [wt, time] = learn_hilbert_map(param, binmap, xy, y, wt_1, pose)
 %% Learn Kernel function from true binary occupancy map
 
 num_features = param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2);
@@ -8,6 +8,9 @@ if nargin < 5 || isempty(wt_1)
 end
 
 %% Update weights
+if param.mapping ==  'local'
+   xy = xy - pose(1:2);
+end
 record = [];
 iter = 0;
 tic;

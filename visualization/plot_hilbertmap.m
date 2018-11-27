@@ -8,7 +8,7 @@ function plot_hilbertmap(param, wt, binmap, xy, pose)
 %     colormap(gca, 'gray');
     switch param.mapping
          case 'local'
-             xy = xy - pose(1:2);
+            xy = xy - pose(1:2);
             plot(xy(:, 1), xy(:, 2), 'xr'); hold off;
         case 'increment'
             plot(xy(:, 1), xy(:, 2), 'xr'); hold off;

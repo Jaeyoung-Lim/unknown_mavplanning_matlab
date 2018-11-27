@@ -89,15 +89,15 @@ while true
             break; % Get out of the for loop
         end
     end
+    % Discard samples that are outside the map
     if params.hilbertmap.enable
-        wt = learn_hilbert_map(params, cons_binmap, xy, y, wt_1);
+        wt = learn_hilbert_map(params, cons_binmap, xy, y, wt_1, mav.pose);
         wt_1 = wt;
         if params.hilbertmap.plot
             figure(2);
             plot_hilbertmap(params, wt, localmap_obs, xy, mav.pose)
         end
     end
-
     if isCollision(mav.pose(1:2), binmap_true)
        failure = true;
        break; 
