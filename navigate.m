@@ -6,6 +6,7 @@ xy = [];
 y = [];
 wt_1 = [];
 failure = false;
+regression_time = [];
 
 %% Plan Optimistic global trajectory 
 global_start = params.start_point; % Set gloabl start and goal position
@@ -76,8 +77,8 @@ while true
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
         
         if params.hilbertmap.enable
-            freespace = free_space(randi([1 size(free_space, 1)], min(10, size(free_space, 1)), 1), :);
-            occupiedspace = occupied_space(randi([1 size(occupied_space, 1)], min(5, size(occupied_space, 1)), 1), :);
+            freespace = free_space(randi([1 size(free_space, 1)], min(5, size(free_space, 1)), 1), :);
+            occupiedspace = occupied_space(randi([1 size(occupied_space, 1)], min(3, size(occupied_space, 1)), 1), :);
             xy = [xy; occupiedspace];
             y = [y; ones(size(occupiedspace, 1), 1)];
             xy = [xy; freespace];
@@ -95,7 +96,8 @@ while true
     % Discard samples that are outside the map\
     if params.hilbertmap.enable
         [xy, y] = discardObservations(params, xy, y, mav.pose);
-        wt = learn_hilbert_map(params, localmap_obs, xy, y, wt_1, mav.pose);
+        [wt, learning_time] = learn_hilbert_map(params, localmap_obs, xy, y, wt_1, mav.pose);
+        regression_time = [regression_time, learning_time];
         wt_1 = wt;
         if params.hilbertmap.plot
             figure(2);

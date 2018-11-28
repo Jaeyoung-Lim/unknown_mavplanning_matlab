@@ -13,7 +13,9 @@ clc; clear all; close all;
 % parameterfile = Param_RANDOMFOREST;
 parameterfile = Param_LOCALRANDOMFOREST;
 % parameterfile = Param_CORRIDOR;
+% parameterfile = Param_LOCALCORRIDOR;
 % parameterfile = Param_CORNER;
+% parameterfile = Param_LOCALCORNER
 
 num_trials = 3; % Number of trials for statistics
 Test_planner = {'disable'}; % Configuration for different test sets
