@@ -74,6 +74,7 @@ while true
         T = T + dt;
 
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
+        
         if params.hilbertmap.enable
             freespace = free_space(randi([1 size(free_space, 1)], min(10, size(free_space, 1)), 1), :);
             occupiedspace = occupied_space(randi([1 size(occupied_space, 1)], min(5, size(occupied_space, 1)), 1), :);
@@ -82,9 +83,11 @@ while true
             xy = [xy; freespace];
             y = [y; -1 * ones(size(freespace, 1), 1)];
         end
+        
         if params.visualization
              plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
-        end        
+        end
+        
         if isCollision(mav.pose(1:2), binmap_true) || goalreached(mav.pose(1:2), global_goal)
             break; % Get out of the for loop
         end
