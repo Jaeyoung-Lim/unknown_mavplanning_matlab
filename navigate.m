@@ -75,8 +75,8 @@ while true
 
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
         if params.hilbertmap.enable
-            freespace = free_space(randi([1 size(free_space, 1)], 5, 1), :);
-            occupiedspace = occupied_space(randi([1 size(occupied_space, 1)], 2, 1), :);
+            freespace = free_space(randi([1 size(free_space, 1)], min(10, size(free_space, 1)), 1), :);
+            occupiedspace = occupied_space(randi([1 size(occupied_space, 1)], min(5, size(occupied_space, 1)), 1), :);
             xy = [xy; occupiedspace];
             y = [y; ones(size(occupiedspace, 1), 1)];
             xy = [xy; freespace];
@@ -89,13 +89,14 @@ while true
             break; % Get out of the for loop
         end
     end
-    % Discard samples that are outside the map
+    % Discard samples that are outside the map\
     if params.hilbertmap.enable
-        wt = learn_hilbert_map(params, cons_binmap, xy, y, wt_1, mav.pose);
+        [xy, y] = discardObservations(params, xy, y, mav.pose);
+        wt = learn_hilbert_map(params, localmap_obs, xy, y, wt_1, mav.pose);
         wt_1 = wt;
         if params.hilbertmap.plot
             figure(2);
-            plot_hilbertmap(params, wt, localmap_obs, xy, mav.pose)
+            plot_hilbertmap(params, wt, localmap_obs, xy, y, mav.pose)
         end
     end
     if isCollision(mav.pose(1:2), binmap_true)

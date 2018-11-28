@@ -8,12 +8,16 @@ if nargin < 5 || isempty(wt_1)
 end
 
 %% Update weights
-if param.mapping ==  'local'
-   xy = xy - pose(1:2);
+switch param.mapping
+    case 'local'
+       [xy, y] = discardObservations(param, xy, y, pose); 
+       xy = xy - pose(1:2);
 end
+
 record = [];
 iter = 0;
 tic;
+
 while true    
     wt = updateWeights(param, wt_1, xy, y, binmap);
     record = [record, wt];
