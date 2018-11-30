@@ -17,11 +17,11 @@ end
 record = [];
 iter = 0;
 tic;
-
+grad = zeros(size(wt_1));
 while true    
-    wt = updateWeights(param, wt_1, xy, y, binmap);
-    record = [record, wt];
-    if norm(wt - wt_1) < 1
+    [wt, grad] = updateWeights(param, wt_1, xy, y, binmap, grad);
+    record = [record, norm(wt - wt_1)];
+    if norm(wt - wt_1) < 0.5
         break;
     end
     if iter > param.hilbertmap.max_iteration
@@ -31,6 +31,7 @@ while true
     iter = iter + 1;
 end
 time = toc;
+% plot(vecnorm(record, 2, 1));
 fprintf('Training Time: %d\n',time)
 
 end
