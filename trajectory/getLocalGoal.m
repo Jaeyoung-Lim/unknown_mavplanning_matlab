@@ -4,7 +4,16 @@ if nargin < 6
     occupancy_map = [];
 end
 
-if ~binoccupancy_map.getOccupancy(goal)
+% Coordinate transform incase of local goal
+switch param.mapping
+    case 'local'
+        goal = global2localpos(param, goal, curr_pose(1:2));
+        curr_pose(1:2) = global2localpos(param, curr_pose(1:2), curr_pose(1:2));
+        
+end
+
+
+if ~binoccupancy_map.getOccupancy(goal) && isinsideMap(param, binoccupancy_map, goal)
     % Local goal is global goal if global goal is free
     local_goal = goal;
     local_goal_vel = zeros(1,2);
@@ -27,5 +36,20 @@ else
     end
 end
 
+switch param.mapping
+    case 'local'
+        local_goal = global2localpos(param, local_goal, curr_pose(1:2));        
+end
 
+end
+
+function flag = isinsideMap(param, map, goal)
+    origin = [0.5*param.localmap.width, 0.5*param.localmap.height]; % For Robocentric Coordinates
+    goal = goal + origin;
+    if goal(1) <= map.XWorldLimits(2) && goal(1) >= map.XWorldLimits(1) && goal(2) <= map.YWorldLimits(2) && goal(2) >= map.YWorldLimits(1)
+        flag = true;
+    else
+        flag = false;    
+    end
+    
 end
