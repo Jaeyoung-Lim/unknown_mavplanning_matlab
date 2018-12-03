@@ -1,4 +1,6 @@
-function [local_goal, local_goal_vel] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancy_map)
+function [local_goal, local_goal_vel] = getLocalGoal(param,  curr_pose, path, goal, occupancy_map)
+
+binoccupancy_map = get_conservativemap(localmap_obs, params, mav.pose);
 
 if nargin < 6
     occupancy_map = [];
