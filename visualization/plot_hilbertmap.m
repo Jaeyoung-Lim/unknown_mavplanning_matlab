@@ -1,4 +1,9 @@
 function plot_hilbertmap(param, wt, binmap, xy, y, pose)
+    if ~param.hilbertmap.plot
+        return;
+    end    
+    figure(2);
+
     tic;
     map = render_hilbertmap(param, wt, binmap);
     time = toc;

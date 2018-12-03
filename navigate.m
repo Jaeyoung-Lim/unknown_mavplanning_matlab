@@ -48,9 +48,7 @@ while true
             [xy, y] = sampleObservations(free_space, occupied_space, xy, y);
         end
         
-        if params.visualization
-             plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
-        end
+        plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
         
         if isCollision(mav.pose(1:2), binmap_true) || goalreached(mav.pose(1:2), global_goal)
             break; % Get out of the for loop
@@ -63,20 +61,15 @@ while true
         
         regression_time = [regression_time, learning_time];
         wt_1 = wt;
-        if params.hilbertmap.plot
-            figure(2);
-            plot_hilbertmap(params, wt, localmap_obs, xy, y, mav.pose)
-        end
+        plot_hilbertmap(params, wt, localmap_obs, xy, y, mav.pose);
     end
     if isCollision(mav.pose(1:2), binmap_true)
        failure = true;
        break; 
-    end
-    if goalreached(mav.pose(1:2), global_goal)
+    elseif goalreached(mav.pose(1:2), global_goal)
         disp('Goal Reached!');
         break;
     end
 end
-
 mavpath = mav.path;
 end
