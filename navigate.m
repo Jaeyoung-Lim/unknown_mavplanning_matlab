@@ -24,22 +24,9 @@ switch params.mapping
 end
 
 map_partial = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose); % 
-opt_binmap = get_optimisticmap(map_partial, params, mav.pose); % Optimistic binary occupancy grid
 
 % Plan global trajectory
-switch params.global_planner
-    case 'optimistic'
-        % Global plan based on optimistic map
-        [~, globalpath] = plan_trajectory('polynomial', opt_binmap, global_start, global_goal);
-     
-    case 'true'
-        % Global plan based on true map
-        [~, globalpath] = plan_trajectory('polynomial', binmap_true, global_start, global_goal);
-    case 'disable'
-        % Disable global planner
-        globalpath = [];
-
-end
+globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, map_partial);
 
 %% Local replanning from global path
 [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
@@ -54,15 +41,13 @@ while true
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration);
     
     if detectLocalOptima(localpath)
-        switch params.globalreplan
-            case false
-                failure = true;
-                disp('Stuck in local goal!');
-                break;
-            case true
-                opt_binmap = get_optimisticmap(map_partial, params, mav.pose); % Optimistic binary occupancy grid
-                % Global plan based on optimistic map
-                [~, globalpath] = plan_trajectory('polynomial', opt_binmap, local_start, global_goal);
+        if params.globalreplan
+            % Global plan based on optimistic map
+            globalpath = planGlobalTrajectory(params, binmap_true, local_start, global_goal, localmap_obs);
+        else
+            failure = true;
+            disp('Stuck in local goal!');
+            break;
         end
     end
     %% Move along local trajectory
@@ -77,12 +62,7 @@ while true
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
         
         if params.hilbertmap.enable
-            freespace = free_space(randi([1 size(free_space, 1)], min(5, size(free_space, 1)), 1), :);
-            occupiedspace = occupied_space(randi([1 size(occupied_space, 1)], min(3, size(occupied_space, 1)), 1), :);
-            xy = [xy; occupiedspace];
-            y = [y; ones(size(occupiedspace, 1), 1)];
-            xy = [xy; freespace];
-            y = [y; -1 * ones(size(freespace, 1), 1)];
+            [xy, y] = sampleObservations(free_space, occupied_space, xy, y);
         end
         
         if params.visualization
@@ -97,6 +77,7 @@ while true
     if params.hilbertmap.enable
         [xy, y] = discardObservations(params, xy, y, mav.pose);
         [wt, learning_time] = learn_hilbert_map(params, localmap_obs, xy, y, wt_1, mav.pose);
+        
         regression_time = [regression_time, learning_time];
         wt_1 = wt;
         if params.hilbertmap.plot
