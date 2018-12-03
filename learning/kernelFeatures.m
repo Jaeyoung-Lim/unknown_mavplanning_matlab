@@ -11,6 +11,8 @@ function phi_hat = kernelFeatures(param, x_query, map, option)
    phi_hat = zeros(size(xy, 1), 1);
    
    switch option
+       case 'rbf'
+           phi_hat = kRadial(x_query, xy, param.hilbertmap.radius);
        case 'sparse'
            phi_hat = kSparse(x_query, xy, param.hilbertmap.radius);
        case 'threshold'
@@ -18,6 +20,17 @@ function phi_hat = kernelFeatures(param, x_query, map, option)
    end
 
 end
+
+function k = kRadial(x, x_hat, radius)
+
+    x = reshape(x', [1, 2, size(x, 1)]);
+    r = vecnorm(x-x_hat, 2, 2);
+    
+    k = exp(-0.5*(r.^2)/((0.5*radius)^2));
+    k = squeeze(k);
+
+end
+
 
 function k = kSparse(x, x_hat, radius)
     k= zeros(size(x_hat, 1), 1, size(x, 1));
