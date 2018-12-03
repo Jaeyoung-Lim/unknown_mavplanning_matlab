@@ -28,11 +28,11 @@ classdef Param_LOCALRANDOMFOREST
                             'max_iteration', 200, ...
                             'learningrate', 0.3, ...
                             'render', true, ...
-                            'render_resolution', 10, ...
+                            'render_resolution', 20, ...
                             'plot', true);
 
         sensor = struct('fov', 0.5*pi(), ...
-                        'maxrange', 5);
+                        'maxrange', 4);
         
         mav = struct('size', 0.5);
         
@@ -42,7 +42,7 @@ classdef Param_LOCALRANDOMFOREST
         update_rate = 1;        
         
         global_planner = 'optimistic';
-        globalreplan = true;
+        globalreplan = false;
         localgoal = 'random'
         
         start_point = [5.0 5.0];
