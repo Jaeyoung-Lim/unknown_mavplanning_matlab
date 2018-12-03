@@ -1,45 +1,28 @@
 function [T, mavpath, failure] = navigate(params, binmap_true)
 %% Initialize Parameters
 initialize();
-hilbert_map = [];
-xy = [];
-y = [];
-wt_1 = [];
-failure = false;
-regression_time = [];
-
-%% Plan Optimistic global trajectory 
 global_start = params.start_point; % Set gloabl start and goal position
 global_goal = params.goal_point;
-
 init_yaw = pi()/2;
 mav.pose = [global_start, init_yaw]; % Current position starts from global start
 
-% Initialize Local map
-switch params.mapping
-    case 'local'
-        localmap_obs = robotics.OccupancyGrid(params.localmap.width, params.localmap.height, params.localmap.resolution);
-    case 'increment'
-        localmap_obs = robotics.OccupancyGrid(params.globalmap.width, params.globalmap.height, params.globalmap.resolution);
-end
+%% Plan Optimistic global trajectory 
 
-map_partial = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose); % 
+% Initialize Local map
+localmap_obs = initlocalmap(params);
+localmap_obs = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
 
 % Plan global trajectory
-globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, map_partial);
-
-%% Local replanning from global path
-[localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
+globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, localmap_obs);
 
 while true        
-    % Replan Local trajectory from trajectory replanning rate
-
+    %% Replan Local trajectory from trajectory replanning rate
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
         
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration);
-    
+%%    
     if detectLocalOptima(localpath)
         if params.globalreplan
             % Global plan based on optimistic map
@@ -96,22 +79,4 @@ while true
 end
 
 mavpath = mav.path;
-end
-
-function globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, map_partial)
-    % Plan global trajectory
-    switch params.global_planner
-        case 'optimistic'
-            % Global plan based on optimistic map
-            opt_binmap = get_optimisticmap(map_partial, params, mav.pose); % Optimistic binary occupancy grid
-            [~, globalpath] = plan_trajectory('polynomial', opt_binmap, global_start, global_goal);
-
-        case 'true'
-            % Global plan based on true map
-            [~, globalpath] = plan_trajectory('polynomial', binmap_true, global_start, global_goal);
-        case 'disable'
-            % Disable global planner
-            globalpath = [];
-
-    end
 end
