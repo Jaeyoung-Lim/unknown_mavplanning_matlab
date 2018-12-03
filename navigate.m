@@ -1,10 +1,6 @@
 function [T, mavpath, failure] = navigate(params, binmap_true)
 %% Initialize Parameters
 initialize();
-global_start = params.start_point; % Set gloabl start and goal position
-global_goal = params.goal_point;
-init_yaw = pi()/2;
-mav.pose = [global_start, init_yaw]; % Current position starts from global start
 
 %% Plan Optimistic global trajectory 
 
@@ -37,12 +33,10 @@ while true
     for t = 0:dt:params.update_rate
         [mav.pose, mav.velocity, mav.acceleration] = statefromtrajectoy(localpath, localpath_vel, localpath_acc, localT, t);
 
-        mav.path = [mav.path; mav.pose(1:2)]; % Record trajectory
-        mav.path_vel = [mav.path_vel; norm(mav.velocity)];
-        mav.path_acc = [mav.path_acc; norm(mav.acceleration)];
-        T = T + dt;
-
-        [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);     % Create a partial map based on observation
+        [mav, T] = updatePath(mav, T, dt); %Record path from state
+        
+        % Create a partial map based on observation
+        [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);
         
         if params.hilbertmap.enable
             [xy, y] = sampleObservations(free_space, occupied_space, xy, y);
