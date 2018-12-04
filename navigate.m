@@ -15,10 +15,10 @@ while true
     %% Replan Local trajectory from trajectory replanning rate
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
-    [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs); % Parse intermediate goal from global path
+    [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs, hilbertmap); % Parse intermediate goal from global path
         
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory('chomp', cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration);
-%%    
+    %%    
     if detectLocalOptima(localpath)
         if params.globalreplan
             % Global plan based on optimistic map
@@ -39,7 +39,7 @@ while true
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);
         
         if params.hilbertmap.enable
-            [xy, y] = sampleObservations(free_space, occupied_space, xy, y);
+            [hilbertmap.xy, hilbertmap.y] = sampleObservations(free_space, occupied_space, hilbertmap.xy, hilbertmap.y);
         end
         
         plot_summary(params, T, binmap_true, localmap_obs, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
@@ -49,13 +49,12 @@ while true
         end
     end
     % Discard samples that are outside the map\
-    if params.hilbertmap.enable
-        [xy, y] = discardObservations(params, xy, y, mav.pose);
-        [wt, learning_time] = learn_hilbert_map(params, localmap_obs, xy, y, wt_1, mav.pose);
+    if hilbertmap.enable
+        hilbertmap = discardObservations(params, hilbertmap, mav.pose);
+        [hilbertmap.wt, learning_time] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
         
         regression_time = [regression_time, learning_time];
-        wt_1 = wt;
-        plot_hilbertmap(params, wt, localmap_obs, xy, y, mav.pose);
+        plot_hilbertmap(params, hilbertmap.wt, localmap_obs, hilbertmap.xy, hilbertmap.y, mav.pose);
     end
     if isCollision(mav.pose(1:2), binmap_true)
        failure = true;

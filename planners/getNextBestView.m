@@ -1,4 +1,4 @@
-function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, map)
+function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, map, hilbertmap)
     %% Next best view planner from Oleynikova 2017
     % Parameters
     num_samples = 80;
@@ -22,7 +22,7 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
             case 'nextbestview'
                 sample_yaw = atan2(sample_pos(2) - mav_pos(2), sample_pos(1) - mav_pos(1)); % From Oleynikova 2017
                 vel = 0.0;
-            case 'nextbestview-yaw'
+            case {'nextbestview-yaw', 'nextbestview-hilbert'}
                 sample_yaw = 2*pi()*rand();
                 yaw(i) = sample_yaw;
                 vel = 1.0;
@@ -35,25 +35,17 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
     [~, idx] = max(R);
     goal = pos(idx, :);
     goal_vel = vel * [cos(yaw(idx)), sin(yaw(idx))];
+    
+    switch param.localgoal
+        case 'nextbestview-hilbert'
+            while true
+                dl = getMIGradient(param, map, goal, goal_vel, hilbertmap);
+                [goal, goal_vel] = updateLocalGoal(dl, goal, goal_vel, hilbertmap);
+            end
+    end
 end
 
-function l = getExplorationgain(param, map, pose)
-        l = 0;
-        scan_resolution = min(1/(param.sensor.maxrange*param.localmap.resolution), (1/param.localmap.height*param.localmap.resolution));
-        
-        angles = -param.sensor.fov/2:20*scan_resolution:param.sensor.fov/2;
-        for i = 1:1:size(angles, 1)
-            
-            intsectionPts = rayIntersection(map, pose, angles(i), param.sensor.maxrange); % Generate rays
-            if isnan(intsectionPts)
-                [~, midpoints] = raycast(map, pose, param.sensor.maxrange, angles(i));
-            else
-                [~, midpoints] = raycast(map, pose(1:2), intsectionPts);
-            end
-            if ~isempty(midpoints)
-                if ~isempty(checkOccupancy(map, midpoints, 'grid') < 0)
-                    l = l + sum(checkOccupancy(map, midpoints, 'grid') < 0);
-                end
-            end
-        end
+function [goal, goal_vel] = updateLocalGoal(dl, goal, goal_vel, hilbertmap)
+    goal = goal + 1000*dl;
+    goal_vel = goal_vel;
 end
