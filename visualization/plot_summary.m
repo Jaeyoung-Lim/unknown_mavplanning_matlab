@@ -1,4 +1,7 @@
 function plot_summary(param, T, globalmap, partialmap, localpath, globalpath, mav, goalVel)
+if ~param.visualization
+    return;
+end
 %% Plot Summary of global and local trajectory
 figure(1);
 subplot(2,2,1);
