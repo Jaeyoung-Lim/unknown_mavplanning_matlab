@@ -24,8 +24,8 @@ function dl = getMIGradient(param, map, pos, vel, hilbertmap)
     figure(3);
     show(map); hold on;
     if ~isempty(arcpoints)
-        plot(arcpoints(:, 1), arcpoints(:, 2), 'xr'); hold on;
+%         plot(arcpoints(:, 1), arcpoints(:, 2), 'xr'); hold on;
     end
     plot(pos(1), pos(2), 'ob'); hold on;
-    plot([pos(1), pos(1)+1000*dl(1)], [pos(2), pos(2)+1000*dl(2)], 'g-'); hold off;
+    plot([pos(1), pos(1)+1000*dl(1)], [pos(2), pos(2)+1000*dl(2)], 'g-'); hold on;
 end

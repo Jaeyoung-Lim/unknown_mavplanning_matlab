@@ -46,6 +46,6 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
 end
 
 function [goal, goal_vel] = updateLocalGoal(dl, goal, goal_vel, hilbertmap)
-    goal = goal + 1000*dl;
+    goal = goal + 100*dl;
     goal_vel = goal_vel;
 end
