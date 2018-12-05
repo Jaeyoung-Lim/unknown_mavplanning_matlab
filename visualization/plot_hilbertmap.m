@@ -27,7 +27,7 @@ function plot_hilbertmap(param, wt, binmap, xy, y, pose)
     hist(wt, 100);
     
     subplot(2, 2, 4);
-    hist(wt(wt~=0), 100);
+    hist(wt(abs(wt)>0.01), 100);
 
 
 end
