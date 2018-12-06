@@ -32,4 +32,18 @@ switch planner_type
 
         trajectory = continous_chomp(binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration);
         [T, path, path_vel, path_acc] = sample_trajectory(trajectory, 0.1);
+
+    case 'informativechomp'
+
+        trajectory = informative_chomp(binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration);
+        [T, path, path_vel, path_acc] = sample_trajectory(trajectory, 0.1);
+
+    case 'primitive'
+        [T, path, path_vel, path_acc] = primitive(binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration);
+%         [T, path, path_vel, path_acc] = sample_trajectory(trajectory, 0.1);
 end
+
+end
+
+
+
