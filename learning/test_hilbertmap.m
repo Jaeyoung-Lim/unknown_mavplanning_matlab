@@ -137,7 +137,7 @@ map = create_random_map(4, 4, 10, 10, 0.4);
 % 
 % title('kernel calc time vs number of anchor points');
 % xlabel('Number of Anchor Points'); ylabel('Training Time [s]');
-% legend({'linear', 'sparse', 'rbf'})
+% legend({'threshold', 'sparse', 'rbf'})
 
 %% Benchmark on momentum methods
 % resolution = 1:5:80;
@@ -189,16 +189,23 @@ map = create_random_map(4, 4, 10, 10, 0.4);
 % xlabel('Number of Anchor Points'); ylabel('Training Time [s]');
 % legend('SGD', 'Momentum');
 
-%% Benchmark kernel mappings
+%% Bench mark on weight histogram
+
+params = Param_TINYRANDOMFOREST;
+num_obstacles = 50;
+num_samples = 81;
+map = create_random_map(4, 4, 10, num_obstacles, 0.4);
 
 res = 0.5;
-[X, Y] = meshgrid(res:res:(map.XWorldLimits(2)-res), res:res:(map.YWorldLimits(2)-res));
+[X, Y] = meshgrid(0:res:(map.XWorldLimits(2)), 0:res:(map.YWorldLimits(2)));
+
 X = X(:);
 Y= Y(:);
 xy = [X, Y];
 
-X = rand(num_samples, 1) * 2 + 1;
-Y = rand(num_samples, 1) * 2 + 1;
+
+X = rand(num_samples, 1) * 4;
+Y = rand(num_samples, 1) * 4;
 xy = [X(:), Y(:)];
 
 y = double(map.getOccupancy(xy));
@@ -206,4 +213,5 @@ zero_mask = y < 1;
 y(zero_mask) = -1;
 
 wt = learn_hilbert_map(params, map, xy, y);
+
 plot_hilbertmap(params, wt, map, xy)

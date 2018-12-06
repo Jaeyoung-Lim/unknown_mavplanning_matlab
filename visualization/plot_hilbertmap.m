@@ -28,11 +28,10 @@ function plot_hilbertmap(param, wt, binmap, xy, y, pose)
     xlabel('X [meters]'); ylabel('Y [meters]');
     xticks(1:4); yticks(1:4);
     
-%     subplot(2, 2, 3);
-%     hist(wt, 100);
-%     
-%     subplot(2, 2, 4);
-%     hist(wt(wt~=0), 100);
-
+    subplot(2, 2, 3);
+    hist(wt, 100);
+    
+    subplot(2, 2, 4);
+    hist(wt(abs(wt)>0.01), 100);
 
 end
