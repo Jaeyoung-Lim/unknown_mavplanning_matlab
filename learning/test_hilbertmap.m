@@ -198,9 +198,11 @@ map = create_random_map(4, 4, 10, num_obstacles, 0.4);
 
 res = 0.5;
 [X, Y] = meshgrid(0:res:(map.XWorldLimits(2)), 0:res:(map.YWorldLimits(2)));
+
 X = X(:);
 Y= Y(:);
 xy = [X, Y];
+
 
 X = rand(num_samples, 1) * 4;
 Y = rand(num_samples, 1) * 4;
@@ -211,4 +213,5 @@ zero_mask = y < 1;
 y(zero_mask) = -1;
 
 wt = learn_hilbert_map(params, map, xy, y);
+
 plot_hilbertmap(params, wt, map, xy)

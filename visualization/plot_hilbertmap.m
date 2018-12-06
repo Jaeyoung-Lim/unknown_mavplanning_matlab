@@ -1,9 +1,14 @@
 function plot_hilbertmap(param, wt, binmap, xy, y, pose)
+    if ~param.hilbertmap.plot
+        return;
+    end    
+    figure(2);
+
     tic;
     map = render_hilbertmap(param, wt, binmap);
     time = toc;
     fprintf('Render Time: %d\n',time)
-    subplot(2, 2, 1);
+    subplot(1, 2, 1);
     show(binmap); hold on;
 
 %     colormap(gca, 'gray');
@@ -15,7 +20,7 @@ function plot_hilbertmap(param, wt, binmap, xy, y, pose)
         case 'increment'
             plot(xy(:, 1), xy(:, 2), 'xr'); hold off;
     end
-    subplot(2, 2, 2);
+    subplot(1, 2, 2);
     imshow(flipud(map'), 'InitialMagnification', 400);
     colormap(gca, 'jet');
     colorbar('Ticks',[]);
@@ -28,6 +33,5 @@ function plot_hilbertmap(param, wt, binmap, xy, y, pose)
     
     subplot(2, 2, 4);
     hist(wt(abs(wt)>0.01), 100);
-
 
 end

@@ -1,9 +1,13 @@
-function [local_goal, local_goal_vel] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancy_map)
+function [local_goal, local_goal_vel] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancy_map, hilbertmap)
 
 if nargin < 6
     occupancy_map = [];
 end
 
+if isempty(hilbertmap.wt)
+    num_features = param.hilbertmap.resolution^2 * binoccupancy_map.XWorldLimits(2) * binoccupancy_map.YWorldLimits(2);
+    hilbertmap.wt = zeros(num_features, 1);
+end
 % Coordinate transform incase of local goal
 switch param.mapping
     case 'local'
@@ -27,9 +31,10 @@ if isinsideMap(param, binoccupancy_map, goal)
                 %% Pick Random Goal
                 local_goal = samplePosfromMap(binoccupancy_map);
 
-            case {'nextbestview', 'nextbestview-yaw'}
+            case {'nextbestview', 'nextbestview-yaw', 'nextbestview-hilbert'}
                 %% Pick Next Best View
-                [local_goal, local_goal_vel] = getNextBestView(param, binoccupancy_map, curr_pose, goal, occupancy_map);
+                [local_goal, local_goal_vel] = getNextBestView(param, binoccupancy_map, curr_pose, goal, occupancy_map, hilbertmap);
+
             otherwise
                 disp('invalid local planner parameter')
 

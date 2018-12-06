@@ -1,4 +1,4 @@
-function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, map)
+function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, map, hilbertmap)
     %% Next best view planner from Oleynikova 2017
     % Parameters
     num_samples = 80;
@@ -22,7 +22,7 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
             case 'nextbestview'
                 sample_yaw = atan2(sample_pos(2) - mav_pos(2), sample_pos(1) - mav_pos(1)); % From Oleynikova 2017
                 vel = 0.0;
-            case 'nextbestview-yaw'
+            case {'nextbestview-yaw', 'nextbestview-hilbert'}
                 sample_yaw = 2*pi()*rand();
                 yaw(i) = sample_yaw;
                 vel = 1.0;
@@ -35,25 +35,24 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
     [~, idx] = max(R);
     goal = pos(idx, :);
     goal_vel = vel * [cos(yaw(idx)), sin(yaw(idx))];
-end
-
-function l = getExplorationgain(param, map, pose)
-        l = 0;
-        scan_resolution = min(1/(param.sensor.maxrange*param.localmap.resolution), (1/param.localmap.height*param.localmap.resolution));
-        
-        angles = -param.sensor.fov/2:20*scan_resolution:param.sensor.fov/2;
-        for i = 1:1:size(angles, 1)
-            
-            intsectionPts = rayIntersection(map, pose, angles(i), param.sensor.maxrange); % Generate rays
-            if isnan(intsectionPts)
-                [~, midpoints] = raycast(map, pose, param.sensor.maxrange, angles(i));
-            else
-                [~, midpoints] = raycast(map, pose(1:2), intsectionPts);
-            end
-            if ~isempty(midpoints)
-                if ~isempty(checkOccupancy(map, midpoints, 'grid') < 0)
-                    l = l + sum(checkOccupancy(map, midpoints, 'grid') < 0);
+    
+    switch param.localgoal
+        case 'nextbestview-hilbert'
+            while true
+                [goal, goal_vel, omega] = updateLocalGoal(param, map, goal, goal_vel, hilbertmap);
+                if abs(omega) < 0.03
+                    break;
                 end
             end
-        end
+    end
+end
+
+function [goal, goal_vel, omega] = updateLocalGoal(param, map, goal, goal_vel, hilbertmap)
+    dl = getMIGradient(param, map, goal, goal_vel, hilbertmap);
+    curr_yaw = atan2(goal_vel(2), goal_vel(1));
+    yaw_vec = cross([goal_vel, 0], [dl, 0]);
+    omega = 10*yaw_vec(3);
+    goal = goal;
+    goal_vel = norm(goal_vel) * [cos(curr_yaw + omega), sin(curr_yaw+omega)];
+    
 end
