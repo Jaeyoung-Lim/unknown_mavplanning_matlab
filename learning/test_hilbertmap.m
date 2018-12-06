@@ -81,63 +81,63 @@ map = create_random_map(4, 4, 10, 10, 0.4);
 % xlabel('Number of Samples'); ylabel('Training Time [s]');
 
 %% Benchmark on Kernel Calculation
-params.hilbertmap.kernel = 'threshold';
-resolution = 1:5:80;
-calc_time = zeros(size(resolution, 2), 1);
-num_anchorpoints = zeros(size(resolution));
-for i = 1:size(resolution, 2)
-    params.hilbertmap.resolution = resolution(i);
-    X = rand(num_samples, 1) * 2 + 1;
-    Y = rand(num_samples, 1) * 2 + 1;
-    xy = [X(:), Y(:)];
-    tic;
-    phi_x = kernelFeatures(params, xy, map, params.hilbertmap.kernel);
-    calc_time(i) = toc; 
-    num_anchorpoints(i) = size(phi_x, 1);
-end
-
-figure(1);
-plot(num_anchorpoints, calc_time, 'ob-'); hold on;
-
-params.hilbertmap.kernel = 'sparse';
-resolution = 1:5:80;
-calc_time = zeros(size(resolution, 2), 1);
-num_anchorpoints = zeros(size(resolution));
-for i = 1:size(resolution, 2)
-    params.hilbertmap.resolution = resolution(i);
-    X = rand(num_samples, 1) * 2 + 1;
-    Y = rand(num_samples, 1) * 2 + 1;
-    xy = [X(:), Y(:)];
-    tic;
-    phi_x = kernelFeatures(params, xy, map, params.hilbertmap.kernel);
-    calc_time(i) = toc; 
-    num_anchorpoints(i) = size(phi_x, 1);
-end
-
-figure(1);
-plot(num_anchorpoints, calc_time, 'or-'); hold on;
-
-params.hilbertmap.kernel = 'rbf';
-resolution = 1:5:80;
-calc_time = zeros(size(resolution, 2), 1);
-num_anchorpoints = zeros(size(resolution));
-for i = 1:size(resolution, 2)
-    params.hilbertmap.resolution = resolution(i);
-    X = rand(num_samples, 1) * 2 + 1;
-    Y = rand(num_samples, 1) * 2 + 1;
-    xy = [X(:), Y(:)];
-    tic;
-    phi_x = kernelFeatures(params, xy, map, params.hilbertmap.kernel);
-    calc_time(i) = toc; 
-    num_anchorpoints(i) = size(phi_x, 1);
-end
-
-figure(1);
-plot(num_anchorpoints, calc_time, 'oc-'); hold on;
-
-title('kernel calc time vs number of anchor points');
-xlabel('Number of Anchor Points'); ylabel('Training Time [s]');
-legend({'linear', 'sparse', 'rbf'})
+% params.hilbertmap.kernel = 'threshold';
+% resolution = 1:5:80;
+% calc_time = zeros(size(resolution, 2), 1);
+% num_anchorpoints = zeros(size(resolution));
+% for i = 1:size(resolution, 2)
+%     params.hilbertmap.resolution = resolution(i);
+%     X = rand(num_samples, 1) * 2 + 1;
+%     Y = rand(num_samples, 1) * 2 + 1;
+%     xy = [X(:), Y(:)];
+%     tic;
+%     phi_x = kernelFeatures(params, xy, map, params.hilbertmap.kernel);
+%     calc_time(i) = toc; 
+%     num_anchorpoints(i) = size(phi_x, 1);
+% end
+% 
+% figure(1);
+% plot(num_anchorpoints, calc_time, 'ob-'); hold on;
+% 
+% params.hilbertmap.kernel = 'sparse';
+% resolution = 1:5:80;
+% calc_time = zeros(size(resolution, 2), 1);
+% num_anchorpoints = zeros(size(resolution));
+% for i = 1:size(resolution, 2)
+%     params.hilbertmap.resolution = resolution(i);
+%     X = rand(num_samples, 1) * 2 + 1;
+%     Y = rand(num_samples, 1) * 2 + 1;
+%     xy = [X(:), Y(:)];
+%     tic;
+%     phi_x = kernelFeatures(params, xy, map, params.hilbertmap.kernel);
+%     calc_time(i) = toc; 
+%     num_anchorpoints(i) = size(phi_x, 1);
+% end
+% 
+% figure(1);
+% plot(num_anchorpoints, calc_time, 'or-'); hold on;
+% 
+% params.hilbertmap.kernel = 'rbf';
+% resolution = 1:5:80;
+% calc_time = zeros(size(resolution, 2), 1);
+% num_anchorpoints = zeros(size(resolution));
+% for i = 1:size(resolution, 2)
+%     params.hilbertmap.resolution = resolution(i);
+%     X = rand(num_samples, 1) * 2 + 1;
+%     Y = rand(num_samples, 1) * 2 + 1;
+%     xy = [X(:), Y(:)];
+%     tic;
+%     phi_x = kernelFeatures(params, xy, map, params.hilbertmap.kernel);
+%     calc_time(i) = toc; 
+%     num_anchorpoints(i) = size(phi_x, 1);
+% end
+% 
+% figure(1);
+% plot(num_anchorpoints, calc_time, 'oc-'); hold on;
+% 
+% title('kernel calc time vs number of anchor points');
+% xlabel('Number of Anchor Points'); ylabel('Training Time [s]');
+% legend({'linear', 'sparse', 'rbf'})
 
 %% Benchmark on momentum methods
 % resolution = 1:5:80;
@@ -188,3 +188,22 @@ legend({'linear', 'sparse', 'rbf'})
 % title('Regression time vs number of anchor points');
 % xlabel('Number of Anchor Points'); ylabel('Training Time [s]');
 % legend('SGD', 'Momentum');
+
+%% Benchmark kernel mappings
+
+res = 0.5;
+[X, Y] = meshgrid(res:res:(map.XWorldLimits(2)-res), res:res:(map.YWorldLimits(2)-res));
+X = X(:);
+Y= Y(:);
+xy = [X, Y];
+
+X = rand(num_samples, 1) * 2 + 1;
+Y = rand(num_samples, 1) * 2 + 1;
+xy = [X(:), Y(:)];
+
+y = double(map.getOccupancy(xy));
+zero_mask = y < 1;
+y(zero_mask) = -1;
+
+wt = learn_hilbert_map(params, map, xy, y);
+plot_hilbertmap(params, wt, map, xy)

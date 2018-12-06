@@ -39,13 +39,20 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
     switch param.localgoal
         case 'nextbestview-hilbert'
             while true
-                dl = getMIGradient(param, map, goal, goal_vel, hilbertmap);
-                [goal, goal_vel] = updateLocalGoal(dl, goal, goal_vel, hilbertmap);
+                [goal, goal_vel, omega] = updateLocalGoal(param, map, goal, goal_vel, hilbertmap);
+                if abs(omega) < 0.03
+                    break;
+                end
             end
     end
 end
 
-function [goal, goal_vel] = updateLocalGoal(dl, goal, goal_vel, hilbertmap)
-    goal = goal + 100*dl;
-    goal_vel = goal_vel;
+function [goal, goal_vel, omega] = updateLocalGoal(param, map, goal, goal_vel, hilbertmap)
+    dl = getMIGradient(param, map, goal, goal_vel, hilbertmap);
+    curr_yaw = atan2(goal_vel(2), goal_vel(1));
+    yaw_vec = cross([goal_vel, 0], [dl, 0]);
+    omega = 10*yaw_vec(3);
+    goal = goal;
+    goal_vel = norm(goal_vel) * [cos(curr_yaw + omega), sin(curr_yaw+omega)];
+    
 end

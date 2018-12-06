@@ -1,15 +1,16 @@
 function [wt, time, hilbertmap] = learn_hilbert_map(param, binmap, hilbertmap, pose)
-%% Learn Kernel function from true binary occupancy map
-xy = hilbertmap.xy;
-y = hilbertmap.y;
-
-num_features = param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2);
-
-if nargin < 5 || isempty(hilbertmap.wt)
+if isempty(hilbertmap.wt)
+    num_features = param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2);
     wt_1 = zeros(num_features, 1);
 else
     wt_1 = hilbertmap.wt;
 end
+
+
+%% Learn Kernel function from true binary occupancy map
+xy = hilbertmap.xy;
+y = hilbertmap.y;
+
 
 %% Update weights
 switch param.mapping
