@@ -21,11 +21,11 @@ function dl = getMIGradient(param, map, pos, vel, hilbertmap)
     end
     dl = sum(dMI, 1);
     
-    figure(3);
-    show(map); hold on;
-    if ~isempty(arcpoints)
+%     figure(3);
+%     show(map); hold on;
+%     if ~isempty(arcpoints)
 %         plot(arcpoints(:, 1), arcpoints(:, 2), 'xr'); hold on;
-    end
-    plot(pos(1), pos(2), 'ob'); hold on;
-    plot([pos(1), pos(1)+1000*dl(1)], [pos(2), pos(2)+1000*dl(2)], 'g-'); hold on;
+%     end
+%     plot(pos(1), pos(2), 'ob'); hold on;
+%     plot([pos(1), pos(1)+1000*dl(1)], [pos(2), pos(2)+1000*dl(2)], 'g-'); hold on;
 end
