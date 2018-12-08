@@ -1,4 +1,4 @@
-function [T, path, path_vel, path_acc]=plan_trajectory(planner_type, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration)
+function [T, path, path_vel, path_acc]=plan_trajectory(planner_type, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, hilbert_map)
 %% Run Planner between start and endpoint depending on the planner type
 if nargin < 5
     start_velocity = [0.0, 0.0];    
@@ -8,6 +8,9 @@ if nargin < 6
 end
 if nargin < 7
     start_acceleration = [0.0, 0.0];
+end
+if nargin < 8
+    hilbert_map = [];
 end
 path_vel = [0.0, 0.0];
 path_acc = [0.0, 0.0];
@@ -35,7 +38,7 @@ switch planner_type
 
     case 'informativechomp'
 
-        trajectory = informative_chomp(binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration);
+        trajectory = informative_chomp(binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, hilbert_map);
         [T, path, path_vel, path_acc] = sample_trajectory(trajectory, 0.1);
 
     case 'primitive'
@@ -44,6 +47,3 @@ switch planner_type
 end
 
 end
-
-
-
