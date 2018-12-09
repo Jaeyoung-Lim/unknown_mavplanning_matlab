@@ -1,8 +1,11 @@
-function dH = getEntropyGradient(param, x_query, map, hilbertmap)
+function [dH, H] = getEntropyGradient(param, x_query, map, hilbertmap)
     epsilon = 1e-4;
     wt = hilbertmap.wt;
     p = occupancyProb(param, hilbertmap.wt, x_query, map);
+    % Calculate entropy
+    H = - p*log2(p) - (1-p) * log2(1 - p);
     
+    % Calculate derivative of entropy
     dphi = diff_kernelFeatures(param, x_query, map, param.hilbertmap.kernel);
     dp = p*(1-p)*wt'*dphi;
     if p < epsilon
