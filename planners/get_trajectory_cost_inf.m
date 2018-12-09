@@ -1,4 +1,4 @@
-function [cost, gradient] = get_trajectory_cost_inf(x0, trajectory, map, cost_map, cost_map_x, cost_map_y, Ms, D_Fs, A_invs, R_unordereds)
+function [cost, gradient] = get_trajectory_cost_inf(x0, trajectory, map, cost_map, cost_map_x, cost_map_y, Ms, D_Fs, A_invs, R_unordereds, localmap, hilbertmap, param)
 %GET_TRAJECTORY_COST Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -215,19 +215,35 @@ for i = 2:length(t)
   end
 end
 
-%% Get information gains
+%% Get information gains at end of segment
 J_inf = 0;
-for k = 1:trajectory.K
-    coeffs = A_invs{k}*Ms{k}*[D_Fs{k};D_Ps{k}];
-    % Calculate coeeficient values
-    
-    % Calculate end segment states from coeeficient values
-    
+for i = 1 : length(trajectory.segments)
+    segment_time = trajectory.segments(i).time;
+    t1 = segment_time;
+
+    for k = 1:trajectory.K
+        % Calculate coeeficient values
+        coeffs = A_invs{k}*Ms{k}*[D_Fs{k};D_Ps{k}];
+        coeffs_segment = coeffs((i-1)*(trajectory.N+1)+1:(i)*(trajectory.N+1));
+        % Need to reverse order. :)
+        p_coeffs = flipud(coeffs_segment);
+        pos1 = polyval(p_coeffs, t1);
+        vel1 = grad_time * A_der * coeffs;
+        % Calculate end segment states from coeeficient values
+        end_pos(k) = pos1;
+        end_vel(k) = vel1;
+    end
     % Calculate mutual information gain
+    [dl, l] = getMIGradient(param, localmap, end_pos, end_vel, hilbertmap);
     
-    % Calculate mutual information gradient
+    J_inf = J_inf + l;
     
-    
+    for j = 1:trajectory.K
+       % grad_term1 = dl * grad_vel_p * grad_map{k}
+        
+       % grad_term2 = dl * jacobian * dl * T*V* Lpp 
+       grad_inf{j} = dl(j) * grad_vel_p * grad_map{j}; 
+    end
 end
 
 %%
