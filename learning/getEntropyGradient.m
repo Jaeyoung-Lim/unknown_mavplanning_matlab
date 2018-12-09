@@ -11,7 +11,7 @@ function dH = getEntropyGradient(param, x_query, map, hilbertmap)
     if p > 1-epsilon
         p = 1-epsilon;
     end
-    dHdp = log((1-p)/p);
+    dHdp = log2((1-p)/p);
     dH = dHdp * dp;
     if isnan(dH)
         disp('wtf');
