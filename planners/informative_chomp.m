@@ -1,4 +1,4 @@
-function [trajectory] = informative_chomp(map, initpos, finalpos, initvel, finalvel, initacc)
+function [trajectory] = informative_chomp(param, map, initpos, finalpos, initvel, finalvel, initacc, localmap, hilbertmap)
 
 if nargin < 4
     initvel = [0.0, 0.0];
@@ -30,6 +30,6 @@ trajectory = estimate_trajectory_times(trajectory, v_max, a_max);
 trajectory = solve_trajectory(trajectory);
 
 %% Optimize path around obstacles.
-trajectory = optimize_trajectory_collisions(map, trajectory, 0);
+trajectory = optimize_trajectory_collisions_inf(map, trajectory, 0, 0, 0.1, localmap, hilbertmap, param);
 
 end

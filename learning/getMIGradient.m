@@ -1,4 +1,4 @@
-function dl = getMIGradient(param, map, pos, vel, hilbertmap)
+function [dl, l] = getMIGradient(param, map, pos, vel, hilbertmap)
     %% Calculate mutual information gradient from hilbertmap
     
     yaw = atan2(vel(2), vel(1));
@@ -8,6 +8,7 @@ function dl = getMIGradient(param, map, pos, vel, hilbertmap)
     perturbed_hilbertmap = hilbertmap;
     
     arcpoints = getObservationEdge(param, map, pose);
+    MI = zeros(size(arcpoints, 1), 1);
     dMI = zeros(size(arcpoints));
     perturbed_hilbertmap.xy = [perturbed_hilbertmap.xy; arcpoints];
     perturbed_hilbertmap.y = [perturbed_hilbertmap.y; -1*ones(size(arcpoints, 1), 1)];
@@ -15,11 +16,13 @@ function dl = getMIGradient(param, map, pos, vel, hilbertmap)
     
     for i = 1:size(arcpoints, 1)
         x_query = arcpoints(i, :);
-        dH = getEntropyGradient(param, x_query, map, hilbertmap);
-        dH_hat = getEntropyGradient(param, x_query, map, perturbed_hilbertmap);
+        [dH, H] = getEntropyGradient(param, x_query, map, hilbertmap);
+        [dH_hat, H_hat] = getEntropyGradient(param, x_query, map, perturbed_hilbertmap);
         dMI(i, :) = dH - dH_hat;
+        MI(i) = H - H_hat;
     end
     dl = sum(dMI, 1);
+    l = sum(MI, 1);
     
 %     figure(3);
 %     show(map); hold on;
