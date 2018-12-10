@@ -7,15 +7,15 @@ function arcpoints = getObservationEdge(param, map, pose)
     for i = 1:1:size(angles, 2)
 
         intsectionPts = rayIntersection(map, pose, angles(i), param.sensor.maxrange); % Generate rays
-        if isnan(intsectionPts)
-            [endpoints, ~] = raycast(map, pose, param.sensor.maxrange, angles(i));
+        if isnan(intsectionPts) % No intersecting points inside the map
+            endpoints = pose(1:2) + param.sensor.maxrange * [cos(angles(i)), sin(angles(i))];
         else
             [endpoints, ~] = raycast(map, pose(1:2), intsectionPts);
+            endpoints = grid2world(map, endpoints);
+        end
+        if isempty(endpoints)
+            disp('wtf');
         end
         arcpoints = [arcpoints; endpoints];
-    end
-    
-    if ~isempty(arcpoints)
-        arcpoints = grid2world(map, arcpoints);
     end
 end

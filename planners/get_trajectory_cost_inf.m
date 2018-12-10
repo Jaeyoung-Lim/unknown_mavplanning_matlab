@@ -6,7 +6,7 @@ function [cost, gradient] = get_trajectory_cost_inf(x0, trajectory, map, cost_ma
 
 w_der = 0.01;
 w_coll = 10;
-w_inf = 0.01;
+w_inf = 0.1;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -243,9 +243,17 @@ for i = 1 : length(trajectory.segments)
     % TODO: Unit vector jacobian
     jacobian_unit = jacobian_unitvector(end_vel);
     
+    current_time = segment_time;
+    grad_time = zeros(1, (trajectory.N+1) * (trajectory.num_elements-1));
+    grad_time((segment_index(i)-1)*(trajectory.N+1)+1:(segment_index(i))*(trajectory.N+1)) = ...
+      [current_time^0 current_time^1 current_time^2 ...
+      current_time^3 current_time^4 current_time^5 current_time^6 ...
+      current_time^7 current_time^8 current_time^9 current_time^10 ...
+      current_time^11];
+    
+    
     for j = 1:trajectory.K
        % grad_term1 = dl * grad_time * grad_map{k}
-       % TODO: grad_time is not correct
        grad_p_dp = grad_time * grad_map{k};       
        grad_inf_term1 = dl(j) * grad_p_dp;
        
