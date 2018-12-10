@@ -251,14 +251,15 @@ for i = 1 : length(trajectory.segments)
       current_time^7 current_time^8 current_time^9 current_time^10 ...
       current_time^11];
     
-    
     for j = 1:trajectory.K
        % grad_term1 = dl * grad_time * grad_map{k}
        grad_p_dp = grad_time * grad_map{k};       
        grad_inf_term1 = dl(j) * grad_p_dp;
+
        
        % grad_term2 = dl * jacobian * dl * T*V* Lpp
-       grad_inf_term2 = dl(j) * (jacobian_obspoint * jacobian_unit * (grad_vel_p * grad_map{j})')'; 
+       grad_vel_p = grad_time * A_der;
+       grad_inf_term2 = dl(j) * jacobian_obspoint(j, j) * jacobian_unit(j, j) * grad_vel_p * grad_map{j}; 
        grad_inf{j} = grad_inf_term1 + grad_inf_term2;
     end
 end

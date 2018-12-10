@@ -28,7 +28,9 @@ function [dl, l] = getMIGradient(param, map, pos, vel, hilbertmap)
 %     show(map); hold on;
 %     if ~isempty(arcpoints)
 %         plot(arcpoints(:, 1), arcpoints(:, 2), 'xr'); hold on;
+%         quiver(arcpoints(1, 1), arcpoints(2, 2), 100*dl(1), 100*dl(2), 'g-'); hold on;
 %     end
-%     plot(pos(1), pos(2), 'ob'); hold on;
-%     plot([pos(1), pos(1)+1000*dl(1)], [pos(2), pos(2)+1000*dl(2)], 'g-'); hold on;
+%     plot(pos(1), pos(2), 'ob'); hold off;
+    
+    
 end
