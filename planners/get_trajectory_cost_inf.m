@@ -6,7 +6,7 @@ function [cost, gradient] = get_trajectory_cost_inf(x0, trajectory, map, cost_ma
 
 w_der = 0.01;
 w_coll = 10;
-w_inf = 0.1;
+w_inf = 1;
 
 %w_der = 0.01;
 %w_coll = 10;

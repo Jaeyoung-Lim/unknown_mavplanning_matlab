@@ -6,7 +6,11 @@ else
     wt_1 = hilbertmap.wt;
 end
 
-
+if isempty(hilbertmap.xy)
+    time = 0;
+    wt = wt_1;
+    return;
+end
 %% Learn Kernel function from true binary occupancy map
 xy = hilbertmap.xy;
 y = hilbertmap.y;
@@ -23,12 +27,12 @@ record = [];
 iter = 0;
 tic;
 grad = zeros(size(wt_1));
-while true    
+while true
     [wt, grad] = updateWeights(param, wt_1, xy, y, binmap, grad);
     record = [record, norm(wt - wt_1)];
-    if norm(wt - wt_1) < 0.5
-        break;
-    end
+%     if norm(wt - wt_1) < 0.5
+%         break;
+%     end
     if iter > param.hilbertmap.max_iteration
         break;
     end
@@ -36,7 +40,8 @@ while true
     iter = iter + 1;
 end
 time = toc;
-% plot(vecnorm(record, 2, 1));
+figure(4);
+plot(vecnorm(record, 2, 1));
 fprintf('Training Time: %d\n',time)
 
 end

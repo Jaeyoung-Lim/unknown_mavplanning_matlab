@@ -14,7 +14,6 @@ hilbertmap = struct('enable', params.hilbertmap.enable, ...
 dt = 0.1;
 T = 0;
 failure = false;
-hilbert_map = [];
 xy = [];
 y = [];
 
