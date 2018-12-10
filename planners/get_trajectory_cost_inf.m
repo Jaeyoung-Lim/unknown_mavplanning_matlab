@@ -6,7 +6,7 @@ function [cost, gradient] = get_trajectory_cost_inf(x0, trajectory, map, cost_ma
 
 w_der = 0.01;
 w_coll = 10;
-w_inf = 0.0;
+w_inf = 0.01;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -236,13 +236,22 @@ for i = 1 : length(trajectory.segments)
     % Calculate mutual information gain
     [dl, l] = getMIGradient(param, localmap, end_pos, end_vel, hilbertmap);
     
-    J_inf = J_inf + l;
+    J_inf = J_inf - l;
+    
+    per_vel = [end_vel(2), -end_vel(1)];
+    jacobian_obspoint = param.sensor.maxrange * (per_vel'*per_vel);
+    % TODO: Unit vector jacobian
+    jacobian_unit = jacobian_unitvector(end_vel);
     
     for j = 1:trajectory.K
-       % grad_term1 = dl * grad_vel_p * grad_map{k}
-        
-       % grad_term2 = dl * jacobian * dl * T*V* Lpp 
-       grad_inf{j} = dl(j) * grad_vel_p * grad_map{j}; 
+       % grad_term1 = dl * grad_time * grad_map{k}
+       % TODO: grad_time is not correct
+       grad_p_dp = grad_time * grad_map{k};       
+       grad_inf_term1 = dl(j) * grad_p_dp;
+       
+       % grad_term2 = dl * jacobian * dl * T*V* Lpp
+       grad_inf_term2 = dl(j) * (jacobian_obspoint * jacobian_unit * (grad_vel_p * grad_map{j})')'; 
+       grad_inf{j} = grad_inf_term1 + grad_inf_term2;
     end
 end
 
@@ -275,4 +284,10 @@ for k = 1:trajectory.K
 end
 
 %plot(p(:, 1), p(:, 2));
+end
+
+function jac = jacobian_unitvector(vector)
+    norm_vector = norm(vector);
+    jac = (1/norm_vector) * [(vector(2) / norm_vector)^2,                  - vector(2);
+                                             - vector(1), (vector(2) / norm_vector)^2];
 end
