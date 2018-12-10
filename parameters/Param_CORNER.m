@@ -32,7 +32,7 @@ classdef Param_CORNER
                           'plot', true);
 
         sensor = struct('fov', 0.5*pi(), ...
-                        'maxrange', 10);
+                        'maxrange', 5);
         
         mav = struct('size', 0.5);
         

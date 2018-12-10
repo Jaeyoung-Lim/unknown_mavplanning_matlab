@@ -1,4 +1,4 @@
-function [trajectory_out, iterations, final_cost, initial_cost] = optimize_trajectory_collisions_inf(map, trajectory, visualize, random_perturb, random_perturb_mag)
+function [trajectory_out, iterations, final_cost, initial_cost] = optimize_trajectory_collisions_inf(map, trajectory, visualize, random_perturb, random_perturb_mag, localmap, hilbertmap, param)
 
 if (nargin < 3)
   visualize = 1;
@@ -62,10 +62,10 @@ if (random_perturb)
 end
 
 %% Get the costs of the initial trajectory.
-[initial_cost, initial_grad] = get_trajectory_cost_inf(x0, trajectory, map,  cost_map, cost_map_x, cost_map_y, Ms, D_Fs, A_invs, R_unordereds);
+[initial_cost, initial_grad] = get_trajectory_cost_inf(x0, trajectory, map,  cost_map, cost_map_x, cost_map_y, Ms, D_Fs, A_invs, R_unordereds, localmap, hilbertmap, param);
 
 %%
-cost_func = @(x0)get_trajectory_cost(x0, trajectory, map,  cost_map, cost_map_x, cost_map_y, Ms, D_Fs, A_invs, R_unordereds);
+cost_func = @(x0)get_trajectory_cost_inf(x0, trajectory, map,  cost_map, cost_map_x, cost_map_y, Ms, D_Fs, A_invs, R_unordereds, localmap, hilbertmap, param);
 tic
 
 %options = optimoptions('fminunc','Algorithm','trust-region','GradObj','on','Display','iter','DerivativeCheck','off', 'TolFun', 1e-4);
