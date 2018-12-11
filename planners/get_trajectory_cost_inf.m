@@ -288,7 +288,7 @@ cost = w_der * J_der + w_coll * J_coll + w_inf * J_inf;
 gradient = [];
 current_index = 0;
 for k = 1:trajectory.K
-  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_inf * grad_inf{k};
+  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} - w_inf * grad_inf{k};
   current_index = current_index + length(grad_coll{k});
 end
 

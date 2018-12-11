@@ -10,12 +10,11 @@ localmap_obs = get_localmap(params.mapping, binmap_true, localmap_obs, params, m
 
 % Plan global trajectory
 globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, localmap_obs);
-
+[hilbertmap.wt, ~] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
 while true        
     %% Replan Local trajectory from trajectory replanning rate
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
-    [hilbertmap.wt, ~] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
 
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs, hilbertmap); % Parse intermediate goal from global path
         
@@ -41,6 +40,7 @@ while true
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);
         
         if params.hilbertmap.enable
+            % Presample observations from the map
             [hilbertmap.xy, hilbertmap.y] = sampleObservations(free_space, occupied_space, hilbertmap.xy, hilbertmap.y);
         end
         
