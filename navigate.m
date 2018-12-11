@@ -10,12 +10,13 @@ localmap_obs = get_localmap(params.mapping, binmap_true, localmap_obs, params, m
 
 % Plan global trajectory
 globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, localmap_obs);
-[hilbertmap, ~] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
+
 while true        
     %% Replan Local trajectory from trajectory replanning rate
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(localmap_obs, params, mav.pose);
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs, hilbertmap); % Parse intermediate goal from global path
+        
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory(params.planner, cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration, localmap_obs, hilbertmap, params);
     %%    
     if detectLocalOptima(localpath)
@@ -38,7 +39,6 @@ while true
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);
         
         if params.hilbertmap.enable
-            % Presample observations from the map
             [hilbertmap.xy, hilbertmap.y] = sampleObservations(free_space, occupied_space, hilbertmap.xy, hilbertmap.y);
         end
         
@@ -51,7 +51,7 @@ while true
     % Discard samples that are outside the map\
     if hilbertmap.enable
         hilbertmap = discardObservations(params, hilbertmap, mav.pose);
-        [hilbertmap, learning_time] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
+        [hilbertmap.wt, learning_time] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
         
         regression_time = [regression_time, learning_time];
         plot_hilbertmap(params, hilbertmap.wt, localmap_obs, hilbertmap.xy, hilbertmap.y, mav.pose);
