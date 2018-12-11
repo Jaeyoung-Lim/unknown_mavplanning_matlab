@@ -1,8 +1,11 @@
-function plot_hilbertmap(param, wt, binmap, xy, y, pose)
+function plot_hilbertmap(param, hilbertmap, binmap, pose)
     if ~param.hilbertmap.plot
         return;
     end    
     figure(2);
+    xy = hilbertmap.xy;
+    y = hilbertmap.y;
+    wt = hilbertmap.wt;
 
     tic;
     map = render_hilbertmap(param, wt, binmap);

@@ -1,4 +1,4 @@
-function [wt, time, hilbertmap] = learn_hilbert_map(param, binmap, hilbertmap, pose)
+function [hilbertmap, time] = learn_hilbert_map(param, binmap, hilbertmap, pose)
 if isempty(hilbertmap.wt)
     num_features = param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2);
     wt_1 = zeros(num_features, 1);
@@ -7,15 +7,14 @@ else
 end
 
 
-%% Learn Kernel function from true binary occupancy map
+hilbertmap = discardObservations(param, hilbertmap, pose); 
+
 xy = hilbertmap.xy;
 y = hilbertmap.y;
-
 
 %% Update weights
 switch param.mapping
     case 'local'
-       hilbertmap = discardObservations(param, hilbertmap, pose); 
        xy = xy - pose(1:2);
 end
 
@@ -29,14 +28,15 @@ while true
     if norm(wt - wt_1) < 0.5
         break;
     end
+    wt_1 = wt;
+    iter = iter + 1;
     if iter > param.hilbertmap.max_iteration
         break;
     end
-    wt_1 = wt;
-    iter = iter + 1;
 end
+hilbertmap.wt = wt;
 time = toc;
 % plot(vecnorm(record, 2, 1));
-fprintf('Training Time: %d\n',time)
+fprintf('Training Time: %d\t Number of Samples: %d\t Number of Features: %d\n',time, size(y, 1), size(wt, 1))
 
 end
