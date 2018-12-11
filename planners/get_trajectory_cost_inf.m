@@ -6,7 +6,7 @@ function [cost, gradient] = get_trajectory_cost_inf(x0, trajectory, map, cost_ma
 
 w_der = 0.01;
 w_coll = 10;
-w_inf = 1;
+w_inf = 0.1;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -288,7 +288,7 @@ cost = w_der * J_der + w_coll * J_coll + w_inf * J_inf;
 gradient = [];
 current_index = 0;
 for k = 1:trajectory.K
-  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} - w_inf * grad_inf{k};
+  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_inf * grad_inf{k};
   current_index = current_index + length(grad_coll{k});
 end
 
