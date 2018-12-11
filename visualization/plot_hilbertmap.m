@@ -18,7 +18,8 @@ function plot_hilbertmap(param, wt, binmap, xy, y, pose)
             plot(xy((y > 0), 1), xy((y > 0), 2), 'xr'); hold on;
             plot(xy((y < 0), 1), xy((y < 0), 2), 'xb'); hold off;
         case 'increment'
-            plot(xy(:, 1), xy(:, 2), 'xr'); hold off;
+            plot(xy((y > 0), 1), xy((y > 0), 2), 'xr'); hold on;
+            plot(xy((y < 0), 1), xy((y < 0), 2), 'xb'); hold off;
     end
     subplot(2, 2, 2);
     imshow(flipud(map'), 'InitialMagnification', 400);
