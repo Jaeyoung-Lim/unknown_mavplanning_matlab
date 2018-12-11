@@ -1,4 +1,4 @@
-function [wt, time, hilbertmap] = learn_hilbert_map(param, binmap, hilbertmap, pose)
+function [hilbertmap, time] = learn_hilbert_map(param, binmap, hilbertmap, pose)
 if isempty(hilbertmap.wt)
     num_features = param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2);
     wt_1 = zeros(num_features, 1);
@@ -8,7 +8,6 @@ end
 
 if isempty(hilbertmap.xy)
     time = 0;
-    wt = wt_1;
     return;
 end
 %% Learn Kernel function from true binary occupancy map
@@ -41,6 +40,7 @@ while true
         break;
     end
 end
+hilbertmap.wt = wt;
 time = toc;
 figure(4);
 plot(vecnorm(record, 2, 1));
