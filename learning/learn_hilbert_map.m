@@ -7,6 +7,12 @@ else
 end
 
 
+if isempty(hilbertmap.xy)
+    hilbertmap.wt = wt_1;
+    time = 0;
+    return;
+end
+
 
 %% Update weights
 switch param.mapping
@@ -40,7 +46,7 @@ end
 hilbertmap.wt = wt;
 time = toc;
 % plot(vecnorm(record, 2, 1));
-fprintf('Training Time: %d\t Number of Samples: %d\t Number of Features: %d\n',time, size(y, 1), size(wt, 1))
+fprintf('Training Time: %d\t Number of Samples: %d\t Number of Features: %d\n',time, size(sample_xy, 1), size(wt, 1))
 
 end
 
