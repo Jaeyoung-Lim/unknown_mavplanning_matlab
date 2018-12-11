@@ -4,10 +4,6 @@ if nargin < 6
     occupancy_map = [];
 end
 
-if isempty(hilbertmap.wt)
-    num_features = param.hilbertmap.resolution^2 * binoccupancy_map.XWorldLimits(2) * binoccupancy_map.YWorldLimits(2);
-    hilbertmap.wt = zeros(num_features, 1);
-end
 % Coordinate transform incase of local goal
 switch param.mapping
     case 'local'

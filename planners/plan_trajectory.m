@@ -10,9 +10,12 @@ if nargin < 7
     start_acceleration = [0.0, 0.0];
 end
 if nargin < 8
-    hilbert_map = [];
+    localmap = [];
 end
 if nargin < 9
+    hilbert_map = [];
+end
+if nargin < 10
     param = [];
 end
 path_vel = [0.0, 0.0];
