@@ -22,8 +22,9 @@ record = [];
 iter = 0;
 tic;
 grad = zeros(size(wt_1));
-while true    
-    [wt, grad] = updateWeights(param, wt_1, xy, y, binmap, grad);
+while true
+    [sample_xy, sample_y] = drawObservation(xy, y, param.hilbertmap.num_samples);
+    [wt, grad] = updateWeights(param, wt_1, sample_xy, sample_y, binmap, grad);
     record = [record, norm(wt - wt_1)];
     if norm(wt - wt_1) < 0.5
         break;
@@ -39,4 +40,10 @@ time = toc;
 % plot(vecnorm(record, 2, 1));
 fprintf('Training Time: %d\t Number of Samples: %d\t Number of Features: %d\n',time, size(y, 1), size(wt, 1))
 
+end
+
+function [sample_xy, sample_y] = drawObservation(xy, y, num_samples)
+    idx = randi(size(xy, 1), num_samples, 1);
+    sample_xy = xy(idx, :);
+    sample_y = y(idx);
 end
