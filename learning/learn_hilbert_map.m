@@ -7,15 +7,19 @@ else
 end
 
 
-hilbertmap = discardObservations(param, hilbertmap, pose); 
-
-xy = hilbertmap.xy;
-y = hilbertmap.y;
 
 %% Update weights
 switch param.mapping
     case 'local'
-       xy = xy - pose(1:2);
+        hilbertmap = discardObservations(param, hilbertmap, pose); 
+
+        xy = hilbertmap.xy;
+        y = hilbertmap.y;
+        xy = xy - pose(1:2);
+    otherwise
+        xy = hilbertmap.xy;
+        y = hilbertmap.y;
+
 end
 
 record = [];
@@ -26,9 +30,7 @@ while true
     [sample_xy, sample_y] = drawObservation(xy, y, param.hilbertmap.num_samples);
     [wt, grad] = updateWeights(param, wt_1, sample_xy, sample_y, binmap, grad);
     record = [record, norm(wt - wt_1)];
-    if norm(wt - wt_1) < 0.5
-        break;
-    end
+
     wt_1 = wt;
     iter = iter + 1;
     if iter > param.hilbertmap.max_iteration
