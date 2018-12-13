@@ -38,7 +38,7 @@ classdef Param_CORNER
         mav = struct('size', 0.5);
         
         % Planner
-        planner = 'chomp'
+        planner = 'informativechomp'
         plan_horizon = 5;
         update_rate = 1;        
         

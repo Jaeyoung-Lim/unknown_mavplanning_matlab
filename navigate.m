@@ -11,6 +11,7 @@ localmap_obs = get_localmap(params.mapping, binmap_true, localmap_obs, params, m
 % Plan global trajectory
 globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, localmap_obs);
 [hilbertmap, ~] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
+
 while true        
     %% Replan Local trajectory from trajectory replanning rate
     local_start = mav.pose(1:2);

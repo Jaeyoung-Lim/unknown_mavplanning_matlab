@@ -6,7 +6,7 @@ function [cost, gradient] = get_trajectory_cost_inf(x0, trajectory, map, cost_ma
 
 w_der = 0.01;
 w_coll = 10;
-w_inf = 0.1;
+w_inf = 1;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -235,14 +235,13 @@ for i = 1 : length(trajectory.segments)
     end
     % Calculate mutual information gain
     [dl, l] = getMIGradient(param, localmap, end_pos, end_vel, hilbertmap);
+    yaw = atan2(end_vel(2), end_vel(1));
+
+    grad_mi_yaw = param.sensor.maxrange * dot([-sin(yaw), cos(yaw)], dl);
+    dyaw_dv = [-end_vel(2) / norm(end_vel)^2, end_vel(1) / norm(end_vel)^2];
     
-    J_inf = J_inf - l;
-    
-    per_vel = [end_vel(2), -end_vel(1)];
-    jacobian_obspoint = param.sensor.maxrange * (per_vel'*per_vel);
-    % TODO: Unit vector jacobian
-    jacobian_unit = jacobian_unitvector(end_vel);
-    
+    J_inf = J_inf + l;
+            
     current_time = segment_time;
     grad_time = zeros(1, (trajectory.N+1) * (trajectory.num_elements-1));
     grad_time((segment_index(i)-1)*(trajectory.N+1)+1:(segment_index(i))*(trajectory.N+1)) = ...
@@ -251,15 +250,15 @@ for i = 1 : length(trajectory.segments)
       current_time^7 current_time^8 current_time^9 current_time^10 ...
       current_time^11];
     
+    
     for j = 1:trajectory.K
        % grad_term1 = dl * grad_time * grad_map{k}
        grad_p_dp = grad_time * grad_map{k};       
        grad_inf_term1 = dl(j) * grad_p_dp;
-
        
        % grad_term2 = dl * jacobian * dl * T*V* Lpp
        grad_vel_p = grad_time * A_der;
-       grad_inf_term2 = dl(j) * jacobian_obspoint(j, j) * jacobian_unit(j, j) * grad_vel_p * grad_map{j}; 
+       grad_inf_term2 = grad_mi_yaw * dyaw_dv(j) * grad_vel_p * grad_map{j}; 
        grad_inf{j} = grad_inf_term1 + grad_inf_term2;
     end
 end
@@ -282,21 +281,15 @@ grad_coll{1}';
 grad_coll{2}';
 
 % TODO: add weights.
-cost = w_der * J_der + w_coll * J_coll + w_inf * J_inf;
+cost = w_der * J_der + w_coll * J_coll - w_inf * J_inf;
 
 % Stack the gradients back.
 gradient = [];
 current_index = 0;
 for k = 1:trajectory.K
-  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_inf * grad_inf{k};
+  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} - w_inf * grad_inf{k};
   current_index = current_index + length(grad_coll{k});
 end
 
 %plot(p(:, 1), p(:, 2));
-end
-
-function jac = jacobian_unitvector(vector)
-    norm_vector = norm(vector);
-    jac = (1/norm_vector) * [(vector(2) / norm_vector)^2,                  - vector(2);
-                                             - vector(1), (vector(2) / norm_vector)^2];
 end
