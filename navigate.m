@@ -10,6 +10,7 @@ localmap_obs = get_localmap(params.mapping, binmap_true, localmap_obs, params, m
 
 % Plan global trajectory
 globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, localmap_obs);
+[hilbertmap, ~] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
 
 while true        
     %% Replan Local trajectory from trajectory replanning rate
@@ -39,6 +40,7 @@ while true
         [localmap_obs, ~, free_space, occupied_space] = get_localmap(params.mapping, binmap_true, localmap_obs, params, mav.pose);
         
         if params.hilbertmap.enable
+            % Subsample the observations to store in bin
             [hilbertmap.xy, hilbertmap.y] = sampleObservations(free_space, occupied_space, hilbertmap.xy, hilbertmap.y);
         end
         
@@ -50,11 +52,8 @@ while true
     end
     % Discard samples that are outside the map\
     if hilbertmap.enable
-        hilbertmap = discardObservations(params, hilbertmap, mav.pose);
-        [hilbertmap.wt, learning_time] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
-        
-        regression_time = [regression_time, learning_time];
-        plot_hilbertmap(params, hilbertmap.wt, localmap_obs, hilbertmap.xy, hilbertmap.y, mav.pose);
+        [hilbertmap, ~] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
+        plot_hilbertmap(params, hilbertmap, localmap_obs, mav.pose);
     end
     if isCollision(mav.pose(1:2), binmap_true)
        failure = true;
