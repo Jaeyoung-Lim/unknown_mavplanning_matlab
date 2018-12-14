@@ -1,4 +1,4 @@
-function dphi_hat = diff_kernelFeatures(param, x_query, map, option)
+function [dphi_hat, phi_hat] = diff_kernelFeatures(param, x_query, map, option)
     % X : Query point
     % X_data : Sample points
     % Create data from binary occupancy points
@@ -12,7 +12,7 @@ function dphi_hat = diff_kernelFeatures(param, x_query, map, option)
    
    switch option
        case 'rbf'
-           dphi_hat = diff_kRadial(x_query, xy, param.hilbertmap.radius);
+           [dphi_hat, phi_hat] = diff_kRadial(x_query, xy, param.hilbertmap.radius);
        case 'sparse'
            dphi_hat = diff_kSparse(x_query, xy, param.hilbertmap.radius);
        case 'threshold'
@@ -21,13 +21,13 @@ function dphi_hat = diff_kernelFeatures(param, x_query, map, option)
 
 end
 
-function dk = diff_kRadial(x, x_hat, radius)
+function [dk, k] = diff_kRadial(x, x_hat, radius)
     phi_hat = kRadial(x, x_hat, radius);
     delta_x = x-x_hat;
-    dk = ( -1/(radius^2) ) * phi_hat .*delta_x;
+    k = phi_hat;
+    dk = ( -1/(0.5*radius^2) ) * phi_hat .*delta_x;
     
 end
-
 
 function k = diff_kSparse(x, x_hat, radius)
     k= zeros(size(x_hat, 1), 1, size(x, 1));
