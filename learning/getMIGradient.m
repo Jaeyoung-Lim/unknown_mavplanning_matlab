@@ -10,14 +10,11 @@ function [dl, l] = getMIGradient(param, map, pos, vel, hilbertmap)
     arcpoints = getObservationEdge(param, map, pose);
     MI = zeros(size(arcpoints, 1), 1);
     dMI = zeros(size(arcpoints));
-%     perturbed_hilbertmap.xy = [perturbed_hilbertmap.xy; arcpoints];
-%     perturbed_hilbertmap.y = [perturbed_hilbertmap.y; -1*ones(size(arcpoints, 1), 1)];
 
     perturbed_hilbertmap.xy = arcpoints;
     perturbed_hilbertmap.y = zeros(size(arcpoints, 1), 1);
     for i = 1:size(arcpoints, 1)
-%         p = occupancyProb(param, hilbertmap.wt, arcpoints(i, :), map);
-        p = 0.2;
+        p = 0.2; %%NOTE: This needs closer attention
         perturbed_hilbertmap.y(i) = log(p/(1-p));
     end
 
@@ -44,7 +41,12 @@ function [dl, l] = getMIGradient(param, map, pos, vel, hilbertmap)
     end
     dl = sum(dMI, 1);
     l = sum(MI, 1);
-    
+    if isempty(dl)
+        dl = [0.0, 0.0];
+    end
+    if isempty(l)
+        l = 0;
+    end
     figure(300);
     show(map); hold on;
     if ~isempty(arcpoints)
