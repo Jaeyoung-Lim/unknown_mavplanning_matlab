@@ -54,7 +54,7 @@ trajectory = add_vertex_to_trajectory(trajectory, 3*(start_point+goal_point)/4, 
 
 %trajectory = add_vertex_to_trajectory(trajectory, 3*(start_point+goal_point)/4, 0, 1);
 
-trajectory = add_vertex_to_trajectory(trajectory, goal_point, 1);
+trajectory = add_vertex_to_trajectory(trajectory, goal_point, 0, 1);
 
 % Estimate segment times.
 trajectory = estimate_trajectory_times(trajectory, v_max, a_max);

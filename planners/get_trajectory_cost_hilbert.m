@@ -6,6 +6,7 @@ function [cost, gradient] = get_trajectory_cost_hilbert(x0, trajectory, map, cos
 
 w_der = 0.01;
 w_coll = 10;
+w_goal = 5;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -228,6 +229,17 @@ for i = 2:length(t)
   end
 end
 
+%% Get Goal Cost
+J_goal = 0;
+
+traj_end = p(end, :);
+J_goal = norm([3.5, 3.5] - traj_end);
+dJ_goal = traj_end - [3.5, 3.5] ;
+for k = 1:trajectory.K
+    grad_p_dp = grad_time * grad_map{k};
+    grad_goal{k} = dJ_goal(k)* grad_p_dp;
+end
+
 %%
 
 x0;
@@ -245,15 +257,15 @@ grad_coll{1}';
 grad_coll{2}';
 
 % TODO: add weights.
-cost = w_der * J_der + w_coll * J_coll;
+cost = w_der * J_der + w_coll * J_coll + w_goal * J_goal;
 
 % Stack the gradients back.
 gradient = [];
 current_index = 0;
 for k = 1:trajectory.K
-  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k};
+  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_goal * grad_goal{k};
   current_index = current_index + length(grad_coll{k});
 end
-
-%plot(p(:, 1), p(:, 2));
+figure(500);
+plot(p(:, 1), p(:, 2)); hold on;
 end
