@@ -10,16 +10,16 @@ clc; clear all; close all;
 
 % Parameters
 % parameterfile = Param_TINYRANDOMFOREST;
-% parameterfile = Param_RANDOMFOREST;
+parameterfile = Param_RANDOMFOREST;
 % parameterfile = Param_LOCALRANDOMFOREST;
 % parameterfile = Param_CORRIDOR;
 % parameterfile = Param_LOCALCORRIDOR;
-parameterfile = Param_CORNER;
+% parameterfile = Param_CORNER;
 % parameterfile = Param_LOCALCORNER
 
 num_trials = 3; % Number of trials for statistics
 Test_planner = {'disable'}; % Configuration for different test sets
-Test_goalselection = {'nextbestview-hilbert'};
+Test_goalselection = {'nextbestview'};
 
 
 %% Initialize variables for statistics

@@ -24,7 +24,7 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
                 switch param.localgoal
                     case 'nextbestview'
                         we = 0.01;
-                        wg = 1;
+                        wg = 100;
                         sample_yaw = atan2(sample_pos(2) - mav_pos(2), sample_pos(1) - mav_pos(1)); % From Oleynikova 2017
                         vel = 0.0;
                         sample_pose = [sample_pos, sample_yaw];

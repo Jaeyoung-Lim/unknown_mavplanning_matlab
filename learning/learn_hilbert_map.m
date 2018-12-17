@@ -49,8 +49,8 @@ time = toc;
 end
 
 function [sample_xy, sample_y] = drawObservation(xy, y, num_samples)
-%     idx = randi(size(xy, 1), min(num_samples, size(xy, 1)), 1);
-    idx = randi(size(xy, 1), num_samples, 1);
+    idx = randi(size(xy, 1), min(num_samples, size(xy, 1)), 1);
+%     idx = randi(size(xy, 1), num_samples, 1);
     sample_xy = xy(idx, :);
     sample_y = y(idx);
 end
