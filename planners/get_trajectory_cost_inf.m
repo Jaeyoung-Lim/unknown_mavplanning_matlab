@@ -4,9 +4,9 @@ function [cost, gradient] = get_trajectory_cost_inf(x0, trajectory, map, cost_ma
 
 %x0
 
-w_der = 0.01;
-w_coll = 10;
-w_inf = 1;
+w_der = 1;
+w_coll = 1;
+w_inf = 10;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -236,7 +236,7 @@ for i = 1 : length(trajectory.segments)
     % Calculate mutual information gain
     [dl, l] = getMIGradient(param, localmap, end_pos, end_vel, hilbertmap);
     yaw = atan2(end_vel(2), end_vel(1));
-
+    
     grad_mi_yaw = param.sensor.maxrange * dot([-sin(yaw), cos(yaw)], dl);
     dyaw_dv = [-end_vel(2) / norm(end_vel)^2, end_vel(1) / norm(end_vel)^2];
     
@@ -257,9 +257,10 @@ for i = 1 : length(trajectory.segments)
        grad_inf_term1 = dl(j) * grad_p_dp;
        
        % grad_term2 = dl * jacobian * dl * T*V* Lpp
-       grad_vel_p = grad_time * A_der;
-       grad_inf_term2 = grad_mi_yaw * dyaw_dv(j) * grad_vel_p * grad_map{j}; 
-       grad_inf{j} = grad_inf_term1 + grad_inf_term2;
+%        grad_vel_p = grad_time * A_der;
+%        grad_inf_term2 = grad_mi_yaw * dyaw_dv(j) * grad_vel_p * grad_map{j}; 
+%        grad_inf{j} = grad_inf_term1 + grad_inf_term2;
+       grad_inf{j} = grad_inf_term1;
     end
 end
 

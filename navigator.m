@@ -19,7 +19,7 @@ parameterfile = Param_CORNER;
 
 num_trials = 3; % Number of trials for statistics
 Test_planner = {'disable'}; % Configuration for different test sets
-Test_goalselection = {'nextbestview'};
+Test_goalselection = {'nextbestview-hilbert'};
 
 
 %% Initialize variables for statistics

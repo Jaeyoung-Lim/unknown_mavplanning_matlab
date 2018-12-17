@@ -53,21 +53,26 @@ function [goal, goal_vel] = getNextBestView(param, binmap, pose, global_goal, ma
             
             while true % Update intermediate goal point with gradients
                 [dl, l] = getMIGradient(param, map, goal, goal_vel, hilbertmap); %Information cost
-                [dg, g] = getGoalGradient(goal); % Goal directed cost
-                goal = goal+100*dl;
-                R = we * l + wg * g;
-                dR = we * dl + wg * dg;
-                                
+                [dg, g] = getGoalGradient(mav_pos, goal, global_goal, r); % Goal directed cost
+                
+                R = we * (-l) + wg * g;
+                dR = we * (-dl) + wg * dg;
+                % Limit goal update to within map
+                int_goal = goal+ 10 * dR;
+                if binmap.getOccupancy(goal)
+                    goal = int_goal;                
+                end
+                
                 fprintf('goalcost: %d infcost: %d ratio: %d\n', l, g, l/g);
-                if norm(dR) <= 1e-4
+                if norm(goal - int_goal) <= 1e-1
                     break;
                 end
             end
     end
 end
 
-function [dg, g] = getGoalGradient(goal)
+function [dg, g] = getGoalGradient(mav_pos, goal, global_goal, r)
     goal_dist = norm(global_goal-mav_pos) + r;
     g  = (goal_dist  - norm(global_goal - goal))/goal_dist;
-
+    dg = (global_goal - goal)/goal_dist;
 end

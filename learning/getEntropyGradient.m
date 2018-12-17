@@ -10,7 +10,7 @@ function [dH, H] = getEntropyGradient(param, x_query, map, hilbertmap)
     % Calculate derivative of entropy
     [dphi, phi] = diff_kernelFeatures(param, x_query, map, param.hilbertmap.kernel);
     p = 1-1/(1+exp(dot(wt, phi)));
-    dp = p*(1-p)*wt'*dphi;
+    dp = (-1) * p*(1-p)*wt'*dphi;
     
     if p < epsilon
         p = epsilon;

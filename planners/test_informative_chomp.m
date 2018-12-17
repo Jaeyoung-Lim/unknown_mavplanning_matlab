@@ -22,6 +22,9 @@ goal_point = goal_pos;
 % setOccupancy(map, vertcat(start_point, goal_point, ...
 %   start_point+0.05, goal_point+0.05, start_point-0.05, goal_point-0.05), 0);
 
+hilbertmap.wt = [];
+hilbertmap.xy = [];
+hilbertmap.y = [];
 
 %% Get Local map from start point
 pose = [start_point, pi()/2];
@@ -29,17 +32,17 @@ pose = [start_point, pi()/2];
 localmap_obs = initlocalmap(param);
 [localmap_obs, ~, free_space, occupied_space] = get_localmap(param.mapping, map, localmap_obs, param, pose);
 
+for i = 1:10
+    pose(1:2) = start_point + i/10*[0. 10.0];
+    [localmap_obs, ~, free_space, occupied_space] = get_localmap(param.mapping, map, localmap_obs, param, pose);
+    [hilbertmap.xy, hilbertmap.y] = sampleObservations(free_space, occupied_space, hilbertmap.xy, hilbertmap.y);
+end
+
+pose = [start_point, pi()/2];
 
 %% Learn Hilbert map
-if param.hilbertmap.enable
-
-    hilbertmap.wt = [];
-    hilbertmap.xy = [];
-    hilbertmap.y = [];
-    [hilbertmap.xy, hilbertmap.y] = sampleObservations(free_space, occupied_space, hilbertmap.xy, hilbertmap.y);
 
     hilbertmap = learn_hilbert_map(param, map, hilbertmap);
-end
 %% Get a straight line plan.
 K = 2; % Number of dimensions.
 N = 11; % Is equivalent to N = 12 in Markus code
