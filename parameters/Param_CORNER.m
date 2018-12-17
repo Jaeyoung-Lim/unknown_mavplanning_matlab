@@ -38,13 +38,14 @@ classdef Param_CORNER
         mav = struct('size', 0.5);
         
         % Planner
-        planner = 'informativechomp'
+        planner = struct('type', 'chomp', ...
+                         'num_segments', 1);
         plan_horizon = 5;
         update_rate = 1;        
         
         global_planner = 'optimistic';
         globalreplan = true;
-        localgoal = 'nextbestview-hilbert'
+        localgoal = 'nextbestview'
         
         start_point = [5.0 5.0];
         goal_point = [15.0 15.0];

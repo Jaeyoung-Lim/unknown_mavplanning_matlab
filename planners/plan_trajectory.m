@@ -1,4 +1,4 @@
-function [T, path, path_vel, path_acc]=plan_trajectory(planner_type, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, localmap, hilbert_map, param)
+function [T, path, path_vel, path_acc]=plan_trajectory(param, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, localmap, hilbert_map)
 %% Run Planner between start and endpoint depending on the planner type
 if nargin < 5
     start_velocity = [0.0, 0.0];    
@@ -12,9 +12,8 @@ end
 if nargin < 8
     hilbert_map = [];
 end
-if nargin < 9
-    param = [];
-end
+
+planner_type = param.planner.type;
 path_vel = [0.0, 0.0];
 path_acc = [0.0, 0.0];
 

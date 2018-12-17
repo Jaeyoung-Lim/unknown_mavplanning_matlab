@@ -3,7 +3,7 @@ function arcpoints = getObservationEdge(param, map, pose)
     arcpoints = [];
     
     scan_resolution = min(1/(param.sensor.maxrange*param.localmap.resolution), (1/param.localmap.height*param.localmap.resolution));
-    angles = -param.sensor.fov/2:scan_resolution:param.sensor.fov/2;
+    angles = -param.sensor.fov/2:10*scan_resolution:param.sensor.fov/2;
 %     arcpoints = zeros(size(angles, 2), 2);
     for i = 1:1:size(angles, 2)
 

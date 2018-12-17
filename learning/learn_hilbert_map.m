@@ -6,13 +6,11 @@ else
     wt_1 = hilbertmap.wt;
 end
 
-
 if isempty(hilbertmap.xy)
     hilbertmap.wt = wt_1;
     time = 0;
     return;
 end
-
 
 %% Update weights
 switch param.mapping
@@ -46,11 +44,12 @@ end
 hilbertmap.wt = wt;
 time = toc;
 % plot(vecnorm(record, 2, 1));
-fprintf('Training Time: %d\t Number of Samples: %d\t Number of Features: %d\n',time, size(sample_xy, 1), size(wt, 1))
+% fprintf('Training Time: %d\t Number of Samples: %d\t Number of Features: %d\n',time, size(sample_xy, 1), size(wt, 1))
 
 end
 
 function [sample_xy, sample_y] = drawObservation(xy, y, num_samples)
+%     idx = randi(size(xy, 1), min(num_samples, size(xy, 1)), 1);
     idx = randi(size(xy, 1), num_samples, 1);
     sample_xy = xy(idx, :);
     sample_y = y(idx);
