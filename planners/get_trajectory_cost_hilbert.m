@@ -7,6 +7,7 @@ function [cost, gradient] = get_trajectory_cost_hilbert(x0, trajectory, map, cos
 w_der = 0.01;
 w_coll = 10;
 w_goal = 5;
+w_entropy = 0.5;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -120,6 +121,7 @@ times = [t(1)];
 current_dist = 0;
 
 J_coll = 0;
+J_entropy = 0;
 
 grad_coll = {};
 
@@ -136,6 +138,8 @@ end
 % at it.
 grad_coll{1} = [];
 grad_coll{2} = [];
+grad_entropy{1} = [];
+grad_entropy{2} = [];
 delta_t = 0;
 for i = 2:length(t)
   current_dist = current_dist + norm(p(i)-p(i-1));
@@ -194,9 +198,8 @@ for i = 2:length(t)
  
     % Get cost map gradients.
     cost_map_grad(1) = docc_prob(1);
-    cost_map_grad(2) = docc_prob(2);
+    cost_map_grad(2) = docc_prob(2);    
     
-%%    
     for k = 1:trajectory.K
       % Get the gradients for this axis.
       grad_p_dp = grad_time * grad_map{k};
@@ -224,6 +227,42 @@ for i = 2:length(t)
         grad_coll{k} = grad_term_1 + grad_term_2;
       end
     end
+    %% Get Uncertainty cost and gradients from hilbertmap
+    occ_entropy = (-(1-occ_prob) * log2(1-occ_prob) - occ_prob * log2(occ_prob));
+    docc_entropy = log2((1-occ_prob)/occ_prob)*docc_prob;
+    entropy_cost = occ_entropy;
+    J_entropy = J_entropy + delta_t * vel_norm * entropy_cost;
+    cost_entropy_grad(1) = docc_entropy(1);
+    cost_entropy_grad(2) = docc_entropy(2);
+    
+    for k = 1:trajectory.K
+      % Get the gradients for this axis.
+      grad_p_dp = grad_time * grad_map{k};
+
+      % Term 1 - collision term.
+      coeffs = A_invs{k}*Ms{k}*[D_Fs{k};D_Ps{k}];
+      vel(k) = grad_time * A_der * coeffs;
+      grad_vel_p = grad_time * A_der;
+      %grad_term_1 = collision_cost * delta_t^2 / current_dist * vel * grad_vel_p * grad_map{k};
+      if (vel_norm < 0.001)
+        grad_term_1 = 0;
+      else
+        grad_term_1 = entropy_cost * delta_t / vel_norm * vel(k) * grad_vel_p * grad_map{k};
+      end
+      % Term 2 - derivative of collision cost term.
+      grad_term_2 = delta_t * vel_norm * cost_entropy_grad(k) * grad_p_dp;
+      
+      if (entropy_cost > 0)
+        breakpoint_here = 0;
+      end
+      
+      if (~isempty(grad_entropy) && ~isempty(grad_entropy{k}))
+        grad_entropy{k} = grad_entropy{k} + grad_term_1 + grad_term_2;
+      else
+        grad_entropy{k} = grad_term_1 + grad_term_2;
+      end
+    end
+
   current_dist = 0;
   delta_t = 0;
   end
@@ -239,6 +278,7 @@ for k = 1:trajectory.K
     grad_p_dp = grad_time * grad_map{k};
     grad_goal{k} = dJ_goal(k)* grad_p_dp;
 end
+
 
 %%
 
@@ -257,15 +297,15 @@ grad_coll{1}';
 grad_coll{2}';
 
 % TODO: add weights.
-cost = w_der * J_der + w_coll * J_coll + w_goal * J_goal;
+cost = w_der * J_der + w_coll * J_coll + w_goal * J_goal + w_entropy * J_entropy;
 
 % Stack the gradients back.
 gradient = [];
 current_index = 0;
 for k = 1:trajectory.K
-  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_goal * grad_goal{k};
+  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_goal * grad_goal{k} + w_entropy * grad_entropy{k};
   current_index = current_index + length(grad_coll{k});
 end
 figure(500);
-plot(p(:, 1), p(:, 2)); hold on;
+plot(p(:, 1), p(:, 2), 'g-'); hold on;
 end
