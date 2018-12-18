@@ -1,4 +1,4 @@
-function [cost, gradient] = get_trajectory_cost_hilbert(x0, trajectory, map, cost_map, cost_map_x, cost_map_y, Ms, D_Fs, A_invs, R_unordereds, localmap, hilbertmap, param)
+function [cost, gradient] = get_trajectory_cost_hilbert_inf(x0, trajectory, map, cost_map, cost_map_x, cost_map_y, Ms, D_Fs, A_invs, R_unordereds, localmap, hilbertmap, param)
 %GET_TRAJECTORY_COST Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,6 +8,7 @@ w_der = 0.01;
 w_coll = 10;
 w_goal = 10;
 w_entropy = 0.5;
+w_inf = 10;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -86,8 +87,8 @@ J_der = sum(J_ders);
 % Integrate along the path to get the arclength -- probably easiest is just
 % sample and then pick closest points to the desired distance.
 dt = 0.01;
-map_res = 0;% 1/map.Resolution;
-
+% map_res = 0;% 1/map.Resolution;
+map_res = 1/map.Resolution;
 % Okay let's go from D_F{k}...
 % We need to get the coefficients back out.
 p = [];
@@ -122,6 +123,7 @@ current_dist = 0;
 
 J_coll = 0;
 J_entropy = 0;
+J_inf = 0;
 
 grad_coll = {};
 
@@ -140,6 +142,10 @@ grad_coll{1} = [];
 grad_coll{2} = [];
 grad_entropy{1} = [];
 grad_entropy{2} = [];
+grad_goal{1} = [];
+grad_goal{2} = [];
+grad_inf{1} = [];
+grad_inf{2} = [];
 delta_t = 0;
 for i = 2:length(t)
   current_dist = current_dist + norm(p(i)-p(i-1));
@@ -262,6 +268,44 @@ for i = 2:length(t)
         grad_entropy{k} = grad_term_1 + grad_term_2;
       end
     end
+    
+    %% Get Information cost and gradients from hilbertmap
+    
+    end_vel = p(i, :) - p(i-1, :);
+    [dl, l] = getMIGradient(param, localmap, p(i, :), end_vel, hilbertmap);
+
+    information_cost = l;
+    J_inf = J_inf + delta_t * vel_norm * information_cost;
+    cost_inf_grad(1) = dl(1);
+    cost_inf_grad(2) = dl(2);
+    
+    for k = 1:trajectory.K
+      % Get the gradients for this axis.
+      grad_p_dp = grad_time * grad_map{k};
+
+      % Term 1 - collision term.
+      coeffs = A_invs{k}*Ms{k}*[D_Fs{k};D_Ps{k}];
+      vel(k) = grad_time * A_der * coeffs;
+      grad_vel_p = grad_time * A_der;
+      %grad_term_1 = collision_cost * delta_t^2 / current_dist * vel * grad_vel_p * grad_map{k};
+      if (vel_norm < 0.001)
+        grad_term_1 = 0;
+      else
+        grad_term_1 = entropy_cost * delta_t / vel_norm * vel(k) * grad_vel_p * grad_map{k};
+      end
+      % Term 2 - derivative of collision cost term.
+      grad_term_2 = delta_t * vel_norm * cost_inf_grad(k) * grad_p_dp;
+      
+      if (entropy_cost > 0)
+        breakpoint_here = 0;
+      end
+      
+      if (~isempty(grad_inf) && ~isempty(grad_inf{k}))
+        grad_inf{k} = grad_inf{k} + grad_term_1 + grad_term_2;
+      else
+        grad_inf{k} = grad_term_1 + grad_term_2;
+      end
+    end
 
   current_dist = 0;
   delta_t = 0;
@@ -271,13 +315,13 @@ end
 %% Get Goal Cost
 J_goal = 0;
 
-traj_end = p(end, :);
-J_goal = norm([3.5, 3.5] - traj_end);
-dJ_goal = traj_end - [3.5, 3.5] ;
-for k = 1:trajectory.K
-    grad_p_dp = grad_time * grad_map{k};
-    grad_goal{k} = dJ_goal(k)* grad_p_dp;
-end
+% traj_end = p(end, :);
+% J_goal = norm([3.5, 3.5] - traj_end);
+% dJ_goal = traj_end - [3.5, 3.5] ;
+% for k = 1:trajectory.K
+%     grad_p_dp = grad_time * grad_map{k}; %Debug grad_time
+%     grad_goal{k} = dJ_goal(k)* grad_p_dp;
+% end
 
 
 %%
@@ -297,15 +341,15 @@ grad_coll{1}';
 grad_coll{2}';
 
 % TODO: add weights.
-cost = w_der * J_der + w_coll * J_coll + w_goal * J_goal + w_entropy * J_entropy;
+cost = w_der * J_der + w_coll * J_coll + w_goal * J_goal + w_entropy * J_entropy + w_inf * J_inf;
 
 % Stack the gradients back.
 gradient = [];
 current_index = 0;
 for k = 1:trajectory.K
-  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_goal * grad_goal{k} + w_entropy * grad_entropy{k};
+  gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_entropy * grad_entropy{k} + w_inf * grad_inf{k};
   current_index = current_index + length(grad_coll{k});
 end
 figure(500);
-plot(p(:, 1), p(:, 2), 'g-'); hold on;
+plot(p(:, 1), p(:, 2), 'r-'); hold on;
 end
