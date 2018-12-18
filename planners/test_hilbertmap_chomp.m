@@ -25,8 +25,11 @@ hilbertmap.wt = [];
 hilbertmap.xy = [];
 hilbertmap.y = [];
 res = 0.5;
+num_samples = 81;
 % [X, Y] = meshgrid(res:res:(map.XWorldLimits(2)-res), res:res:(map.YWorldLimits(2)-res));
-[X, Y] = meshgrid(res:res:0.8*(map.XWorldLimits(2)-res), res:res:0.8*(map.YWorldLimits(2)-res));
+% [X, Y] = meshgrid(res:res:0.8*(map.XWorldLimits(2)-res), res:res:0.8*(map.YWorldLimits(2)-res));
+X = rand(num_samples, 1) * map.XWorldLimits(2);
+Y = rand(num_samples, 1) * map.YWorldLimits(2);
 xy =  [X(:), Y(:)];
 hilbertmap.xy = xy;
 
@@ -65,7 +68,7 @@ trajectory = solve_trajectory(trajectory);
 %% Optimize path around obstacles.
 % trajectory_opt = optimize_path_collisions(trajectory);
 % trajectory = optimize_trajectory_collisions(map, trajectory, 0);
-trajectory_chomp = optimize_trajectory_collisions(map, trajectory, 0);
+trajectory_chomp = optimize_trajectory_collisions_free(map, trajectory, 0);
 trajectory_hilbert = optimize_trajectory_collisions_hilbert(map, trajectory, 0, 0, 0.1, localmap_obs, hilbertmap, param);
 
 
@@ -98,7 +101,7 @@ imagesc(map.XWorldLimits, fliplr(map.YWorldLimits), flipud(map_hilbert'));
 set(gca, 'Ydir', 'normal');
 hold on;
 
-colormap(gca, 'jet');
+% colormap(gca, 'jet');
 colorbar('Ticks',[]);
 title('Hilbert Map');
 xlabel('x position [m]'); ylabel('y position [m]');
