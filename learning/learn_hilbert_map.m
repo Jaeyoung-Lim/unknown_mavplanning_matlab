@@ -1,4 +1,7 @@
-function [hilbertmap, time] = learn_hilbert_map(param, binmap, hilbertmap, pose)
+function [hilbertmap, time] = learn_hilbert_map(param, occupancymap, hilbertmap, pose)
+
+binmap = occupancymap.localmap;
+
 if isempty(hilbertmap.wt)
     num_features = param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2);
     wt_1 = zeros(num_features, 1);

@@ -1,5 +1,8 @@
-function plot_hilbertmap(param, hilbertmap, binmap, pose, localpath)
-    if ~param.hilbertmap.plot
+function plot_hilbertmap(param, hilbertmap, occupancymap, pose, localpath)
+
+binmap = occupancymap.localmap;
+
+if ~param.hilbertmap.plot
         return;
     end    
 

@@ -1,7 +1,9 @@
-function [local_goal, local_goal_vel] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancy_map, hilbertmap)
+function [local_goal, local_goal_vel] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancymap, hilbertmap)
 
 if nargin < 6
     occupancy_map = [];
+else
+    occupancy_map = occupancymap.localmap;
 end
 
 if isempty(hilbertmap.wt)

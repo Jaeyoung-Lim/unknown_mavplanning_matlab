@@ -1,8 +1,13 @@
-function [map_obs, map_true, free_space, occupied_space] = get_localmap(map_type, binmap, map_obs, param, pose)
+function [occupancymap, map_true, free_space, occupied_space] = get_localmap(map_type, occupancymap, param, pose)
     %% Initialize
     free_space = []; %Observed Free space in the map
     occupied_space = []; % Observed Occupied space inthe map
-
+    
+    binmap = occupancymap.truemap;
+    map_obs = occupancymap.localmap;
+    
+    % Always increment map for local observation
+    
     switch map_type
         case 'local'
             % Recreate local map
@@ -76,5 +81,8 @@ function [map_obs, map_true, free_space, occupied_space] = get_localmap(map_type
         end
         
     end
+    
+    occupancymap.localmap = map_obs;
+    occupancymap.incrementmap = map_obs;
             
 end

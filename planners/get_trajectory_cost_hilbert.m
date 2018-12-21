@@ -189,7 +189,7 @@ for i = 2:length(t)
 %     cost_map_grad(2) = get_table_value_at_pos(p(i, :), map, cost_map_y, 0);
     %% Get collision cost and gradients from hilbert map
     % Now evalute the collision cost.
-    [dphi, phi] = diff_kernelFeatures(param, p(i, :), map, param.hilbertmap.kernel);
+    [dphi, phi] = diff_kernelFeatures(param, p(i, :), localmap, param.hilbertmap.kernel);
     occ_prob = 1-1/(1+exp(dot(hilbertmap.wt, phi)));
     docc_prob = occ_prob*(1-occ_prob)*(hilbertmap.wt)'*dphi;
     %disp(sprintf('%f: [%f %f] c: %f',  t(i), p(i, 1), p(i, 2), collision_cost));

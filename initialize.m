@@ -9,12 +9,16 @@ hilbertmap = struct('enable', params.hilbertmap.enable, ...
                     'wt', [], ...
                     'xy', [], ...
                     'y', []);
+                
+occupancymap = struct('localmap', [], ... % Locally observed map
+                      'incrementmap', [], ... % Global observed map
+                      'truemap', []); % True binary occupancy map
+
          
 % Initialize time
 dt = 0.1;
 T = 0;
 failure = false;
-hilbert_map = [];
 xy = [];
 y = [];
 
