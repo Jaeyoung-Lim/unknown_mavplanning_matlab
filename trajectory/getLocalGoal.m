@@ -41,6 +41,13 @@ if isinsideMap(param, binoccupancy_map, goal)
         end
     end
 else
+    switch param.localgoal
+        case 'global'
+            local_goal = goal;
+            local_goal_vel = zeros(1, 2);
+    end
+
+    % This is nonsense:
     local_goal = samplePosfromMap(binoccupancy_map);
     local_goal_vel = zeros(1,2);    
 end

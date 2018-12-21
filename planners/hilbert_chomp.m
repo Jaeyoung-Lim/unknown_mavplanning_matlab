@@ -28,6 +28,10 @@ trajectory = add_vertex_to_trajectory(trajectory, finalpos, 1, 1);
 trajectory = estimate_trajectory_times(trajectory, v_max, a_max);
 trajectory = solve_trajectory(trajectory);
 
+figure(findobj('name', 'Optimizer'));
+
+
+
 %% Optimize path around obstacles.
 trajectory = optimize_trajectory_collisions_hilbert(map, trajectory, 0, 0, 0.1, localmap, hilbertmap, param);
 

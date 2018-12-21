@@ -306,6 +306,6 @@ for k = 1:trajectory.K
   gradient(current_index+1:current_index + length(grad_coll{k})) = w_der * grad_ders{k} + w_coll * grad_coll{k} + w_goal * grad_goal{k} + w_entropy * grad_entropy{k};
   current_index = current_index + length(grad_coll{k});
 end
-figure(500);
+figure(findobj('name', 'Optimizer'));
 plot(p(:, 1), p(:, 2), 'g-'); hold on;
 end

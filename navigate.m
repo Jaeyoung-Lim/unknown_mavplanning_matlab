@@ -53,7 +53,7 @@ while true
     % Discard samples that are outside the map\
     if hilbertmap.enable
         [hilbertmap, ~] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
-        plot_hilbertmap(params, hilbertmap, localmap_obs, mav.pose);
+        plot_hilbertmap(params, hilbertmap, localmap_obs, mav.pose, localpath);
     end
     if isCollision(mav.pose(1:2), binmap_true)
        failure = true;
