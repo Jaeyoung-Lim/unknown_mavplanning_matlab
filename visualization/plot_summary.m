@@ -3,7 +3,7 @@ if ~param.visualization
     return;
 end
 %% Plot Summary of global and local trajectory
-figure(1);
+figure(findobj('name', 'Navigator'));
 subplot(2,2,1);
 colormap gray;
 plot_binmap(param, globalmap, mav, localpath, globalpath, goalVel);

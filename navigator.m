@@ -17,6 +17,11 @@ parameterfile = Param_RANDOMFOREST;
 % parameterfile = Param_CORNER;
 % parameterfile = Param_LOCALCORNER
 
+% Initialize figures
+figure('name', 'Navigator', 'NumberTitle', 'off');
+figure('name', 'Hilbert Map', 'NumberTitle', 'off');
+figure('name', 'Optimizer', 'NumberTitle', 'off');
+
 num_trials = 3; % Number of trials for statistics
 Test_planner = {'disable'}; % Configuration for different test sets
 Test_goalselection = {'nextbestview'};
