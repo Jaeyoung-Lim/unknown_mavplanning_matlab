@@ -21,8 +21,9 @@ classdef Param_LOCALRANDOMFOREST
                           'resolution', 10);
                       
         hilbertmap = struct('enable', true, ...
-                            'kernel', 'sparse', ...
+                            'kernel', 'rbf', ...
                             'momentum', 0, ...%Momentum method flag for SGD
+                            'num_samples', 100, ...
                             'resolution', 2, ...
                             'radius', 1, ...
                             'max_iteration', 200, ...
@@ -37,16 +38,17 @@ classdef Param_LOCALRANDOMFOREST
         mav = struct('size', 0.5);
         
         % Planner
-        planner = 'chomp'
+        planner = struct('type', 'hilbertchomp', ...
+                         'num_segments', 1);
         plan_horizon = 5;
         update_rate = 1;        
         
         global_planner = 'optimistic';
         globalreplan = false;
-        localgoal = 'random'
+        localgoal = 'nextbestview'
         
-        start_point = [5.0 5.0];
-        goal_point = [15.0 15.0];
+        start_point = [2.0 2.0];
+        goal_point = [18.0 18.0];
 
         
     end 

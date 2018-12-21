@@ -19,7 +19,11 @@ while true
     [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, localmap_obs, hilbertmap); % Parse intermediate goal from global path
         
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory(params, cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration, localmap_obs, hilbertmap);
-    %%    
+    %%
+    if hilbertmap.enable
+        plot_hilbertmap(params, hilbertmap, localmap_obs, mav.pose, localpath);
+    end
+
     if detectLocalOptima(localpath)
         if params.globalreplan
             % Global plan based on optimistic map
@@ -53,7 +57,7 @@ while true
     % Discard samples that are outside the map\
     if hilbertmap.enable
         [hilbertmap, ~] = learn_hilbert_map(params, localmap_obs, hilbertmap, mav.pose);
-        plot_hilbertmap(params, hilbertmap, localmap_obs, mav.pose, localpath);
+%         plot_hilbertmap(params, hilbertmap, localmap_obs, mav.pose, localpath);
     end
     if isCollision(mav.pose(1:2), binmap_true)
        failure = true;

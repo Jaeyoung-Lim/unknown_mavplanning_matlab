@@ -307,5 +307,6 @@ for k = 1:trajectory.K
   current_index = current_index + length(grad_coll{k});
 end
 figure(findobj('name', 'Optimizer'));
+plot(p(1, 1), p(1, 2), 'go'); hold on;
 plot(p(:, 1), p(:, 2), 'g-'); hold on;
 end
