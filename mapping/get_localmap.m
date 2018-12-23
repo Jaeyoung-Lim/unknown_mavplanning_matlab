@@ -79,7 +79,7 @@ function [occupancymap, map_true, free_space, occupied_space] = get_localmap(map
             i_width = world2grid(map_obs, [0.5*param.localmap.width, map_obs.YWorldLimits(2)]);
             j_height = world2grid(map_obs, [0.0, map_obs.YWorldLimits(2)-0.5*param.localmap.height + 0.001]); %% This is a hack
             map_obs_values = double(map_obs.occupancyMatrix);
-            map_obs_values = padarray(map_obs_values, [i_width(2), j_height(1)], 'both');
+            map_obs_values = padarray(map_obs_values, [i_width(2), j_height(1)], 0.5, 'both');
             submap_obs = map_obs_values(ij_pos(1):(ij_pos(1)+2*i_width(2)-1), ij_pos(2):(ij_pos(2)+2*j_height(1)-1));
             localmap_obs = robotics.OccupancyGrid(submap_obs, param.globalmap.resolution);
     end
