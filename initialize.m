@@ -1,3 +1,10 @@
+% Initialize figures
+close all;
+figure('name', 'Navigator', 'NumberTitle', 'off');
+figure('name', 'Hilbert Map', 'NumberTitle', 'off');
+figure('name', 'Optimizer', 'NumberTitle', 'off');
+
+
 % Initialize mav states
 mav = struct('pose', [0.0, 0.0, 0.0], ...
              'velocity', [0.0, 0.0], ...
