@@ -3,7 +3,7 @@ function [hilbertmap, time] = learn_hilbert_map(param, occupancymap, hilbertmap,
 binmap = occupancymap.localmap;
 
 if isempty(hilbertmap.wt)
-    num_features = param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2);
+    num_features = floor(param.hilbertmap.resolution^2 * binmap.XWorldLimits(2) * binmap.YWorldLimits(2));
     wt_1 = zeros(num_features, 1);
 else
     wt_1 = hilbertmap.wt;

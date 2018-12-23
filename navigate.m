@@ -5,7 +5,6 @@ initialize();
 %% Plan Optimistic global trajectory 
 occupancymap.truemap = binmap_true;
 % Initialize Local map
-occupancymap.localmap = initlocalmap(params);
 occupancymap = get_localmap(params.mapping, occupancymap, params, mav.pose); % Create a partial map based on observation
 
 % Plan global trajectory
