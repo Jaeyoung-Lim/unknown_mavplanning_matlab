@@ -1,8 +1,8 @@
 % Initialize figures
 close all;
-figure('name', 'Navigator', 'NumberTitle', 'off');
-figure('name', 'Hilbert Map', 'NumberTitle', 'off');
-figure('name', 'Optimizer', 'NumberTitle', 'off');
+figure('name', 'Navigator', 'NumberTitle', 'off', 'Position', [100 800 400 400]);
+figure('name', 'Hilbert Map', 'NumberTitle', 'off', 'Position', [600 800 1200 400]);
+figure('name', 'Optimizer', 'NumberTitle', 'off', 'Position', [1900 800 400 400]);
 
 
 % Initialize mav states
