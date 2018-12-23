@@ -1,9 +1,9 @@
 function plot_hilbertmap(param, hilbertmap, occupancymap, pose, localpath)
 
-binmap = occupancymap.localmap;
+    binmap = occupancymap.localmap;
 
-if ~param.hilbertmap.plot
-        return;
+    if ~param.hilbertmap.plot
+            return;
     end    
 
     figure(findobj('name', 'Hilbert Map'));
@@ -24,7 +24,7 @@ if ~param.hilbertmap.plot
         switch param.mapping
              case 'local'
                 origin = [0.5*binmap.XWorldLimits(2), 0.5*binmap.YWorldLimits(2)];
-                xy = xy - pose(1:2);
+                xy = xy - pose(1:2) + origin;
                 localpath = localpath - pose(1:2) + origin;
                 plot(origin(1), origin(2), 'wo'); hold on;
         end

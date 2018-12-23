@@ -52,20 +52,9 @@ function [occupancymap, map_true, free_space, occupied_space] = get_localmap(map
     
     if ~isempty(free_space)
         free_space = grid2world(map_obs,free_space);
-
-        switch map_type
-            case 'local'
-                free_space = local2globalpos(param, free_space, pose(1:2));
-        end
-    end
-    
+    end    
     if ~isempty(occupied_space)
         occupied_space = grid2world(map_obs, occupied_space);
-        switch map_type
-            case 'local'
-                occupied_space = local2globalpos(param, occupied_space, pose(1:2));
-        end
-        
     end
     
     occupancymap.incrementmap = map_obs;
