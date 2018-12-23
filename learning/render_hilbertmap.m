@@ -4,9 +4,10 @@ function p = render_hilbertmap(param, wt, map)
     map_width = map.XWorldLimits(2)* high_res;
     map_height = map.YWorldLimits(2) * high_res;
     p = 0.5*ones(map_width, map_height);
+    origin = [0.5 * map.XWorldLimits(2), 0.5 * map.YWorldLimits(2)];
     for i = 1:map_width
         for j = 1:map_height
-            x = [i, j] * 1/ high_res;
+            x = [i, j] * 1/ high_res - origin;
             p(i, j) = occupancyProb(param, wt, x, map);
         end
     end

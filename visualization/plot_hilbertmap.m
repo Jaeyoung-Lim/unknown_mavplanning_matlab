@@ -19,7 +19,6 @@ function plot_hilbertmap(param, hilbertmap, occupancymap, pose, localpath)
     subplot(1, 2, 1);
     show(binmap); hold on;
 
-%     colormap(gca, 'gray');
     if ~isempty(xy)
         switch param.mapping
              case 'local'
@@ -31,9 +30,9 @@ function plot_hilbertmap(param, hilbertmap, occupancymap, pose, localpath)
         plot(xy((y > 0), 1), xy((y > 0), 2), 'xr'); hold on;
         plot(xy((y < 0), 1), xy((y < 0), 2), 'xb'); hold on;
     end
+    
     %% Plot Hilbertmap
     subplot(1, 2, 2);
-%     imshow(flipud(map'), 'InitialMagnification', 400); hold on;
     imagesc(binmap.XWorldLimits, fliplr(binmap.YWorldLimits), flipud(map')); set(gca, 'Ydir', 'normal');
     hold on;
     colormap(gca, 'jet');
