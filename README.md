@@ -3,7 +3,12 @@
 This repository includes matlab tools to experiment on navigating through unknown environments utilizing hilbertmaps.
 
 
+## Global navigation with hilbertmaps
 ![pathplot](resources/hilbert_chomp_entropy1.png)
+
+
+## Local navigation with hilbertmaps
+![pathplot](resources/hilbert_chomp_local.png)
 
 # Dependency
 The matlab code uses the following toolboxes
