@@ -270,10 +270,10 @@ end
 
 %% Get Goal Cost
 J_goal = 0;
-
+goal = param.goal_point;
 traj_end = p(end, :);
-J_goal = norm([3.5, 3.5] - traj_end);
-dJ_goal = traj_end - [3.5, 3.5] ;
+J_goal = norm(goal - traj_end);
+dJ_goal = traj_end - goal;
 for k = 1:trajectory.K
     grad_p_dp = grad_time * grad_map{k};
     grad_goal{k} = dJ_goal(k)* grad_p_dp;
