@@ -1,11 +1,10 @@
 # unknown_mavplanning_matlab
 
-This repository includes matlab tools to experiment on navigating through unknown environments.
+This repository includes matlab tools to experiment on navigating through unknown environments utilizing hilbertmaps.
 
-The following baseline methods have been implemented
-- Oleynikova 2016
-- Oleynikova 2017
-- Yamaguchi 1998
+
+![pathplot](resources/hilbert_chomp_entropy1.png)
+
 # Dependency
 The matlab code uses the following toolboxes
 - Robotics Toolbox
