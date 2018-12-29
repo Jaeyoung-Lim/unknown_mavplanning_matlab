@@ -1,5 +1,8 @@
-function globalpath = planGlobalTrajectory(params, binmap_true, global_start, global_goal, map_partial)
+function globalpath = planGlobalTrajectory(params, occupancymap, global_start, global_goal)
     % Plan global trajectory
+    binmap_true = occupancymap.truemap;
+    map_partial = occupancymap.localmap;
+    
     switch params.global_planner
         case 'optimistic'
             % Global plan based on optimistic map

@@ -1,7 +1,9 @@
-function [local_goal, local_goal_vel] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancy_map, hilbertmap)
+function [local_goal, local_goal_vel] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancymap, hilbertmap)
 
 if nargin < 6
     occupancy_map = [];
+else
+    occupancy_map = occupancymap.localmap;
 end
 
 if isempty(hilbertmap.wt)
@@ -41,6 +43,13 @@ if isinsideMap(param, binoccupancy_map, goal)
         end
     end
 else
+    switch param.localgoal
+        case 'global'
+            local_goal = goal;
+            local_goal_vel = zeros(1, 2);
+    end
+
+    % This is nonsense:
     local_goal = samplePosfromMap(binoccupancy_map);
     local_goal_vel = zeros(1,2);    
 end

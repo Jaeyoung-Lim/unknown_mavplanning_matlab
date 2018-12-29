@@ -1,9 +1,13 @@
-function plot_summary(param, T, globalmap, partialmap, localpath, globalpath, mav, goalVel)
+function plot_summary(param, T, occupancymap, localpath, globalpath, mav, goalVel)
 if ~param.visualization
     return;
 end
+
+globalmap = occupancymap.truemap;
+partialmap = occupancymap.localmap;
+
 %% Plot Summary of global and local trajectory
-figure(1);
+figure(findobj('name', 'Navigator'));
 subplot(2,2,1);
 colormap gray;
 plot_binmap(param, globalmap, mav, localpath, globalpath, goalVel);
