@@ -6,7 +6,7 @@ function phi_hat = kernelFeatures(param, x_query, map, option)
     switch param.mapping
         case 'local'
             [X, Y] = meshgrid((-0.5*map.XWorldLimits(2) + res):res:0.5*map.XWorldLimits(2), (- 0.5 * map.YWorldLimits(2)+ res):res:0.5 * map.YWorldLimits(2));
-        case 'otherwise'
+        otherwise
             [X, Y] = meshgrid(res:res:map.XWorldLimits(2), res:res:map.YWorldLimits(2));
     end
     X = X(:);
