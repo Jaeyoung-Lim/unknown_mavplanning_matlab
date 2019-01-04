@@ -47,7 +47,7 @@ while true
             [hilbertmap.xy, hilbertmap.y] = sampleObservations(free_space, occupied_space, hilbertmap.xy, hilbertmap.y);
         end
         
-        plot_summary(params, T, occupancymap, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
+        plot_summary(params, T, occupancymap, localpath, globalpath, mav, local_goal_vel, global_goal); % Plot MAV moving in environment
         
         if isCollision(mav.pose(1:2), occupancymap.truemap) || goalreached(mav.pose(1:2), global_goal)
             break; % Get out of the for loop
