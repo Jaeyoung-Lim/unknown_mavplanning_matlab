@@ -37,8 +37,8 @@ res = 0.5;
 num_samples = 81;
 % [X, Y] = meshgrid(res:res:(map.XWorldLimits(2)-res), res:res:(map.YWorldLimits(2)-res));
 % [X, Y] = meshgrid(res:res:0.8*(map.XWorldLimits(2)-res), res:res:0.8*(map.YWorldLimits(2)-res));
-X = rand(num_samples, 1) * 1.0 *map.XWorldLimits(2);
-Y = rand(num_samples, 1) * 1.0 *map.YWorldLimits(2);
+X = rand(num_samples, 1) * 0.7 *map.XWorldLimits(2);
+Y = rand(num_samples, 1) * 0.7 *map.YWorldLimits(2);
 xy =  [X(:), Y(:)];
 hilbertmap.xy = xy;
 
