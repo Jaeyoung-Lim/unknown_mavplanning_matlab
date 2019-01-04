@@ -15,7 +15,7 @@ occupancymap = struct('localmap', [], ... % Locally observed map
 [occupancymap.truemap, start_pos, goal_pos] = generate_envwithPos(param, param.start_point, param.goal_point);
 start_point = start_pos;
 goal_point = goal_pos;
-
+map = occupancymap.truemap;
 % map = create_random_map(4, 4, 10, 10, 0.4);
 
 %   start_point = [0.5 0.5];
@@ -35,10 +35,10 @@ hilbertmap.xy = [];
 hilbertmap.y = [];
 res = 0.5;
 num_samples = 81;
-[X, Y] = meshgrid(res:res:(map.XWorldLimits(2)-res), res:res:(map.YWorldLimits(2)-res));
+% [X, Y] = meshgrid(res:res:(map.XWorldLimits(2)-res), res:res:(map.YWorldLimits(2)-res));
 % [X, Y] = meshgrid(res:res:0.8*(map.XWorldLimits(2)-res), res:res:0.8*(map.YWorldLimits(2)-res));
-% X = rand(num_samples, 1) * 1.0 *map.XWorldLimits(2);
-% Y = rand(num_samples, 1) * 1.0 *map.YWorldLimits(2);
+X = rand(num_samples, 1) * 1.0 *map.XWorldLimits(2);
+Y = rand(num_samples, 1) * 1.0 *map.YWorldLimits(2);
 xy =  [X(:), Y(:)];
 hilbertmap.xy = xy;
 
