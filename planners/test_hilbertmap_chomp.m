@@ -4,7 +4,6 @@ map_size = 1;
 
 param = Param_TINYRANDOMFOREST;
 figure('name', 'Navigator', 'NumberTitle', 'off', 'Position', [100 800 400 400]);
-figure('name', 'Hilbert Map', 'NumberTitle', 'off', 'Position', [600 800 1200 400]);
 figure('name', 'Optimizer', 'NumberTitle', 'off', 'Position', [1900 800 400 400]);
 
 
@@ -78,8 +77,8 @@ trajectory = solve_trajectory(trajectory);
 %% Optimize path around obstacles.
 % trajectory_opt = optimize_path_collisions(trajectory);
 % trajectory = optimize_trajectory_collisions(map, trajectory, 0);
-trajectory_chomp = optimize_trajectory_collisions(map, trajectory, 0);
-trajectory_hilbert = optimize_trajectory_collisions_hilbert(map, trajectory, 0, 0, 0.1, localmap_obs, hilbertmap, param);
+trajectory_chomp = optimize_trajectory_collisions_free(map, trajectory, 0);
+trajectory_hilbert = optimize_trajectory_collisions_hilbert(map, trajectory, 0, 0, 0.1, occupancymap.localmap, hilbertmap, param);
 
 
 %% Plot
