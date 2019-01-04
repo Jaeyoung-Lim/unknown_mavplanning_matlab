@@ -1,4 +1,4 @@
-function plot_summary(param, T, occupancymap, localpath, globalpath, mav, goalVel)
+function plot_summary(param, T, occupancymap, localpath, globalpath, mav, goalVel, global_goal)
 if ~param.visualization
     return;
 end
@@ -10,7 +10,7 @@ partialmap = occupancymap.localmap;
 figure(findobj('name', 'Navigator'));
 subplot(2,2,1);
 colormap gray;
-plot_binmap(param, globalmap, mav, localpath, globalpath, goalVel);
+plot_binmap(param, globalmap, mav, localpath, globalpath, goalVel, global_goal);
 
 subplot(2,2,2);
 plot_localmap(param, partialmap, mav.pose, mav.path, localpath, globalpath);
@@ -34,7 +34,7 @@ function plot_data(param, T, mav)
 
 end
 
-function plot_binmap(param, map, state, localpath, globalpath, goalvel)
+function plot_binmap(param, map, state, localpath, globalpath, goalvel, global_goal)
         
     show(map); hold on;
     plot(localpath(:, 1), localpath(:, 2), 'g'); hold on;
@@ -46,6 +46,8 @@ function plot_binmap(param, map, state, localpath, globalpath, goalvel)
         plot(globalpath(:, 1), globalpath(:, 2), 'r'); hold on;
         plot(globalpath(end, 1), globalpath(end, 2), 'xr'); hold on;
     end
+    plot(global_goal(1), global_goal(2), 'bx'); hold on;
+
     quiver(state.pose(1), state.pose(2), state.velocity(1), state.velocity(2), 'r'); hold on;
     plot(state.pose(1), state.pose(2), 'xr','MarkerSize',10); hold on;
     rectangle('Position',[state.pose(1)-0.5*param.localmap.width, ...

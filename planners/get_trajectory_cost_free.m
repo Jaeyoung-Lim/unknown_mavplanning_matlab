@@ -6,7 +6,7 @@ function [cost, gradient] = get_trajectory_cost_free(x0, trajectory, map, cost_m
 
 w_der = 0.01;
 w_coll = 10;
-w_goal = 10;
+w_goal = 100;
 
 %w_der = 0.01;
 %w_coll = 10;

@@ -22,7 +22,7 @@ trajectory = add_vertex_state_to_trajectory(trajectory, initpos, 1, 0, initvel, 
 % trajectory = add_vertex_state_to_trajectory(trajectory, 2 * (initpos + finalpos)/4, 0, 1);
 % trajectory = add_vertex_state_to_trajectory(trajectory, 3 * (initpos  +finalpos)/4, 0, 1);
 
-trajectory = add_vertex_to_trajectory(trajectory, finalpos, 1, 1);
+trajectory = add_vertex_to_trajectory(trajectory, finalpos, 0, 1);
 
 % Estimate segment times.
 trajectory = estimate_trajectory_times(trajectory, v_max, a_max);

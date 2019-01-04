@@ -4,10 +4,10 @@ function [cost, gradient] = get_trajectory_cost_hilbert(x0, trajectory, map, cos
 
 %x0
 
-w_der = 0.01;
-w_coll = 10;
-w_goal = 10;
-w_entropy = 0.5;
+w_der = param.planner.cost_der;
+w_coll = param.planner.cost_coll;
+w_goal = param.planner.cost_goal;
+w_entropy = param.planner.cost_entropy;
 
 %w_der = 0.01;
 %w_coll = 10;
@@ -270,10 +270,10 @@ end
 
 %% Get Goal Cost
 J_goal = 0;
-
+goal = param.goal_point;
 traj_end = p(end, :);
-J_goal = norm([3.5, 3.5] - traj_end);
-dJ_goal = traj_end - [3.5, 3.5] ;
+J_goal = norm(goal - traj_end);
+dJ_goal = traj_end - goal;
 for k = 1:trajectory.K
     grad_p_dp = grad_time * grad_map{k};
     grad_goal{k} = dJ_goal(k)* grad_p_dp;
@@ -309,4 +309,5 @@ end
 figure(findobj('name', 'Optimizer'));
 plot(p(1, 1), p(1, 2), 'go'); hold on;
 plot(p(:, 1), p(:, 2), 'g-'); hold on;
+plot(p(end, 1), p(end, 2), 'gx'); hold on;
 end

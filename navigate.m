@@ -23,16 +23,16 @@ while true
         plot_hilbertmap(params, hilbertmap, occupancymap, mav.pose, localpath);
     end
 
-    if detectLocalOptima(localpath)
-        if params.globalreplan
-            % Global plan based on optimistic map
-            globalpath = planGlobalTrajectory(params, occupancymap, local_start, global_goal);
-        else
-            failure = true;
-            disp('Stuck in local goal!');
-            break;
-        end
-    end
+%     if detectLocalOptima(localpath)
+%         if params.globalreplan
+%             % Global plan based on optimistic map
+%             globalpath = planGlobalTrajectory(params, occupancymap, local_start, global_goal);
+%         else
+%             failure = true;
+%             disp('Stuck in local goal!');
+%             break;
+%         end
+%     end
     %% Move along local trajectory
     for t = 0:dt:params.update_rate
         [mav.pose, mav.velocity, mav.acceleration] = statefromtrajectoy(localpath, localpath_vel, localpath_acc, localT, t);
@@ -47,7 +47,7 @@ while true
             [hilbertmap.xy, hilbertmap.y] = sampleObservations(free_space, occupied_space, hilbertmap.xy, hilbertmap.y);
         end
         
-        plot_summary(params, T, occupancymap, localpath, globalpath, mav, local_goal_vel); % Plot MAV moving in environment
+        plot_summary(params, T, occupancymap, localpath, globalpath, mav, local_goal_vel, global_goal); % Plot MAV moving in environment
         
         if isCollision(mav.pose(1:2), occupancymap.truemap) || goalreached(mav.pose(1:2), global_goal)
             break; % Get out of the for loop
