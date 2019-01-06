@@ -33,7 +33,9 @@ function plot_hilbertmap(param, hilbertmap, occupancymap, pose, localpath)
     
     %% Plot Hilbertmap
     subplot(1, 2, 2);
-    imagesc(binmap.XWorldLimits, fliplr(binmap.YWorldLimits), flipud(map')); set(gca, 'Ydir', 'normal'); hold on;
+    imagesc(binmap.XWorldLimits, fliplr(binmap.YWorldLimits), flipud(map'));
+    set(gca, 'Ydir', 'normal'); hold on;
+
     if ~isempty(xy)
         plot(xy((y > 0), 1), xy((y > 0), 2), 'xr'); hold on;
         plot(xy((y < 0), 1), xy((y < 0), 2), 'xb'); hold on;
