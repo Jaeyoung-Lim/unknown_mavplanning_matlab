@@ -8,7 +8,7 @@ param = Param_LOCALTINYRANDOMFOREST;
 
 figure('name', 'Navigator', 'NumberTitle', 'off', 'Position', [100 800 400 400]);
 figure('name', 'Optimizer', 'NumberTitle', 'off', 'Position', [1900 800 400 400]);
-
+figure('name', 'Hilbert Map', 'NumberTitle', 'off', 'Position', [600 800 1200 400]);
 
 occupancymap = struct('localmap', [], ... % Locally observed map
                       'incrementmap', [], ... % Global observed map
@@ -41,8 +41,8 @@ res = 0.5;
 num_samples = 81;
 % [X, Y] = meshgrid(res:res:(map.XWorldLimits(2)-res), res:res:(map.YWorldLimits(2)-res));
 % [X, Y] = meshgrid(res:res:0.8*(map.XWorldLimits(2)-res), res:res:0.8*(map.YWorldLimits(2)-res));
-X = rand(num_samples, 1) * 0.7 *map.XWorldLimits(2);
-Y = rand(num_samples, 1) * 0.7 *map.YWorldLimits(2);
+X = rand(num_samples, 1) * 1.0 *map.XWorldLimits(2);
+Y = rand(num_samples, 1) * 1.0 *map.YWorldLimits(2);
 xy =  [X(:), Y(:)];
 hilbertmap.xy = xy;
 
@@ -101,16 +101,17 @@ hold off;
 
 % figure(2);
 subplot(1, 2, 2);
+
 xy = hilbertmap.xy;
 y = hilbertmap.y;
 wt = hilbertmap.wt;
 
 origin = [0.5 * map.XWorldLimits(2), 0.5 * map.YWorldLimits(2)];
 
-switch param.mapping
-    case 'local'
-        xy = xy + origin - start_point;
-end
+mavpos = start_point;
+start_point = start_point - mavpos + origin ;
+goal_point = goal_point - mavpos + origin ;
+xy = xy - mavpos + origin ;
 
 tic;
 map_hilbert = render_hilbertmap(param, wt, map);
@@ -134,4 +135,9 @@ xlabel('x position [m]'); ylabel('y position [m]');
 axis image;
 plot([start_point(1), goal_point(1)], [start_point(2), goal_point(2)], 'xw');  hold on;
 [t, p1] = sample_trajectory(trajectory_hilbert, 0.1);
+p1 = p1 - mavpos + origin;
 plot(p1(:, 1), p1(:, 2), 'w');  hold on;
+
+figure(2)
+hilbertmap.xy = hilbertmap.xy - mavpos + origin;
+plot_hilbertmap(param, hilbertmap, occupancymap, [start_point, 0], p1);
