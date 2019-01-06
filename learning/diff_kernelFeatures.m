@@ -3,7 +3,12 @@ function [dphi_hat, phi_hat] = diff_kernelFeatures(param, x_query, map, option)
     % X_data : Sample points
     % Create data from binary occupancy points
     res = 1/(param.hilbertmap.resolution);
-    [X, Y] = meshgrid(res:res:map.XWorldLimits(2), res:res:map.YWorldLimits(2));
+    switch param.mapping
+        case 'local'
+            [X, Y] = meshgrid((-0.5*map.XWorldLimits(2) + res):res:0.5*map.XWorldLimits(2), (- 0.5 * map.YWorldLimits(2)+ res):res:0.5 * map.YWorldLimits(2));
+        otherwise
+            [X, Y] = meshgrid(res:res:map.XWorldLimits(2), res:res:map.YWorldLimits(2));
+    end
     X = X(:);
     Y= Y(:);
     xy = [X, Y];

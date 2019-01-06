@@ -272,8 +272,15 @@ end
 J_goal = 0;
 goal = param.goal_point;
 traj_end = p(end, :);
-J_goal = norm(goal - traj_end);
-dJ_goal = traj_end - goal;
+% Naive goal cost
+% J_goal = norm(goal - traj_end);
+% dJ_goal = traj_end - goal;
+% Saled goal cost
+r = 0.01;
+dg = norm(goal - p(1, :)) + r;
+J_goal = (norm(goal - traj_end) - dg)/dg;
+dJ_goal = (1/dg) * (traj_end - goal);
+
 for k = 1:trajectory.K
     grad_p_dp = grad_time * grad_map{k};
     grad_goal{k} = dJ_goal(k)* grad_p_dp;

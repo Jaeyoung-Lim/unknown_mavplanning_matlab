@@ -1,4 +1,4 @@
-function [trajectory_out, iterations, final_cost, initial_cost] = optimize_trajectory_collisions_hilbert(map, trajectory, visualize, random_perturb, random_perturb_mag, localmap, hilbertmap, param)
+function [trajectory_out, iterations, final_cost, initial_cost] = optimize_trajectory_collisions_hilbert(map, trajectory, visualize, random_perturb, random_perturb_mag, localmap, hilbertmap, param, localgoal)
 
 if (nargin < 3)
   visualize = 1;
@@ -9,6 +9,10 @@ end
 if (nargin < 5)
   random_perturb_mag = 0.1;
 end
+if (nargin < 9)
+  goal = param.goal_point;
+end
+
 %OPTIMIZE_PATH_COLLISIONS Summary of this function goes here
 %   Detailed explanation goes here
 
