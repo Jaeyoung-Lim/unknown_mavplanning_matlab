@@ -75,6 +75,8 @@ trajectory = solve_trajectory(trajectory);
 %trajectory = plan_path_waypoints([start_point;goal_point]);
 
 %% Optimize path around obstacles.
+figure(findobj('name', 'Optimizer'));
+show(map); hold on;
 % trajectory_opt = optimize_path_collisions(trajectory);
 % trajectory = optimize_trajectory_collisions(map, trajectory, 0);
 trajectory_chomp = optimize_trajectory_collisions_free(map, trajectory, 0);
