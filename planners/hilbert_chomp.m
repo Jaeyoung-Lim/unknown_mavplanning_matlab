@@ -33,6 +33,6 @@ figure(findobj('name', 'Optimizer'));
 
 
 %% Optimize path around obstacles.
-trajectory = optimize_trajectory_collisions_hilbert(map, trajectory, 0, 0, 0.1, localmap, hilbertmap, param);
+trajectory = optimize_trajectory_collisions_hilbert(map, trajectory, 0, 0, 0.1, localmap, hilbertmap, param, finalpos);
 
 end

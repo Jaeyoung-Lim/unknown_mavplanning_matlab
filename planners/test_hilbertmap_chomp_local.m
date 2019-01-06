@@ -2,7 +2,10 @@ clc; close all;
 %% Create a random map.
 map_size = 1;
 
-param = Param_TINYRANDOMFOREST;
+% param = Param_TINYRANDOMFOREST;
+% param = Param_LOCALRANDOMFOREST;
+param = Param_LOCALTINYRANDOMFOREST;
+
 figure('name', 'Navigator', 'NumberTitle', 'off', 'Position', [100 800 400 400]);
 figure('name', 'Optimizer', 'NumberTitle', 'off', 'Position', [1900 800 400 400]);
 
@@ -15,6 +18,7 @@ occupancymap = struct('localmap', [], ... % Locally observed map
 [occupancymap.truemap, start_pos, goal_pos] = generate_envwithPos(param, param.start_point, param.goal_point);
 start_point = start_pos;
 goal_point = goal_pos;
+% goal_point = [10.0, 10.0];
 map = occupancymap.truemap;
 % map = create_random_map(4, 4, 10, 10, 0.4);
 
@@ -100,6 +104,13 @@ subplot(1, 2, 2);
 xy = hilbertmap.xy;
 y = hilbertmap.y;
 wt = hilbertmap.wt;
+
+origin = [0.5 * map.XWorldLimits(2), 0.5 * map.YWorldLimits(2)];
+
+switch param.mapping
+    case 'local'
+        xy = xy + origin - start_point;
+end
 
 tic;
 map_hilbert = render_hilbertmap(param, wt, map);
