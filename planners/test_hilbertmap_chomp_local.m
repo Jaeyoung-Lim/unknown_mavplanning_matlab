@@ -64,9 +64,9 @@ a_max = 2.0;
 trajectory = create_trajectory(K, N);
 trajectory = add_vertex_to_trajectory(trajectory, start_point, 1);
 
-trajectory = add_vertex_to_trajectory(trajectory, 1*(start_point+goal_point)/4, 0, 1);
-trajectory = add_vertex_to_trajectory(trajectory, 2*(start_point+goal_point)/4, 0, 1);
-trajectory = add_vertex_to_trajectory(trajectory, 3*(start_point+goal_point)/4, 0, 1);
+% trajectory = add_vertex_to_trajectory(trajectory, 1*(start_point+goal_point)/4, 0, 1);
+% trajectory = add_vertex_to_trajectory(trajectory, 2*(start_point+goal_point)/4, 0, 1);
+% trajectory = add_vertex_to_trajectory(trajectory, 3*(start_point+goal_point)/4, 0, 1);
 
 %trajectory = add_vertex_to_trajectory(trajectory, 3*(start_point+goal_point)/4, 0, 1);
 
@@ -124,7 +124,7 @@ set(gca, 'Ydir', 'normal');
 hold on;
 
 if ~isempty(xy)
-    plot(xy((y > 0), 1), xy((y > 0), 2), 'xr'); hold on;
+    plot(xy((y > 0), 1), xy((y > 0), 2), 'xy'); hold on;
     plot(xy((y < 0), 1), xy((y < 0), 2), 'xb'); hold on;
 end
 
@@ -136,7 +136,7 @@ axis image;
 plot([start_point(1), goal_point(1)], [start_point(2), goal_point(2)], 'xw');  hold on;
 [t, p1] = sample_trajectory(trajectory_hilbert, 0.1);
 p1 = p1 - mavpos + origin;
-plot(p1(:, 1), p1(:, 2), 'w');  hold on;
+plot(p1(:, 1), p1(:, 2), 'g');  hold on;
 
 figure(2)
 hilbertmap.xy = hilbertmap.xy - mavpos + origin;
