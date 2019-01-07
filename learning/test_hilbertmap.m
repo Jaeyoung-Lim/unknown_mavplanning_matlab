@@ -211,6 +211,7 @@ hilbertmap = struct('enable', params.hilbertmap.enable, ...
 map = create_random_map(4, 4, 10, num_obstacles, 0.4);
 occupancymap.truemap = map;
 occupancymap.localmap = initlocalmap(params);
+binmap = occupancymap.truemap;
 
 X = rand(num_samples, 1) * 1.0 *map.XWorldLimits(2);
 Y = rand(num_samples, 1) * 1.0 *map.YWorldLimits(2);
@@ -224,6 +225,41 @@ hilbertmap.xy = xy;
 hilbertmap.y = y;
 hilbertmap.wt = [];
 
-hilbertmap = learn_hilbert_map(params, occupancymap, hilbertmap);
+params.hilbertmap.pattern = 'grid';
+hilbertmap_grid = learn_hilbert_map(params, occupancymap, hilbertmap);
+params.hilbertmap.pattern = 'radial';
+hilbertmap_radial = learn_hilbert_map(params, occupancymap, hilbertmap);
 
-plot_hilbertmap(params, hilbertmap, occupancymap)
+subplot(1, 2, 1);
+params.hilbertmap.pattern = 'grid';
+map = render_hilbertmap(params, hilbertmap_grid.wt, binmap);
+imagesc(binmap.XWorldLimits, fliplr(binmap.YWorldLimits), flipud(map'));
+set(gca, 'Ydir', 'normal'); hold on;
+
+if ~isempty(xy)
+    plot(xy((y > 0), 1), xy((y > 0), 2), 'xr'); hold on;
+    plot(xy((y < 0), 1), xy((y < 0), 2), 'xb'); hold on;
+end
+
+colormap(gca, 'jet');
+colorbar('Ticks',[]);
+title('Grid Pattern');
+xlabel('X [meters]'); ylabel('Y [meters]');
+xticks(1:binmap.XWorldLimits(2)); yticks(1:binmap.YWorldLimits(2));
+
+subplot(1, 2, 2);
+params.hilbertmap.pattern = 'radial';
+map = render_hilbertmap(params, hilbertmap_radial.wt, binmap);
+imagesc(binmap.XWorldLimits, fliplr(binmap.YWorldLimits), flipud(map'));
+set(gca, 'Ydir', 'normal'); hold on;
+
+if ~isempty(xy)
+    plot(xy((y > 0), 1), xy((y > 0), 2), 'xr'); hold on;
+    plot(xy((y < 0), 1), xy((y < 0), 2), 'xb'); hold on;
+end
+
+colormap(gca, 'jet');
+colorbar('Ticks',[]);
+title('Radial Pattern');
+xlabel('X [meters]'); ylabel('Y [meters]');
+xticks(1:binmap.XWorldLimits(2)); yticks(1:binmap.YWorldLimits(2));
