@@ -1,5 +1,11 @@
 function plot_hilbertmap(param, hilbertmap, occupancymap, pose, localpath)
 
+    if nargin < 5
+        localpath = param.start_point;
+    end
+    if nargin < 4
+        pose = [param.start_point, 0];
+    end
     binmap = occupancymap.localmap;
 
     if ~param.hilbertmap.plot
