@@ -45,6 +45,12 @@ switch planner_type
         trajectory = informative_chomp(param, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, localmap, hilbert_map);
         [T, path, path_vel, path_acc] = sample_trajectory(trajectory, 0.1);
 
+    case 'hybridchomp'
+
+        trajectory = hybrid_chomp(param, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, localmap, hilbert_map);
+        [T, path, path_vel, path_acc] = sample_trajectory(trajectory, 0.1);
+
+
     case 'hilbertchomp'
 
         trajectory = hilbert_chomp(param, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, localmap, hilbert_map);
