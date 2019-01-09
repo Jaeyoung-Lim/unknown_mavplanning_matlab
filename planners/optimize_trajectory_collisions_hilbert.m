@@ -73,7 +73,7 @@ cost_func = @(x0)get_trajectory_cost_hilbert(x0, trajectory, map,  cost_map, cos
 tic
 
 %options = optimoptions('fminunc','Algorithm','trust-region','GradObj','on','Display','iter','DerivativeCheck','off', 'TolFun', 1e-4);
-options = optimoptions('fminunc','Algorithm','quasi-newton','GradObj','on','Display','iter','DerivativeCheck','off', 'TolFun', 1e-4, 'MaxIter', 25);
+options = optimoptions('fminunc','Algorithm','quasi-newton','GradObj','on','Display','iter','DerivativeCheck','off', 'TolFun', 1e-4, 'MaxIter', 50);
 %options = optimoptions('fminunc','Algorithm','quasi-newton','GradObj','off','Display','iter','DerivativeCheck','off', 'TolFun', 1e-4, 'MaxIter', 15);
 
 [x, final_cost, ~, output] = fminunc(cost_func, x0, options);
