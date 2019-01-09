@@ -17,9 +17,12 @@ switch param.mapping
         curr_pose(1:2) = global2localpos(param, curr_pose(1:2), curr_pose(1:2));
         
 end
-local_goal = param.goal_point;
-local_goal_vel = [0.0, 0.0];
-return
+switch param.planner.type
+    case 'hilbertchomp'
+        local_goal = param.goal_point;
+        local_goal_vel = [0.0, 0.0];
+        return;
+end
 
 if isinsideMap(param, binoccupancy_map, goal)
     if ~binoccupancy_map.getOccupancy(goal)

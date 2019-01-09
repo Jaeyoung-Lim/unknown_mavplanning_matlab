@@ -8,7 +8,7 @@ occupancymap.truemap = binmap_true;
 occupancymap = get_localmap(params.mapping, occupancymap, params, mav.pose); % Create a partial map based on observation
 
 % Plan global trajectory
-globalpath = planGlobalTrajectory(params, occupancymap, global_start, global_goal);
+globalpath = planGlobalTrajectory(params, occupancymap, mav, global_start, global_goal);
 [hilbertmap, ~] = learn_hilbert_map(params, occupancymap, hilbertmap, mav.pose);
 
 while true        

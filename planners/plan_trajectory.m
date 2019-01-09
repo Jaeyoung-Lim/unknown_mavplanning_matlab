@@ -10,10 +10,13 @@ if nargin < 7
     start_acceleration = [0.0, 0.0];
 end
 if nargin < 8
+    occupancymap = [];
+else
+   localmap = occupancymap.localmap; 
+end
+if nargin < 9
     hilbert_map = [];
 end
-
-localmap = occupancymap.localmap;
 
 planner_type = param.planner.type;
 path_vel = [0.0, 0.0];
