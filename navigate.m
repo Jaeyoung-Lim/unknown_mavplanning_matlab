@@ -19,9 +19,6 @@ while true
         
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory(params, cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration, occupancymap, hilbertmap);
     %%
-    if hilbertmap.enable
-        plot_hilbertmap(params, hilbertmap, occupancymap, mav.pose, localpath);
-    end
 
 %     if detectLocalOptima(localpath)
 %         if params.globalreplan

@@ -17,9 +17,10 @@ parameterfile = Param_LOCALRANDOMFOREST;
 % parameterfile = Param_CORNER;
 % parameterfile = Param_LOCALCORNER
 
-num_trials = 1; % Number of trials for statistics
-Test_planner = {'disable'}; % Configuration for different test sets
-Test_goalselection = {'nextbestview'};
+num_trials = 2; % Number of trials for statistics
+Test_planner = {'chomp', 'hilbertchomp'}; % Configuration for different test sets
+Test_map = {'increment', 'local'};
+Test_goalselection = {'nextbestview', 'frompath'};
 
 
 %% Initialize variables for statistics
@@ -33,7 +34,8 @@ S = zeros(num_tests, num_trials); % Success Mask
 for i = 1:num_trials
     for j=1:num_tests
         % Switch test cases
-        parameterfile.global_planner = Test_planner{j};
+        parameterfile.planner.type = Test_planner{j};
+        parameterfile.mapping = Test_map{j};
         parameterfile.localgoal = Test_goalselection{j};
 
         %% Generate Map only once

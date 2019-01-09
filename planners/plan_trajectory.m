@@ -1,4 +1,4 @@
-function [T, path, path_vel, path_acc]=plan_trajectory(param, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, occupancymap, hilbert_map)
+function [T, path, path_vel, path_acc]=plan_trajectory(param, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, occupancymap, hilbert_map, planner_type)
 %% Run Planner between start and endpoint depending on the planner type
 if nargin < 5
     start_velocity = [0.0, 0.0];    
@@ -11,14 +11,17 @@ if nargin < 7
 end
 if nargin < 8
     occupancymap = [];
+    localmap = [];
 else
    localmap = occupancymap.localmap; 
 end
 if nargin < 9
     hilbert_map = [];
 end
+if nargin < 10
+    planner_type = param.planner.type;
+end
 
-planner_type = param.planner.type;
 path_vel = [0.0, 0.0];
 path_acc = [0.0, 0.0];
 
@@ -52,6 +55,7 @@ switch planner_type
 
         trajectory = hilbert_chomp(param, binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration, localmap, hilbert_map);
         [T, path, path_vel, path_acc] = sample_trajectory(trajectory, 0.1);
+        plot_hilbertmap(param, hilbert_map, occupancymap, [start_position, atan2(start_velocity(2), start_velocity(1))], path);
 
     case 'primitive'
         [T, path, path_vel, path_acc] = primitive(binary_occupancygrid, start_position, goal_position, start_velocity, goal_velocity, start_acceleration);

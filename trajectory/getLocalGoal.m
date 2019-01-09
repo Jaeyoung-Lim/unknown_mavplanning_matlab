@@ -10,13 +10,7 @@ if isempty(hilbertmap.wt)
     num_features = param.hilbertmap.resolution^2 * binoccupancy_map.XWorldLimits(2) * binoccupancy_map.YWorldLimits(2);
     hilbertmap.wt = zeros(num_features, 1);
 end
-% Coordinate transform incase of local goal
-switch param.mapping
-    case 'local'
-        goal = global2localpos(param, goal, curr_pose(1:2));
-        curr_pose(1:2) = global2localpos(param, curr_pose(1:2), curr_pose(1:2));
-        
-end
+
 switch param.planner.type
     case 'hilbertchomp'
         local_goal = param.goal_point;
@@ -24,41 +18,73 @@ switch param.planner.type
         return;
 end
 
-if isinsideMap(param, binoccupancy_map, goal)
-    if ~binoccupancy_map.getOccupancy(goal)
-        % Local goal is global goal if global goal is free
-        local_goal = goal;
-        local_goal_vel = zeros(1,2);
-    else
-        switch param.localgoal
-            case 'frompath'
-                %% Pick Goal from Path
-                local_goal = goalfrompath(binoccupancy_map, path, curr_pose(1:2), param.plan_horizon);
+% Coordinate transform incase of local goal
+switch param.mapping
+    case 'local'
+        goal = global2localpos(param, goal, curr_pose(1:2));
+        curr_pose(1:2) = global2localpos(param, curr_pose(1:2), curr_pose(1:2));
+        
+        if isinsideMap(param, binoccupancy_map, goal) %% TODO: This only applies when doing local navigation
+            if ~binoccupancy_map.getOccupancy(goal)
+                % Local goal is global goal if global goal is free
+                local_goal = goal;
+                local_goal_vel = zeros(1,2);
+            else
+                switch param.localgoal
+                    case 'frompath'
+                        %% Pick Goal from Path
+                        local_goal = goalfrompath(binoccupancy_map, path, curr_pose(1:2), param.plan_horizon);
 
-            case 'random'
-                %% Pick Random Goal
-                local_goal = samplePosfromMap(binoccupancy_map);
+                    case 'random'
+                        %% Pick Random Goal
+                        local_goal = samplePosfromMap(binoccupancy_map);
 
-            case {'nextbestview', 'nextbestview-yaw', 'nextbestview-hilbert'}
-                %% Pick Next Best View
-                [local_goal, local_goal_vel] = getNextBestView(param, binoccupancy_map, curr_pose, goal, occupancy_map, hilbertmap);
+                    case {'nextbestview', 'nextbestview-yaw', 'nextbestview-hilbert'}
+                        %% Pick Next Best View
+                        [local_goal, local_goal_vel] = getNextBestView(param, binoccupancy_map, curr_pose, goal, occupancy_map, hilbertmap);
 
-            otherwise
-                disp('invalid local planner parameter')
+                    otherwise
+                        disp('invalid local planner parameter')
 
+                end
+            end
+        else
+            switch param.localgoal
+                case 'global'
+                    local_goal = goal;
+                    local_goal_vel = zeros(1, 2);
+
+            end
+        % This is nonsense:
+        %     local_goal = samplePosfromMap(binoccupancy_map);
+        %     local_goal_vel = zeros(1,2);    
         end
-    end
-else
-    switch param.localgoal
-        case 'global'
+    otherwise
+        if ~binoccupancy_map.getOccupancy(goal)
+            % Local goal is global goal if global goal is free
             local_goal = goal;
-            local_goal_vel = zeros(1, 2);
-    end
+            local_goal_vel = zeros(1,2);
+        else
+            switch param.localgoal
+                case 'frompath'
+                    %% Pick Goal from Path
+                    local_goal = goalfrompath(binoccupancy_map, path, curr_pose(1:2), param.plan_horizon);
 
-    % This is nonsense:
-    local_goal = samplePosfromMap(binoccupancy_map);
-    local_goal_vel = zeros(1,2);    
+                case 'random'
+                    %% Pick Random Goal
+                    local_goal = samplePosfromMap(binoccupancy_map);
+
+                case {'nextbestview', 'nextbestview-yaw', 'nextbestview-hilbert'}
+                    %% Pick Next Best View
+                    [local_goal, local_goal_vel] = getNextBestView(param, binoccupancy_map, curr_pose, goal, occupancy_map, hilbertmap);
+
+                otherwise
+                    disp('invalid local planner parameter')
+
+            end
+        end
 end
+
 
 switch param.mapping
     case 'local'
