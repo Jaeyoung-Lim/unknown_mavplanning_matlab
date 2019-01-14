@@ -23,11 +23,13 @@ end
 function plot_data(param, T, mav)
     subplot(2,2,3);
     plot(mav.path_vel, 'b-'); hold on;
+    ylim([0, 10]);
     xlabel('Time [s]');
     ylabel('Velocity [m/s]'); 
     hold off;
     subplot(2,2,4);
     plot(mav.path_acc, 'b-'); hold on;
+    ylim([0, 10]);
     xlabel('Time [s]');
     ylabel('Acceleration [m/s^2]'); 
     hold off;
@@ -64,7 +66,13 @@ function plot_localmap(param, map, pose, mavpath, localpath, globalpath)
     show(map); hold on;
     switch param.mapping
         case 'local'
-            plot(0.5*param.localmap.width, 0.5*param.localmap.height, 'xr','MarkerSize',10); hold off;
+            origin = [0.5*param.localmap.width, 0.5*param.localmap.height];
+            plot(origin(1), origin(2), 'xr','MarkerSize',10); hold on;
+            localpath = localpath - pose(1:2) + origin;
+            mavpath = mavpath - pose(1:2) + origin;
+            plot(localpath(:, 1), localpath(:, 2), 'g'); hold on;
+            plot(localpath(end, 1), localpath(end, 2), 'xb'); hold on;
+            plot(mavpath(:, 1), mavpath(:, 2), 'b'); hold off;
             
         case 'increment'
             plot(localpath(:, 1), localpath(:, 2), 'g'); hold on;
