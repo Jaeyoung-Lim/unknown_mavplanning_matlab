@@ -1,4 +1,4 @@
-function [local_goal, local_goal_vel] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancymap, hilbertmap)
+function [local_goal, local_goal_vel, goal_visible] = getLocalGoal(param, binoccupancy_map, curr_pose, path, goal, occupancymap, hilbertmap)
 
 if nargin < 6
     occupancy_map = [];
@@ -11,10 +11,21 @@ if isempty(hilbertmap.wt)
     hilbertmap.wt = zeros(num_features, 1);
 end
 
+goal_visible = false;
+
 switch param.planner.type
     case 'hilbertchomp'
         local_goal = param.goal_point;
         local_goal_vel = [0.0, 0.0];
+        switch param.mapping
+            case 'local'
+            goal = global2localpos(param, goal, curr_pose(1:2));
+            if isinsideMap(param, binoccupancy_map, goal)
+                 if ~binoccupancy_map.getOccupancy(goal)
+                     goal_visible = true;
+                 end
+            end
+        end
         return;
 end
 
@@ -24,11 +35,12 @@ switch param.mapping
         goal = global2localpos(param, goal, curr_pose(1:2));
         curr_pose(1:2) = global2localpos(param, curr_pose(1:2), curr_pose(1:2));
         
-        if isinsideMap(param, binoccupancy_map, goal) %% TODO: This only applies when doing local navigation
+        if isinsideMap(param, binoccupancy_map, goal)
             if ~binoccupancy_map.getOccupancy(goal)
                 % Local goal is global goal if global goal is free
                 local_goal = goal;
                 local_goal_vel = zeros(1,2);
+                goal_visible = true;
             else
                 switch param.localgoal
                     case 'frompath'
@@ -55,15 +67,13 @@ switch param.mapping
                     local_goal_vel = zeros(1, 2);
 
             end
-        % This is nonsense:
-        %     local_goal = samplePosfromMap(binoccupancy_map);
-        %     local_goal_vel = zeros(1,2);    
         end
     otherwise
         if ~binoccupancy_map.getOccupancy(goal)
             % Local goal is global goal if global goal is free
             local_goal = goal;
             local_goal_vel = zeros(1,2);
+            goal_visible = true;
         else
             switch param.localgoal
                 case 'frompath'

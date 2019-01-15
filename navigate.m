@@ -15,23 +15,18 @@ while true
     %% Replan Local trajectory from trajectory replanning rate
     local_start = mav.pose(1:2);
     cons_binmap = get_conservativemap(occupancymap, params, mav.pose);
-    [local_goal, local_goal_vel] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, occupancymap, hilbertmap); % Parse intermediate goal from global path
+    [local_goal, local_goal_vel, goal_isvisible] = getLocalGoal(params, cons_binmap, mav.pose, globalpath, global_goal, occupancymap, hilbertmap); % Parse intermediate goal from global path
         
     [localT, localpath, localpath_vel, localpath_acc] = plan_trajectory(params, cons_binmap, local_start, local_goal, mav.velocity, local_goal_vel, mav.acceleration, occupancymap, hilbertmap);
-    %%
 
-%     if detectLocalOptima(localpath)
-%         if params.globalreplan
-%             % Global plan based on optimistic map
-%             globalpath = planGlobalTrajectory(params, occupancymap, local_start, global_goal);
-%         else
-%             failure = true;
-%             disp('Stuck in local goal!');
-%             break;
-%         end
-%     end
     %% Move along local trajectory
-    for t = 0:dt:params.update_rate
+    if goal_isvisible
+        replan_horizon = localT(end);
+    else
+        replan_horizon = params.update_rate;
+    end
+    
+    for t = 0:dt:replan_horizon
         [mav.pose, mav.velocity, mav.acceleration] = statefromtrajectoy(localpath, localpath_vel, localpath_acc, localT, t);
 
         [mav, T] = updatePath(mav, T, dt); %Record path from state
@@ -50,7 +45,7 @@ while true
             break; % Get out of the for loop
         end
     end
-    % Discard samples that are outside the map\
+    % Discard samples that are outside the map
     if hilbertmap.enable
         [hilbertmap, ~] = learn_hilbert_map(params, occupancymap, hilbertmap, mav.pose);
     end
