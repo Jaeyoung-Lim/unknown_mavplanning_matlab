@@ -18,9 +18,13 @@ parameterfile = Param_LOCALRANDOMFOREST;
 % parameterfile = Param_LOCALCORNER
 
 num_trials = 2; % Number of trials for statistics
-Test_planner = {'chomp', 'hilbertchomp'}; % Configuration for different test sets
-Test_map = {'increment', 'local'};
-Test_goalselection = {'nextbestview', 'frompath'};
+Test_planner = {'hilbertchomp'}; % Configuration for different test sets
+Test_map = {'local'};
+Test_goalselection = {'frompath'};
+
+% Test_planner = {'chomp'}; % Configuration for different test sets
+% Test_map = {'increment'};
+% Test_goalselection = {'nextbestview'};
 
 
 %% Initialize variables for statistics
