@@ -25,7 +25,7 @@ trajectory = add_vertex_state_to_trajectory(trajectory, initpos, 1, 0, initvel, 
 trajectory = add_vertex_to_trajectory(trajectory, finalpos, 0, 1);
 
 % Estimate segment times.
-trajectory = set_trajectory_times(trajectory, 2.0);
+trajectory = set_trajectory_times(trajectory, param.planner.horizon);
 trajectory = solve_trajectory(trajectory);
 
 figure(findobj('name', 'Optimizer'));
