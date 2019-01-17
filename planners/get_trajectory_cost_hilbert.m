@@ -233,6 +233,9 @@ for i = 2:length(t)
       end
     end
     %% Get Uncertainty cost and gradients from hilbertmap
+    if occ_prob <= 1e-5
+        occ_prob = 1e-5; % Handle exception where occ_prob = 0
+    end
     occ_entropy = (-(1-occ_prob) * log2(1-occ_prob) - occ_prob * log2(occ_prob));
     docc_entropy = log2((1-occ_prob)/occ_prob)*docc_prob;
     entropy_cost = occ_entropy;
