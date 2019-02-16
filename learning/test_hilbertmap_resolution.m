@@ -9,6 +9,8 @@ N = 5;
 test_resolution = [50, 10, 5, 1];
 test_radius = [0.3, 0.3, 0.3, 1];
 
+image_mse = [];
+
 %%
 figure('name', 'Navigator', 'NumberTitle', 'off', 'Position', [100 800 400 400]);
 figure('name', 'Optimizer', 'NumberTitle', 'off', 'Position', [1900 800 400 400]);
@@ -45,7 +47,8 @@ hilbertmap_grid = learn_hilbert_map(params, occupancymap, hilbertmap);
 
 %%
 subplot(1, N, 1);
-show(occupancymap.truemap);
+ground_truth = (occupancymap.truemap.occupancyMatrix)';
+imagesc(binmap.XWorldLimits, fliplr(binmap.YWorldLimits), flipud(ground_truth'));
 
 colorbar('Ticks',[]);
 title('Grid Pattern');
@@ -65,10 +68,21 @@ for j = 2:N
     subplot(1, N, j);
     params.hilbertmap.pattern = 'grid';
     map = render_hilbertmap(params, hilbertmap_grid.wt, binmap);
+    
+    image_mse(j-1) = immse(map, double(ground_truth));
+    
+    % Calculate False Positive
+    
+    % Calculate True Positive
+    
+    % Calculate False Negative
+    
+    % Calculate True Negative
+    
+    % Visualize map
     imagesc(binmap.XWorldLimits, fliplr(binmap.YWorldLimits), flipud(map'));
     set(gca, 'Ydir', 'normal'); hold on;
-
-
+    
     if ~isempty(xy)
         plot(xy((y > 0), 1), xy((y > 0), 2), 'xr'); hold on;
         plot(xy((y < 0), 1), xy((y < 0), 2), 'xb'); hold on;
@@ -79,4 +93,5 @@ for j = 2:N
     title('Grid Pattern');
     xlabel('X [meters]'); ylabel('Y [meters]');
     xticks(1:binmap.XWorldLimits(2)); yticks(1:binmap.YWorldLimits(2));
+    
 end
