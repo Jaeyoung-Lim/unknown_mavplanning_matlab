@@ -47,7 +47,7 @@ hilbertmap_grid = learn_hilbert_map(params, occupancymap, hilbertmap);
 
 %%
 subplot(1, N, 1);
-ground_truth = (occupancymap.truemap.occupancyMatrix)';
+ground_truth = double(occupancymap.truemap.occupancyMatrix)';
 imagesc(binmap.XWorldLimits, fliplr(binmap.YWorldLimits), flipud(ground_truth'));
 
 colorbar('Ticks',[]);
@@ -69,10 +69,15 @@ for j = 2:N
     params.hilbertmap.pattern = 'grid';
     map = render_hilbertmap(params, hilbertmap_grid.wt, binmap);
     
-    image_mse(j-1) = immse(map, double(ground_truth));
-    
+    image_mse(j-1) = immse(map, ground_truth);
+
+    mask_true = ground_truth(:, :) > 0.5;
+
     % Calculate False Positive
-    
+    mask_positive = map(:, :) > 0.5;
+    size(ground_truth(mask_positive))
+    sum(double(ground_truth(mask_positive) < 0.5))
+
     % Calculate True Positive
     
     % Calculate False Negative
