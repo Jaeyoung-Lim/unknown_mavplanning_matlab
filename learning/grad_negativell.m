@@ -11,7 +11,8 @@ if ~(norm(w, 2) == 0)
 else
     regularize = zeros(size(w));
 end
-grad_NLL = grad_NLL + regularize;
+w_regularize = param.hilbertmap.regularize;
+grad_NLL = grad_NLL + w_regularize * regularize;
 
 % Vectorized above calculation, but slower :(
 % grad_NLL_stretch =  phi_x * diag((Y ./ (1+exp(diag(Y)*(w'*phi_x)'))));
