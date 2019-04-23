@@ -1,6 +1,6 @@
 close all; clc; clear all;
 
-%% Plot Occupancy probability depending on the cost
+%% Figure 1 Plot Occupancy probability depending on the cost
 figure(1);
 occprob = 0:0.01:1.0;
 
@@ -24,7 +24,7 @@ title('Collision Cost and Uncertainty Cost');
 xlabel('Occupancy Probability');
 ylabel('Cost');
 
-%% With True depth model
+%% Figure 2 With True depth model
 figure(2);
 s = -10:0.1:10;
 occprob = zeros(1, size(s, 2));
@@ -55,6 +55,19 @@ title('Collision Cost and Uncertainty Cost');
 xlabel('Occupancy Probability');
 ylabel('Cost');
 
+%% Figure 3 
+figure(3);
+plot(s, collision_cost, 'k--', 'LineWidth', 1.5); hold on; %% Occupancy Probability
+occupancy = (-10:0.1:10 > 1);
+plot(s, occupancy, 'b'); hold on; %% Occupancy Probability
+plot(s, 0.3*entropy_cost+collision_cost, 'k-', 'LineWidth', 1.5); hold on;
+title('Occupancy Probability');
+ylim([0, 1.2]);
+xlabel('Position [m]', 'FontWeight','bold');
+ylabel('Occupancy Probability', 'FontWeight','bold');
+legend('Occupancy Probability', 'Occupancy Ground Truth', 'Collision + Entropy');
+grid on;
+
 function occprob = qcdf(s)
     if s <  -3
         occprob = 0.0;
@@ -68,3 +81,5 @@ function occprob = qcdf(s)
         occprob = 1;
     end
 end
+
+
