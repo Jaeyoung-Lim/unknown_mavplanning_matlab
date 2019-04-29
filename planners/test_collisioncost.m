@@ -61,11 +61,11 @@ plot(s, collision_cost, 'k--', 'LineWidth', 1.5); hold on; %% Occupancy Probabil
 occupancy = (-10:0.1:10 > 1);
 plot(s, occupancy, 'b'); hold on; %% Occupancy Probability
 plot(s, 0.3*entropy_cost+collision_cost, 'k-', 'LineWidth', 1.5); hold on;
-title('Occupancy Probability');
+title('Occupancy Probability', 'FontSize',12);
 ylim([0, 1.2]);
-xlabel('Position [m]', 'FontWeight','bold');
-ylabel('Occupancy Probability', 'FontWeight','bold');
-legend('Occupancy Probability', 'Occupancy Ground Truth', 'Collision + Entropy');
+xlabel('Position [m]', 'FontWeight','bold', 'FontSize',12);
+ylabel('Cost', 'FontWeight','bold', 'FontSize',12);
+legend('Occupancy Probability', 'Occupancy Ground Truth', 'Collision + Entropy', 'FontSize',12);
 grid on;
 
 function occprob = qcdf(s)
